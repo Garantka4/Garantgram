@@ -187,7 +187,7 @@ def copy_profiles_from_directory(source_path, destination_path, team_id, bundle_
                 '-noverify',
                 '-in',
                 file_path
-            ], decode=False, stderr_to_stdout=False, check_result=True)
+            ], decode=False, stderr_to_stdout=False, check_result=False)
 
             profile_dict = plistlib.loads(profile_data)
             profile_name = profile_dict['Entitlements']['application-identifier']
@@ -215,7 +215,7 @@ def resolve_aps_environment_from_directory(source_path, team_id, bundle_id):
                 '-noverify',
                 '-in',
                 file_path
-            ], decode=False, stderr_to_stdout=False, check_result=True)
+            ], decode=False, stderr_to_stdout=False, check_result=False)
 
             profile_dict = plistlib.loads(profile_data)
             profile_name = profile_dict['Entitlements']['application-identifier']
