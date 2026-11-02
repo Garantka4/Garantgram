@@ -35,7 +35,7 @@ apple_resource_bundle(
         ":RichTextEditorUIKitResourcesBundleInfoPlist",
     ],
     resources = glob([
-        "Sources/RichTextEditorUIKit/Resources/Media.xcassets/**",
+        "Sources/RichTextEditorUIKit/Resources/*.png",
     ]),
 )
 
