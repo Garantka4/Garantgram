@@ -95,8 +95,4 @@ jobs:
             Garantgram.ipa \
             Garantgram.DSYMs.zip \
             --title "Garantgram ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }})" \
-            --notes "Garantgram for iOS (${{ env.APP_VERSION }})
-Features:
-- Full Ghost Mode (No read receipts, no typing indicators, stealth stories)
-- 100% Ad-Free (All sponsored messages stripped)
-- Unsigned build ready for TrollStore / Scarlet / AltStore / Sideloadly"
+            --notes "Garantgram for iOS (${{ env.APP_VERSION }}) - Ghost Mode and No-Ads"
