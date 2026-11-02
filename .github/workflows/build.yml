@@ -46,9 +46,6 @@ jobs:
 
           cd $SOURCE_DIR
 
-          # Patch actool.bzl 26.0 workaround if present
-          sed -i '' 's/dotted_version("26.0")/dotted_version("15.0")/g' build-system/bazel-rules/rules_apple/apple/internal/resource_actions/actool.bzl 2>/dev/null || true
-
           BUILD_NUMBER_OFFSET="$(cat build_number_offset)"
 
           export APP_VERSION=$(cat versions.json | python3 -c 'import json,sys;obj=json.load(sys.stdin);print(obj["app"]);')
