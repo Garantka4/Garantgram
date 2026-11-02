@@ -49,7 +49,7 @@ filegroup(
 )
 
 sgdeps = [
-    "//Swiftgram/SGStrings:SGStrings"
+    "//Garantgram/SGStrings:SGStrings"
 ]
 
 swift_library(

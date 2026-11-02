@@ -1,6 +1,6 @@
 submodules/**/.build/*
-Swiftgram/Playground/custom_bazel_path.bzl
-Swiftgram/Playground/codesigning
+Garantgram/Playground/custom_bazel_path.bzl
+Garantgram/Playground/codesigning
 buildServer.json
 
 fastlane/README.md

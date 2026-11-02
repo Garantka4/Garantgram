@@ -2,11 +2,11 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 # MARK: Swiftgram
 sgsrcs = [
-    "//Swiftgram/SGGalleryUIExtensions:SGGalleryUIExtensions",
+    "//Garantgram/SGGalleryUIExtensions:SGGalleryUIExtensions",
 ]
 
 sgdeps = [
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings"
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings"
 ]
 #
 

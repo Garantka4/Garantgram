@@ -3,20 +3,20 @@ load("@build_bazel_rules_apple//apple:ios.bzl", "ios_unit_test")
 load("@build_bazel_rules_apple//apple/testing/default_runner:ios_test_runner.bzl", "ios_test_runner")
 
 sgdeps = [
-    "//Swiftgram/SGGTranslate:SGGTranslate",
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
-    "//Swiftgram/SGWebSettingsScheme:SGWebSettingsScheme",
-    "//Swiftgram/SGGHSettingsScheme:SGGHSettingsScheme",
-    "//Swiftgram/SGConfig:SGConfig",
-    "//Swiftgram/SGLogging:SGLogging",
+    "//Garantgram/SGGTranslate:SGGTranslate",
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SGWebSettingsScheme:SGWebSettingsScheme",
+    "//Garantgram/SGGHSettingsScheme:SGGHSettingsScheme",
+    "//Garantgram/SGConfig:SGConfig",
+    "//Garantgram/SGLogging:SGLogging",
 ]
 
 sgsrc = [
-    "//Swiftgram/SGIQTP:SGIQTP",
+    "//Garantgram/SGIQTP:SGIQTP",
     # MARK: Swiftgram
-    "//Swiftgram/SGServerSuggestions:SGServerSuggestions",
-    "//Swiftgram/SGTranslate:SGTranslate",
-    "//Swiftgram/SGLocalizationInfoExtension:SGLocalizationInfoExtension",
+    "//Garantgram/SGServerSuggestions:SGServerSuggestions",
+    "//Garantgram/SGTranslate:SGTranslate",
+    "//Garantgram/SGLocalizationInfoExtension:SGLocalizationInfoExtension",
     #
 ]
 

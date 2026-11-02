@@ -2,7 +2,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 # MARK: Swiftgram
 sgdeps = [
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
     "//submodules/TranslateUI:TranslateUI"
 ]
 #

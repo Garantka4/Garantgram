@@ -3,12 +3,12 @@ load("@build_bazel_rules_apple//apple:ios.bzl", "ios_unit_test")
 load("@build_bazel_rules_apple//apple/testing/default_runner:ios_test_runner.bzl", "ios_test_runner")
 
 sgdeps = [
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
-    "//Swiftgram/SGAPIWebSettings:SGAPIWebSettings",
-    "//Swiftgram/SGAPIToken:SGAPIToken"
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SGAPIWebSettings:SGAPIWebSettings",
+    "//Garantgram/SGAPIToken:SGAPIToken"
 ]
 sgsrcs = [
-    "//Swiftgram/SGChatListSimpleSettingsSignal:SGChatListSimpleSettingsSignal",
+    "//Garantgram/SGChatListSimpleSettingsSignal:SGChatListSimpleSettingsSignal",
 ]
 
 swift_library(

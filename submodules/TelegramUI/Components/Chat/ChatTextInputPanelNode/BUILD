@@ -19,8 +19,8 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
-        "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
-        "//Swiftgram/SGInputToolbar:SGInputToolbar",
+        "//Garantgram/SGSimpleSettings:SGSimpleSettings",
+        "//Garantgram/SGInputToolbar:SGInputToolbar",
         "//submodules/Display",
         "//submodules/LottieSettings:LottieSettings",
         "//submodules/AsyncDisplayKit",

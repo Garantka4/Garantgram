@@ -41,11 +41,11 @@ apple_resource_bundle(
 )
 
 sgdeps = [
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
 ]
 
 sgsrcs = [
-    "//Swiftgram/SGNY:SGNY"
+    "//Garantgram/SGNY:SGNY"
 ]
 
 swift_library(

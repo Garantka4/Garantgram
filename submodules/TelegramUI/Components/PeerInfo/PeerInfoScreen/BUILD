@@ -2,18 +2,18 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 # MARK: Swiftgram
 sgdeps = [
-    "//Swiftgram/SGSettingsUI:SGSettingsUI",
-    "//Swiftgram/SGStrings:SGStrings",
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SGSettingsUI:SGSettingsUI",
+    "//Garantgram/SGStrings:SGStrings",
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
 
-    "//Swiftgram/SGRegDate:SGRegDate",
-    "//Swiftgram/SGRegDateScheme:SGRegDateScheme",
-    "//Swiftgram/SGDebugUI:SGDebugUI",
+    "//Garantgram/SGRegDate:SGRegDate",
+    "//Garantgram/SGRegDateScheme:SGRegDateScheme",
+    "//Garantgram/SGDebugUI:SGDebugUI",
 ]
 #
 # MARK: Swiftgram
 sgsrcs = [
-    "//Swiftgram/SGPeerInfoRows:SGPeerInfoRows",
+    "//Garantgram/SGPeerInfoRows:SGPeerInfoRows",
 ]
 #
 

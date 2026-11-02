@@ -1,13 +1,13 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 sgdeps = [
-    "//Swiftgram/SGStrings:SGStrings",
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SGStrings:SGStrings",
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
     "//submodules/TranslateUI:TranslateUI"
 ]
 
 sgsrc = [
-    "//Swiftgram/SGDoubleTapMessageAction:SGDoubleTapMessageAction"
+    "//Garantgram/SGDoubleTapMessageAction:SGDoubleTapMessageAction"
 ]
 
 swift_library(

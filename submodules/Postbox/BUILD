@@ -67,7 +67,7 @@ package_group(
 
 # MARK: Swiftgram
 sgsrc = [
-    "//Swiftgram/SGPostboxLocalPeerSearch:SGPostboxLocalPeerSearch"
+    "//Garantgram/SGPostboxLocalPeerSearch:SGPostboxLocalPeerSearch"
 ]
 #
 

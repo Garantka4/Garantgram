@@ -283,7 +283,7 @@ filegroup(
     name = "AppStringResources",
     srcs = [
         "Telegram-iOS/en.lproj/Localizable.strings",
-        "//Swiftgram/SGStrings:SGLocalizableStrings", # MARK: Swiftgram
+        "//Garantgram/SGStrings:SGLocalizableStrings", # MARK: Swiftgram
     ] + [
         "{}.lproj/Localizable.strings".format(language) for language in empty_languages
     ],
@@ -343,7 +343,7 @@ alternate_icon_folders = [
 ]
 #
 
-composer_icon_folders = ["Swiftgram"] # MARK: Swiftgram
+composer_icon_folders = ["Garantgram"] # MARK: Garantgram
 
 [
     filegroup(
@@ -378,7 +378,7 @@ objc_library(
     ],
 )
 
-SGRESOURCES = ["//Swiftgram/SGSettingsUI:SGUIAssets", "//Swiftgram/SGPayWall:SGPayWallAssets", "//Swiftgram/SGAppBadgeAssets:SGAppBadgeAssets", "//Swiftgram/SGNY:SGNYAssets"] # MARK: Swiftgram
+SGRESOURCES = ["//Garantgram/SGSettingsUI:SGUIAssets", "//Garantgram/SGPayWall:SGPayWallAssets", "//Garantgram/SGAppBadgeAssets:SGAppBadgeAssets", "//Garantgram/SGNY:SGNYAssets"] # MARK: Swiftgram
 
 swift_library(
     name = "Lib",
@@ -2068,7 +2068,7 @@ xcode_provisioning_profile(
 )
 
 apple_prebuilt_watchos_application(
-    name = "SwiftgramWatchApp", # MARK: Swiftgram
+    name = "GarantgramWatchApp", # MARK: Swiftgram
     # Watch bundle id tracks the host config ("<host>.watchkitapp"). The rule passes it
     # to xcodebuild as PRODUCT_BUNDLE_IDENTIFIER (baked + signed); the watch Info.plist
     # derives WKCompanionAppBundleIdentifier from it via $(PRODUCT_BUNDLE_IDENTIFIER:base),
@@ -2081,7 +2081,7 @@ apple_prebuilt_watchos_application(
 )
 
 ios_application(
-    name = "Swiftgram", # MARK: Swiftgram
+    name = "Garantgram", # MARK: Swiftgram
     bundle_id = "{telegram_bundle_id}".format(
         telegram_bundle_id = telegram_bundle_id,
     ),
@@ -2099,13 +2099,13 @@ ios_application(
         ":RequiredDeviceCapabilitiesPlist",
         ":UrlTypesInfoPlist",
     ],
-    app_icons = [ ":{}_icon".format(name) for name in composer_icon_folders ],
+    app_icons = [":DefaultAppIcon"],
     alternate_icons = [
         ":{}".format(name) for name in alternate_icon_folders
     ],
     resources = [
         ":LaunchScreen",
-        #":DefaultAppIcon",
+        ":DefaultAppIcon",
     ],
     frameworks = [
         ":MtProtoKitFramework",
@@ -2118,7 +2118,7 @@ ios_application(
         ":AppStringResources",
     ],
     # MARK: Swiftgram
-    settings_bundle = "//Swiftgram/SGSettingsBundle:SGSettingsBundle",
+    settings_bundle = "//Garantgram/SGSettingsBundle:SGSettingsBundle",
     extensions = select({
         ":disableExtensionsSetting": [],
         "//conditions:default": [
@@ -2135,7 +2135,7 @@ ios_application(
     # --//Telegram:embedWatchApp is set (Make.py sets it for device configs when
     # --embedWatchApp is passed). Off by default, so simulator/dev builds are unaffected.
     watch_application = select({
-        ":embedWatchAppSetting": ":SwiftgramWatchApp", # MARK: Swiftgram
+        ":embedWatchAppSetting": ":GarantgramWatchApp", # MARK: Swiftgram
         "//conditions:default": None,
     }),
     deps = [
@@ -2149,10 +2149,10 @@ xcodeproj(
     name = "Telegram_xcodeproj",
     bazel_path = telegram_bazel_path,
     bazel_env = {"LANG": "en_US.UTF-8","PATH": "/opt/homebrew/bin:/usr/local/bin:/bin:/usr/bin"}, # MARK: Swiftgram, otherwise Bazel through xcode does not see ccache
-    project_name = "Swiftgram", # MARK: Swiftgram
+    project_name = "Garantgram", # MARK: Swiftgram
     tags = ["manual"],
     top_level_targets = [
-        top_level_target(":Swiftgram", target_environments = ["device", "simulator"]), # MARK: Swiftgram
+        top_level_target(":Garantgram", target_environments = ["device", "simulator"]), # MARK: Swiftgram
         ":iOSAppUITestSuite",
     ],
     xcode_configurations = {
@@ -2194,7 +2194,7 @@ ios_ui_test_suite(
         ":iPhone-17__26.2",
     ],
     tags = ["manual"],
-    test_host = "//Telegram:Swiftgram", # MARK: Swiftgram
+    test_host = "//Telegram:Garantgram", # MARK: Swiftgram
     visibility = ["@rules_xcodeproj//xcodeproj:generated"],
     deps = [":iOSAppUITestSuite.library"],
 )

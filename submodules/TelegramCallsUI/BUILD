@@ -43,7 +43,7 @@ apple_resource_bundle(
 )
 
 sgdeps = [
-    "//Swiftgram/SGAppGroupIdentifier:SGAppGroupIdentifier"
+    "//Garantgram/SGAppGroupIdentifier:SGAppGroupIdentifier"
 ]
 
 swift_library(

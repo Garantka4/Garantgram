@@ -1,12 +1,12 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 sgdeps = [
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
 ]
 
 sgsrc = [
-    "//Swiftgram/SGChatListSimpleSettingsSignal:SGSimpleSettingsBoolSignal", # MARK: Swiftgram
-    "//Swiftgram/SGTabBarHeightModifier:SGTabBarHeightModifier"
+    "//Garantgram/SGChatListSimpleSettingsSignal:SGSimpleSettingsBoolSignal", # MARK: Swiftgram
+    "//Garantgram/SGTabBarHeightModifier:SGTabBarHeightModifier"
 ]
 
 swift_library(

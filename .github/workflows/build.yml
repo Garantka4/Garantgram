@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       - uses: actions/checkout@v4
@@ -18,11 +18,12 @@ jobs:
 
       - name: Set active Xcode path
         run: |
-          XCODE_VERSION=$(cat versions.json | python3 -c 'import json,sys;obj=json.load(sys.stdin);print(obj["xcode"]);')
-          if [ -d "/Applications/Xcode_$XCODE_VERSION.app" ]; then
-            sudo xcode-select -s "/Applications/Xcode_$XCODE_VERSION.app/Contents/Developer"
-          else
-            echo "Xcode $XCODE_VERSION not found, using default Xcode: $(xcode-select -p)"
+          if [ -d "/Applications/Xcode_16.1.app" ]; then
+            sudo xcode-select -s "/Applications/Xcode_16.1.app/Contents/Developer"
+          elif [ -d "/Applications/Xcode_16.0.app" ]; then
+            sudo xcode-select -s "/Applications/Xcode_16.0.app/Contents/Developer"
+          elif [ -d "/Applications/Xcode_16.app" ]; then
+            sudo xcode-select -s "/Applications/Xcode_16.app/Contents/Developer"
           fi
           xcodebuild -version
 
@@ -44,6 +45,9 @@ jobs:
           BAZEL_USER_ROOT="/private/var/tmp/_bazel_containerhost"
 
           cd $SOURCE_DIR
+
+          # Patch actool.bzl 26.0 workaround if present
+          sed -i '' 's/dotted_version("26.0")/dotted_version("15.0")/g' build-system/bazel-rules/rules_apple/apple/internal/resource_actions/actool.bzl 2>/dev/null || true
 
           BUILD_NUMBER_OFFSET="$(cat build_number_offset)"
 
@@ -68,15 +72,19 @@ jobs:
           OUTPUT_PATH="build/artifacts"
           rm -rf "$OUTPUT_PATH"
           mkdir -p "$OUTPUT_PATH"
-          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.ipa; do
-            cp "$f" "$OUTPUT_PATH/Garantgram.ipa"
-            cp "$f" "$OUTPUT_PATH/Telegram.ipa"
+          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.ipa bazel-bin/Telegram/*.ipa; do
+            if [ -f "$f" ]; then
+              cp "$f" "$OUTPUT_PATH/Garantgram.ipa"
+              cp "$f" "$OUTPUT_PATH/Telegram.ipa"
+            fi
           done
 
           # collect dsym
           mkdir -p build/DSYMs
-          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.dSYM; do
-            cp -R "$f" build/DSYMs/
+          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.dSYM bazel-bin/Telegram/*.dSYM; do
+            if [ -d "$f" ]; then
+              cp -R "$f" build/DSYMs/
+            fi
           done
           zip -r "./$OUTPUT_PATH/Garantgram.DSYMs.zip" build/DSYMs 1>/dev/null
 

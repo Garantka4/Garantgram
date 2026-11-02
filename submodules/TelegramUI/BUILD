@@ -6,35 +6,35 @@ load(
 )
 
 sgdeps = [
-    "//Swiftgram/SGSettingsUI:SGSettingsUI",
-    "//Swiftgram/SGConfig:SGConfig",
-    "//Swiftgram/SGAPIWebSettings:SGAPIWebSettings",
-    "//Swiftgram/SGAppGroupIdentifier:SGAppGroupIdentifier",
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
-    "//Swiftgram/SFSafariViewControllerPlus:SFSafariViewControllerPlus",
-    "//Swiftgram/SGLogging:SGLogging",
-    "//Swiftgram/SGStrings:SGStrings",
-    "//Swiftgram/SGActionRequestHandlerSanitizer:SGActionRequestHandlerSanitizer",
-    "//Swiftgram/Wrap:Wrap",
-    "//Swiftgram/SGDeviceToken:SGDeviceToken",
-    "//Swiftgram/SGDebugUI:SGDebugUI",
-    "//Swiftgram/SGInputToolbar:SGInputToolbar",
-    "//Swiftgram/SGIAP:SGIAP",
-    "//Swiftgram/SGPayWall:SGPayWall",
-    "//Swiftgram/SGProUI:SGProUI",
-    "//Swiftgram/SGKeychainBackupManager:SGKeychainBackupManager",
-    "//Swiftgram/SGGHSettings:SGGHSettings",
-    # "//Swiftgram/SGContentAnalysis:SGContentAnalysis"
+    "//Garantgram/SGSettingsUI:SGSettingsUI",
+    "//Garantgram/SGConfig:SGConfig",
+    "//Garantgram/SGAPIWebSettings:SGAPIWebSettings",
+    "//Garantgram/SGAppGroupIdentifier:SGAppGroupIdentifier",
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SFSafariViewControllerPlus:SFSafariViewControllerPlus",
+    "//Garantgram/SGLogging:SGLogging",
+    "//Garantgram/SGStrings:SGStrings",
+    "//Garantgram/SGActionRequestHandlerSanitizer:SGActionRequestHandlerSanitizer",
+    "//Garantgram/Wrap:Wrap",
+    "//Garantgram/SGDeviceToken:SGDeviceToken",
+    "//Garantgram/SGDebugUI:SGDebugUI",
+    "//Garantgram/SGInputToolbar:SGInputToolbar",
+    "//Garantgram/SGIAP:SGIAP",
+    "//Garantgram/SGPayWall:SGPayWall",
+    "//Garantgram/SGProUI:SGProUI",
+    "//Garantgram/SGKeychainBackupManager:SGKeychainBackupManager",
+    "//Garantgram/SGGHSettings:SGGHSettings",
+    # "//Garantgram/SGContentAnalysis:SGContentAnalysis"
 ]
 
 sgsrcs = [
-    "//Swiftgram/SGDBReset:SGDBReset",
-    "//Swiftgram/SGShowMessageJson:SGShowMessageJson",
-    "//Swiftgram/ChatControllerImplExtension:ChatControllerImplExtension",
-    "//Swiftgram/SGSharedAccountContextMigration:SGSharedAccountContextMigration",
-    "//Swiftgram/SGOutgoingTranslationLanguageSelection:SGOutgoingTranslationLanguageSelection",
-    "//Swiftgram/SGSafariControllerUrlOpening:SGSafariControllerUrlOpening",
-    "//Swiftgram/SGTelegramUIExtensions:SGTelegramUIExtensions", # MARK: Swiftgram
+    "//Garantgram/SGDBReset:SGDBReset",
+    "//Garantgram/SGShowMessageJson:SGShowMessageJson",
+    "//Garantgram/ChatControllerImplExtension:ChatControllerImplExtension",
+    "//Garantgram/SGSharedAccountContextMigration:SGSharedAccountContextMigration",
+    "//Garantgram/SGOutgoingTranslationLanguageSelection:SGOutgoingTranslationLanguageSelection",
+    "//Garantgram/SGSafariControllerUrlOpening:SGSafariControllerUrlOpening",
+    "//Garantgram/SGTelegramUIExtensions:SGTelegramUIExtensions", # MARK: Swiftgram
 ]
 
 filegroup(

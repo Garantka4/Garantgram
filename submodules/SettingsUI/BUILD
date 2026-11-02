@@ -4,12 +4,12 @@ load("@build_bazel_rules_apple//apple/testing/default_runner:ios_test_runner.bzl
 
 sgdeps = [
     "//submodules/BuildConfig:BuildConfig",
-    "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
-    "//Swiftgram/SGStrings:SGStrings"
+    "//Garantgram/SGSimpleSettings:SGSimpleSettings",
+    "//Garantgram/SGStrings:SGStrings"
 ]
 
 sgsrc = [
-    "//Swiftgram/SGRecentSessionApiId:SGRecentSessionApiId",
+    "//Garantgram/SGRecentSessionApiId:SGRecentSessionApiId",
 ]
 
 swift_library(
