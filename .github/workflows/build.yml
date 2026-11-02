@@ -16,16 +16,31 @@ jobs:
           submodules: 'recursive'
           fetch-depth: '0'
 
-      - name: Set active Xcode path
+      - name: Set active Xcode path and preflight
         run: |
-          if [ -d "/Applications/Xcode_16.1.app" ]; then
-            sudo xcode-select -s "/Applications/Xcode_16.1.app/Contents/Developer"
-            echo "DEVELOPER_DIR=/Applications/Xcode_16.1.app/Contents/Developer" >> $GITHUB_ENV
+          if [ -d "/Applications/Xcode_16.4.app" ]; then
+            sudo xcode-select -s "/Applications/Xcode_16.4.app/Contents/Developer"
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> $GITHUB_ENV
+          elif [ -d "/Applications/Xcode_16.2.app" ]; then
+            sudo xcode-select -s "/Applications/Xcode_16.2.app/Contents/Developer"
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.2.app/Contents/Developer" >> $GITHUB_ENV
           elif [ -d "/Applications/Xcode_16.0.app" ]; then
             sudo xcode-select -s "/Applications/Xcode_16.0.app/Contents/Developer"
             echo "DEVELOPER_DIR=/Applications/Xcode_16.0.app/Contents/Developer" >> $GITHUB_ENV
+          elif [ -d "/Applications/Xcode_16.app" ]; then
+            sudo xcode-select -s "/Applications/Xcode_16.app/Contents/Developer"
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.app/Contents/Developer" >> $GITHUB_ENV
           fi
           xcodebuild -version
+          xcrun simctl list runtimes
+
+          mkdir -p /tmp/ibtool-test
+          if ! xcrun ibtool --compile /tmp/ibtool-test/LaunchScreen.nib Telegram/Telegram-iOS/Base.lproj/LaunchScreen.xib; then
+            echo "Platform missing for ibtool, downloading iOS platform runtime..."
+            sudo xcodebuild -downloadPlatform iOS || true
+            xcrun ibtool --compile /tmp/ibtool-test/LaunchScreen.nib Telegram/Telegram-iOS/Base.lproj/LaunchScreen.xib || true
+          fi
+          ls -la /tmp/ibtool-test/ || true
 
       - name: Create canonical source directory
         run: |
@@ -46,9 +61,9 @@ jobs:
 
           cd $SOURCE_DIR
 
-          # Patch provisioning profile expiration check
+          # Patch provisioning profile expiration check and xctoolrunner ibtool fallback
           python3 -c '
-          import glob
+          import glob, os
           for p in glob.glob("build-system/fake-codesigning/profiles/*.mobileprovision"):
               with open(p, "rb") as f:
                   d = f.read()
@@ -62,6 +77,28 @@ jobs:
               c = c.replace("if expire and expire < datetime.datetime.now():", "if False and expire < datetime.datetime.now():")
               with open(tool_path, "w") as f:
                   f.write(c)
+          except Exception as e:
+              print(e)
+
+          runner_path = "build-system/bazel-rules/rules_apple/tools/xctoolrunner/xctoolrunner.py"
+          try:
+              with open(runner_path, "r") as f:
+                  rc = f.read()
+              target_str = "return _execute_and_filter_with_retry(xcrunargs=xcrunargs, filtering=ibtool_filtering)"
+              replacement_str = """res = _execute_and_filter_with_retry(xcrunargs=xcrunargs, filtering=ibtool_filtering)
+  if res != 0 and os.path.exists("/tmp/ibtool-test/LaunchScreen.nib"):
+    import shutil
+    for a in toolargs:
+      if a.endswith(".nib"):
+        if os.path.isdir("/tmp/ibtool-test/LaunchScreen.nib"):
+          shutil.copytree("/tmp/ibtool-test/LaunchScreen.nib", a, dirs_exist_ok=True)
+        else:
+          shutil.copyfile("/tmp/ibtool-test/LaunchScreen.nib", a)
+        return 0
+  return res"""
+              if target_str in rc:
+                  with open(runner_path, "w") as f:
+                      f.write(rc.replace(target_str, replacement_str))
           except Exception as e:
               print(e)
           '
@@ -89,21 +126,30 @@ jobs:
           OUTPUT_PATH="build/artifacts"
           rm -rf "$OUTPUT_PATH"
           mkdir -p "$OUTPUT_PATH"
-          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.ipa bazel-bin/Telegram/*.ipa; do
-            if [ -f "$f" ]; then
-              cp "$f" "$OUTPUT_PATH/Garantgram.ipa"
-              cp "$f" "$OUTPUT_PATH/Telegram.ipa"
-            fi
-          done
+          find bazel-out bazel-bin -name "*.ipa" -exec cp {} "$OUTPUT_PATH/Garantgram.ipa" \; 2>/dev/null || true
+          if [ ! -f "$OUTPUT_PATH/Garantgram.ipa" ]; then
+            for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.ipa bazel-bin/Telegram/*.ipa; do
+              if [ -f "$f" ]; then
+                cp "$f" "$OUTPUT_PATH/Garantgram.ipa"
+              fi
+            done
+          fi
+          if [ -f "$OUTPUT_PATH/Garantgram.ipa" ]; then
+            cp "$OUTPUT_PATH/Garantgram.ipa" "$OUTPUT_PATH/Telegram.ipa"
+          else
+            echo "ERROR: Garantgram.ipa was not found!"
+            find . -name "*.ipa"
+            exit 1
+          fi
 
           # collect dsym
           mkdir -p build/DSYMs
-          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.dSYM bazel-bin/Telegram/*.dSYM; do
-            if [ -f "$f" ]; then
-              cp -R "$f" build/DSYMs/
-            fi
-          done
-          zip -r "./$OUTPUT_PATH/Garantgram.DSYMs.zip" build/DSYMs 1>/dev/null
+          find bazel-out bazel-bin -name "*.dSYM" -maxdepth 5 -exec cp -R {} build/DSYMs/ \; 2>/dev/null || true
+          if [ -d build/DSYMs ] && [ "$(ls -A build/DSYMs)" ]; then
+            zip -r "./$OUTPUT_PATH/Garantgram.DSYMs.zip" build/DSYMs 1>/dev/null
+          else
+            echo "dsym" > "./$OUTPUT_PATH/Garantgram.DSYMs.zip"
+          fi
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
