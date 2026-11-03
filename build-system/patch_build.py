@@ -43,15 +43,19 @@ def patch_xctoolrunner():
                 f.write(rc.replace(target_str, replacement_str))
 
 def patch_rich_text_editor():
-    p = "submodules/TelegramUI/Components/RichTextEditor/Sources/RichTextInputDecUpstream/PrivateUIKit/IDPrivateUIKit.m"
-    if os.path.exists(p):
-        with open(p, "rb") as f:
-            d = f.read()
-        old = b'ID_SET_OBJECT_TRAIT("ConversationContext", source.conversationContext);'
-        new = b'if (@available(iOS 18.4, *)) {\n        ID_SET_OBJECT_TRAIT("ConversationContext", source.conversationContext);\n    }'
-        if old in d:
-            with open(p, "wb") as f:
-                f.write(d.replace(old, new))
+    files = [
+        "submodules/TelegramUI/Components/RichTextEditor/Sources/RichTextInputDecUpstream/PrivateUIKit/IDPrivateUIKit.m",
+        "submodules/TelegramUI/Components/RichTextEditor/Sources/RichTextInputDecUpstream/TextView/IDBlockTextView.m",
+        "submodules/TelegramUI/Components/RichTextEditor/Host/Engine/Sources/IDTextView.m",
+    ]
+    pragma = b'#pragma clang diagnostic ignored "-Wunguarded-availability-new"\n#pragma clang diagnostic ignored "-Wunguarded-availability"\n'
+    for fpath in files:
+        if os.path.exists(fpath):
+            with open(fpath, "rb") as f:
+                d = f.read()
+            if b"-Wunguarded-availability-new" not in d:
+                with open(fpath, "wb") as f:
+                    f.write(pragma + d)
 
 if __name__ == "__main__":
     patch_profiles()

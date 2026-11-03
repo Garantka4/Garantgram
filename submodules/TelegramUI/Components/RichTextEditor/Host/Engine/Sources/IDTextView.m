@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+#pragma clang diagnostic ignored "-Wunguarded-availability"
 #import "IDTextView.h"
 #import "IDTextLayoutCanvasView.h"
 #import "IDTextLayoutCanvasViewInternal.h"

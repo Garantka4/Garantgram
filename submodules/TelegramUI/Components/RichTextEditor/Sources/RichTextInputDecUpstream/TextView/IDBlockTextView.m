@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+#pragma clang diagnostic ignored "-Wunguarded-availability"
 #import <TargetConditionals.h>
 #if TARGET_OS_IOS
 
