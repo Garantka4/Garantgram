@@ -223,33 +223,7 @@ final class PasskeysScreenComponent: Component {
             component.passkeysDataUpdated(self.passkeysData ?? [])
             self.state?.updated(transition: .spring(duration: 0.4))
             
-            if #available(iOS 26.0, *) {
-                Task { @MainActor in
-                    let updater = ASCredentialUpdater()
-                    let decodeBase64: (String) -> Data? = { string in
-                        var string = string.replacingOccurrences(of: "-", with: "+")
-                            .replacingOccurrences(of: "_", with: "/")
-                        while string.count % 4 != 0 {
-                            string.append("=")
-                        }
-                        return Data(base64Encoded: string)
-                    }
-                    if let credentialId = decodeBase64(passkey.id) {
-                        do {
-                            try await updater.reportUnknownPublicKeyCredential(relyingPartyIdentifier: "telegram.org", credentialID: credentialId)
-                        } catch let e {
-                            Logger.shared.log("Passkeys", "reportUnknownPublicKeyCredential error: \(e). Retrying with another domain")
-                            // MARK: Swiftgram
-                            do {
-                                try await updater.reportUnknownPublicKeyCredential(relyingPartyIdentifier: "swiftgram.app", credentialID: credentialId)
-                            } catch let e {
-                                Logger.shared.log("Passkeys", "reportUnknownPublicKeyCredential error: \(e)")
-                            }
-                            //
-                        }
-                    }
-                }
-            }
+
         }
         
         func update(component: PasskeysScreenComponent, availableSize: CGSize, state: EmptyComponentState, environment: Environment<ViewControllerComponentContainer.Environment>, transition: ComponentTransition) -> CGSize {
