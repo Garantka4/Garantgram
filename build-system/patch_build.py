@@ -91,6 +91,18 @@ def patch_display():
                         f.write(d)
                     break
 
+    p2 = "submodules/Display/Source/ScrollToTopProxyView.swift"
+    if os.path.exists(p2):
+        with open(p2, "rb") as f:
+            d2 = f.read()
+        import re
+        pattern = rb'(\r?\n\s+if #available\(iOS 26\.0, \*\) \{[\s\S]*?\}\r?\n)'
+        m = re.search(pattern, d2)
+        if m:
+            d2 = d2[:m.start()] + b"\n" + d2[m.end():]
+            with open(p2, "wb") as f:
+                f.write(d2)
+
 if __name__ == "__main__":
     patch_profiles()
     patch_plisttool()
