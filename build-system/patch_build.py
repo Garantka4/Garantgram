@@ -42,8 +42,20 @@ def patch_xctoolrunner():
             with open(runner_path, "w", encoding="utf-8") as f:
                 f.write(rc.replace(target_str, replacement_str))
 
+def patch_rich_text_editor():
+    p = "submodules/TelegramUI/Components/RichTextEditor/Sources/RichTextInputDecUpstream/PrivateUIKit/IDPrivateUIKit.m"
+    if os.path.exists(p):
+        with open(p, "rb") as f:
+            d = f.read()
+        old = b'ID_SET_OBJECT_TRAIT("ConversationContext", source.conversationContext);'
+        new = b'if (@available(iOS 18.4, *)) {\n        ID_SET_OBJECT_TRAIT("ConversationContext", source.conversationContext);\n    }'
+        if old in d:
+            with open(p, "wb") as f:
+                f.write(d.replace(old, new))
+
 if __name__ == "__main__":
     patch_profiles()
     patch_plisttool()
     patch_xctoolrunner()
+    patch_rich_text_editor()
     print("Patches applied successfully.")
