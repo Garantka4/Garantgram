@@ -7,9 +7,11 @@ private let dbResetKey = "sg_db_reset"
 private let dbHardResetKey = "sg_db_hard_reset"
 
 private func sgDefaultDataPath() -> String? {
-    guard let appGroupUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: sgAppGroupIdentifier()) else {
-        return nil
-    }
+    let appGroupUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: sgAppGroupIdentifier()) ?? {
+        let docUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("AppGroup")
+        try? FileManager.default.createDirectory(at: docUrl, withIntermediateDirectories: true, attributes: nil)
+        return docUrl
+    }()
     return (appGroupUrl.path as NSString).appendingPathComponent("telegram-data")
 }
 
