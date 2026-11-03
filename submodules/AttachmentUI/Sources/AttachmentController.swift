@@ -507,6 +507,7 @@ public class AttachmentController: ViewController, MinimizableController {
         private let bottomPanelBackgroundColorDisposable = MetaDisposable()
 
         private var selectionCount: Int = 0
+        private var currentCaption: NSAttributedString?
 
         var mediaPickerContext: AttachmentMediaPickerContext? {
             didSet {
@@ -514,6 +515,7 @@ public class AttachmentController: ViewController, MinimizableController {
                     self.captionDisposable.set((mediaPickerContext.caption
                     |> deliverOnMainQueue).startStrict(next: { [weak self] caption in
                         if let strongSelf = self {
+                            strongSelf.currentCaption = caption
                             strongSelf.panel.updateCaption(caption ?? NSAttributedString())
                         }
                     }))
@@ -767,6 +769,7 @@ public class AttachmentController: ViewController, MinimizableController {
 
             self.panel.textUpdated = { [weak self] text in
                 if let strongSelf = self {
+                    strongSelf.currentCaption = text
                     strongSelf.mediaPickerContext?.setCaption(text)
                 }
             }
@@ -791,7 +794,7 @@ public class AttachmentController: ViewController, MinimizableController {
                         return
                     }
 
-                    guard let caption = await mediaPickerContext.caption.get() else {
+                    guard let caption = self.currentCaption else {
                         return
                     }
                     if caption.length == 0 {
@@ -811,8 +814,10 @@ public class AttachmentController: ViewController, MinimizableController {
                                 guard case let .plain(text, entities) = text else {
                                     return
                                 }
-                                self.panel.updateCaption(chatInputStateStringWithAppliedEntities(text, entities: entities))
-                                mediaPickerContext.setCaption(chatInputStateStringWithAppliedEntities(text, entities: entities))
+                                let appliedCaption = chatInputStateStringWithAppliedEntities(text, entities: entities)
+                                self.currentCaption = appliedCaption
+                                self.panel.updateCaption(appliedCaption)
+                                mediaPickerContext.setCaption(appliedCaption)
                             },
                             send: { [weak self] text in
                                 guard let self, let mediaPickerContext = self.mediaPickerContext else {
