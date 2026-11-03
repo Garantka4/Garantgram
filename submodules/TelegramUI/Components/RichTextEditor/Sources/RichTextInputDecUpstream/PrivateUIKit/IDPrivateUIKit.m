@@ -1649,7 +1649,10 @@ void IDPrivateSynchronizeTextInputTraits(
     if (@available(iOS 18.4, *)) {
         ID_SET_OBJECT_TRAIT("ConversationContext", source.conversationContext);
     }
-    ID_SET_BOOL_TRAIT("AllowsNumberPadPopover", source.allowsNumberPadPopover);
+    if ([source respondsToSelector:NSSelectorFromString(@"allowsNumberPadPopover")]) {
+        BOOL val = ((BOOL (*)(id, SEL))objc_msgSend)(source, NSSelectorFromString(@"allowsNumberPadPopover"));
+        ID_SET_BOOL_TRAIT("AllowsNumberPadPopover", val);
+    }
 
 #undef ID_SET_INTEGER_TRAIT
 #undef ID_SET_BOOL_TRAIT

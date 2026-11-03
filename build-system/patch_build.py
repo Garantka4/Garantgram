@@ -57,6 +57,21 @@ def patch_rich_text_editor():
                 with open(fpath, "wb") as f:
                     f.write(pragma + d)
 
+    p = "submodules/TelegramUI/Components/RichTextEditor/Sources/RichTextInputDecUpstream/PrivateUIKit/IDPrivateUIKit.m"
+    if os.path.exists(p):
+        with open(p, "rb") as f:
+            c = f.read()
+        target = b'ID_SET_BOOL_TRAIT("AllowsNumberPadPopover", source.allowsNumberPadPopover);'
+        replacement = (
+            b'if ([source respondsToSelector:NSSelectorFromString(@"allowsNumberPadPopover")]) {\n'
+            b'        BOOL val = ((BOOL (*)(id, SEL))objc_msgSend)(source, NSSelectorFromString(@"allowsNumberPadPopover"));\n'
+            b'        ID_SET_BOOL_TRAIT("AllowsNumberPadPopover", val);\n'
+            b'    }'
+        )
+        if target in c:
+            with open(p, "wb") as f:
+                f.write(c.replace(target, replacement))
+
 def patch_display():
     p = "submodules/Display/Source/WindowContent.swift"
     if os.path.exists(p):
