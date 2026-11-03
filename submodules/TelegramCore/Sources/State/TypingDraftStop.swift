@@ -97,10 +97,5 @@ func _internal_stopIncomingTypingDraft(postbox: Postbox, network: Network, peerI
         }
         // MARK: Garantgram - Ghost Mode: Do not broadcast draft stop typing
         return .complete()
-        // return network.request(Api.functions.messages.setTyping(flags: flags, peer: inputPeer, topMsgId: topMessageId, action: .sendMessageStopDraftAction(.init(randomId: randomId))))
-        |> `catch` { _ -> Signal<Api.Bool, NoError> in
-            return .single(.boolFalse)
-        }
-        |> ignoreValues
     }
 }
