@@ -7,6 +7,13 @@ import MetalPerformanceShaders
 import QuartzCore
 import Camera
 
+private final class UncheckedSendableBox<T>: @unchecked Sendable {
+    let value: T
+    init(_ value: T) {
+        self.value = value
+    }
+}
+
 private final class CameraBundleMarker: NSObject {
 }
 
@@ -487,14 +494,14 @@ final class RoundVideoFrameProcessor {
             encoder.endEncoding()
         }
 
-        let retainedPixelBuffers = [primary.pixelBuffer, effectiveSecondary.pixelBuffer, outputPixelBuffer]
-        let retainedTextures = [
+        let retainedPixelBuffers = UncheckedSendableBox([primary.pixelBuffer, effectiveSecondary.pixelBuffer, outputPixelBuffer])
+        let retainedTextures = UncheckedSendableBox([
             primaryTextures.y,
             primaryTextures.cbcr,
             secondaryTextures.y,
             secondaryTextures.cbcr,
             outputTexture
-        ]
+        ])
         self.isRendering = true
         statistics.renderSubmitted += 1
         statistics.pendingRenders += 1
@@ -521,8 +528,8 @@ final class RoundVideoFrameProcessor {
                     return
                 }
                 self.isRendering = false
-                withExtendedLifetime(retainedPixelBuffers) {
-                    withExtendedLifetime(retainedTextures) {
+                withExtendedLifetime(retainedPixelBuffers.value) {
+                    withExtendedLifetime(retainedTextures.value) {
                         completion(processedFrame)
                     }
                 }
