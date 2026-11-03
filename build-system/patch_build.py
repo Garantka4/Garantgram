@@ -57,9 +57,29 @@ def patch_rich_text_editor():
                 with open(fpath, "wb") as f:
                     f.write(pragma + d)
 
+def patch_display():
+    p = "submodules/Display/Source/WindowContent.swift"
+    if os.path.exists(p):
+        with open(p, "rb") as f:
+            d = f.read()
+        if b"reservedRegions" in d:
+            for line_end in [b"\r\n", b"\n"]:
+                old = (
+                    b"        if #available(iOS 27.1, *) {" + line_end +
+                    b"            return self.eventView.reservedRegions(kind: .division).first(where: \\.isActive)?.frame" + line_end +
+                    b"        }" + line_end +
+                    b"        return nil"
+                )
+                if old in d:
+                    d = d.replace(old, b"        return nil")
+                    with open(p, "wb") as f:
+                        f.write(d)
+                    break
+
 if __name__ == "__main__":
     patch_profiles()
     patch_plisttool()
     patch_xctoolrunner()
     patch_rich_text_editor()
+    patch_display()
     print("Patches applied successfully.")
