@@ -87,13 +87,8 @@ func _internal_stopIncomingTypingDraft(postbox: Postbox, network: Network, peerI
         return (inputPeer, current.id)
     }
     |> mapToSignal { result -> Signal<Never, NoError> in
-        guard let (inputPeer, randomId) = result else {
+        guard let _ = result else {
             return .complete()
-        }
-        var flags: Int32 = 0
-        let topMessageId = threadId.flatMap { Int32(clamping: $0) }
-        if topMessageId != nil {
-            flags |= 1 << 0
         }
         // MARK: Garantgram - Ghost Mode: Do not broadcast draft stop typing
         return .complete()
