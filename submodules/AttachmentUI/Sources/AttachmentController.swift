@@ -790,7 +790,7 @@ public class AttachmentController: ViewController, MinimizableController {
             }
             self.panel.invokeAICompose = { [weak self] in
                 Task { @MainActor in
-                    guard let self, let controller = self.controller, let mediaPickerContext = self.mediaPickerContext else {
+                    guard let self, let controller = self.controller, self.mediaPickerContext != nil else {
                         return
                     }
 
