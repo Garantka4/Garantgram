@@ -85,7 +85,7 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
         }))
     }
     
-    items[.edit]!.append(contentsOf: sgPeerInfoSettingsProfileIdItems(data: data, interaction: interaction)) // MARK: Swiftgram
+    // items[.edit]!.append(contentsOf: sgPeerInfoSettingsProfileIdItems(data: data, interaction: interaction)) // MARK: Swiftgram
     
     if let settings = data.globalSettings {
         if settings.premiumGracePeriod {
@@ -207,8 +207,8 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
     }
     
     // MARK: Swiftgram
-    let sgWebSettings = context.currentAppConfiguration.with({ $0 }).sgWebSettings
-    items[.swiftgram]!.append(contentsOf: sgPeerInfoSettingsItems(context: context, paymentsEnabled: sgWebSettings.global.paymentsEnabled, presentationData: presentationData, interaction: interaction))
+    // let sgWebSettings = context.currentAppConfiguration.with({ $0 }).sgWebSettings
+    // items[.swiftgram]!.append(contentsOf: sgPeerInfoSettingsItems(context: context, paymentsEnabled: sgWebSettings.global.paymentsEnabled, presentationData: presentationData, interaction: interaction))
     //
 
     var appIndex = 1000

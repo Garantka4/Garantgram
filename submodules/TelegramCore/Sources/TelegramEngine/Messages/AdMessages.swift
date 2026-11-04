@@ -491,7 +491,9 @@ private class AdMessagesHistoryContextImpl {
             return transaction.getPeer(peerId).flatMap(apiInputPeer)
         }
         |> mapToSignal { inputPeer -> Signal<(interPostInterval: Int32?, startDelay: Int32?, betweenDelay: Int32?, messages: [Message]), NoError> in
-            guard let inputPeer else {
+            // MARK: Garantgram - No Ads: Never fetch sponsored messages
+            return .single((nil, nil, nil, []))
+            #if false
                 return .single((nil, nil, nil, []))
             }
             var flags: Int32 = 0
@@ -578,6 +580,7 @@ private class AdMessagesHistoryContextImpl {
                     }
                 }
             }
+            #endif
         }
         
         self.disposable.set((signal
