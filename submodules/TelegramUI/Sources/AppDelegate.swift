@@ -1759,7 +1759,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             
             Logger.shared.log("App \(self.episodeId)", "Executing low-impact cache reindex in foreground")
             let _ = self.runCacheReindexTasks(lowImpact: true, completion: {
-                Logger.shared.log("App \(self.episodeId)", "Executing low-impact cache reindex in foreground РІР‚вЂќ done")
+                Logger.shared.log("App \(self.episodeId)", "Executing low-impact cache reindex in foreground - done")
             })
         }
         

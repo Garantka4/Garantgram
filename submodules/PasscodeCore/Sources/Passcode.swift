@@ -51,7 +51,7 @@ public final class PasscodeEnvironment: @unchecked Sendable {
             guard current == configuration else { throw PasscodeError.unavailable }
             return
         }
-        // Sideloaded builds (free Apple ID) may not have a keychain access group РІР‚вЂњ allow nil
+        // Sideloaded builds (free Apple ID) may not have a keychain access group - allow nil
         self.configuration = configuration
         self.resolvePrivateAccessGroup = privateAccessGroup
     }
@@ -91,7 +91,7 @@ public final class PasscodeEnvironment: @unchecked Sendable {
         defer { self.mutex.unlock() }
         guard let configuration = self.configuration, configuration.processRole == .mainApp else { throw PasscodeError.unavailable }
         if let group = self.resolvedPrivateAccessGroup { return group }
-        // Sideloaded builds (free Apple ID) may not have a keychain access group – return fallback
+        // Sideloaded builds (free Apple ID) may not have a keychain access group - return fallback
         guard let group = self.resolvePrivateAccessGroup?(), !group.isEmpty else {
             let fallback = configuration.appGroupIdentifier.hasPrefix("group.")
                 ? String(configuration.appGroupIdentifier.dropFirst("group.".count))
@@ -99,9 +99,10 @@ public final class PasscodeEnvironment: @unchecked Sendable {
             self.resolvedPrivateAccessGroup = fallback
             return fallback
         }
-        // Skip suffix validation – sideloaded TeamID prefix may differ from App Group
+        // Skip suffix validation - sideloaded TeamID prefix may differ from App Group
         self.resolvedPrivateAccessGroup = group
         return group
+    }
 }
 
 protocol PasscodeStorage {
