@@ -589,9 +589,15 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         
         let baseAppBundleId = Bundle.main.bundleIdentifier!
         let appGroupName = "group.\(baseAppBundleId)"
-        try! PasscodeEnvironment.shared.configure(PasscodeConfiguration(appGroupIdentifier: appGroupName, processRole: .mainApp, biometricKeychainService: walletBiometricKeychainService), privateAccessGroup: {
-            BuildConfig.keychainAccessGroup(baseAppBundleId: baseAppBundleId)
-        })
+        // Use try? so sideloaded builds (free Apple ID) don't crash on missing keychain access group
+        do {
+            try PasscodeEnvironment.shared.configure(PasscodeConfiguration(appGroupIdentifier: appGroupName, processRole: .mainApp, biometricKeychainService: walletBiometricKeychainService), privateAccessGroup: {
+                BuildConfig.keychainAccessGroup(baseAppBundleId: baseAppBundleId)
+            })
+        } catch {
+            Logger.shared.log("AppDelegate", "PasscodeEnvironment.configure failed: \(error), retrying without access group")
+            try? PasscodeEnvironment.shared.configure(PasscodeConfiguration(appGroupIdentifier: appGroupName, processRole: .mainApp, biometricKeychainService: walletBiometricKeychainService), privateAccessGroup: { nil })
+        }
         let maybeAppGroupUrl: URL? = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName) ?? {
             let docUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("AppGroup")
             try? FileManager.default.createDirectory(at: docUrl, withIntermediateDirectories: true, attributes: nil)
@@ -1753,7 +1759,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             
             Logger.shared.log("App \(self.episodeId)", "Executing low-impact cache reindex in foreground")
             let _ = self.runCacheReindexTasks(lowImpact: true, completion: {
-                Logger.shared.log("App \(self.episodeId)", "Executing low-impact cache reindex in foreground — done")
+                Logger.shared.log("App \(self.episodeId)", "Executing low-impact cache reindex in foreground РІР‚вЂќ done")
             })
         }
         
