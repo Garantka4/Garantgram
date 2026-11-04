@@ -1588,7 +1588,7 @@ func peerInfoScreenData(
             let forcedLinkedCommunityId = Atomic<EnginePeer.Id?>(value: nil)
             
             return combineLatest(
-                Signal<RegDate?, NoError>.single(nil) |> then (getRegDate(context: context, peerId: peerId.id._internalGetInt64Value())), // MARK: Swiftgram
+                .single(nil as RegDate?),
                 context.account.viewTracker.peerView(peerId, updateData: true),
                 peerInfoAvailableMediaPanes(context: context, peerId: peerId, chatLocation: chatLocation, isMyProfile: isMyProfile, chatLocationContextHolder: chatLocationContextHolder, sharedMediaFromForumTopic: sharedMediaFromForumTopic),
                 context.engine.data.subscribe(TelegramEngine.EngineData.Item.NotificationSettings.Global()),
@@ -1919,7 +1919,7 @@ func peerInfoScreenData(
             let didRefreshWelcomeMessages = Atomic<Bool>(value: false)
             
             return combineLatest(
-                getFirstMessage(context: context, peerId: peerId), // MARK: Swiftgram
+                .single(nil as EngineMessage?),
                 context.account.viewTracker.peerView(peerId, updateData: true),
                 peerInfoAvailableMediaPanes(context: context, peerId: peerId, chatLocation: chatLocation, isMyProfile: false, chatLocationContextHolder: chatLocationContextHolder, sharedMediaFromForumTopic: sharedMediaFromForumTopic),
                 context.engine.data.subscribe(TelegramEngine.EngineData.Item.NotificationSettings.Global()),
@@ -2301,7 +2301,7 @@ func peerInfoScreenData(
             let didRefreshWelcomeMessages = Atomic<Bool>(value: false)
             
             return combineLatest(queue: .mainQueue(),
-                Signal<EngineMessage?, NoError>.single(nil) |> then (getFirstMessage(context: context, peerId: peerId)), // MARK: Swiftgram
+                .single(nil as EngineMessage?),
                 context.account.viewTracker.peerView(groupId, updateData: true),
                 peerInfoAvailableMediaPanes(context: context, peerId: groupId, chatLocation: chatLocation, isMyProfile: false, chatLocationContextHolder: chatLocationContextHolder, sharedMediaFromForumTopic: sharedMediaFromForumTopic),
                 context.engine.data.subscribe(TelegramEngine.EngineData.Item.NotificationSettings.Global()),

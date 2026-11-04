@@ -2,6 +2,7 @@ import Foundation
 import Postbox
 internal import TelegramApi
 import SwiftSignalKit
+import SGSimpleSettings
 
 
 private enum PeerReadStateMarker: Equatable {
@@ -183,12 +184,6 @@ func localReadMarkIsAheadOfServer(localMaxIncomingReadId: MessageId.Id, serverMa
 }
 
 private func validatePeerReadState(network: Network, postbox: Postbox, stateManager: AccountStateManager, peerId: PeerId) -> Signal<Never, PeerReadStateValidationError> {
-    // MARK: Garantgram - Ghost Mode: Confirm local state without waiting for server
-    return confirmSynchronized(postbox: postbox, peerId: peerId)
-    |> ignoreValues
-}
-
-private func _unused_validatePeerReadState(network: Network, postbox: Postbox, stateManager: AccountStateManager, peerId: PeerId) -> Signal<Never, PeerReadStateValidationError> {
     if peerId.namespace == Namespaces.Peer.SecretChat {
         // A secret chat has no Api.InputPeer, so there is no dialog to read an authoritative
         // read state from: every step below fails at inputPeer and asks to retry, forever.
@@ -258,11 +253,6 @@ private func _unused_validatePeerReadState(network: Network, postbox: Postbox, s
 }
 
 private func pushPeerReadState(network: Network, postbox: Postbox, stateManager: AccountStateManager, peerId: PeerId, readState: PeerReadState) -> Signal<PeerReadState, PeerReadStateValidationError> {
-    // MARK: Garantgram - Ghost Mode: Never send read receipts to server
-    return .single(readState)
-}
-
-private func _unused_pushPeerReadState(network: Network, postbox: Postbox, stateManager: AccountStateManager, peerId: PeerId, readState: PeerReadState) -> Signal<PeerReadState, PeerReadStateValidationError> {
     if peerId.namespace == Namespaces.Peer.SecretChat {
         // Decide whether a request is needed before looking the peer up: inputSecretChat goes
         // through loadedPeerWithId, which never emits when the peer row is missing and fails
@@ -331,20 +321,25 @@ private func _unused_pushPeerReadState(network: Network, postbox: Postbox, state
             default:
                 switch readState {
                 case let .idBased(maxIncomingReadId, _, _, _, markedUnread):
-                    var pushSignal: Signal<Void, NoError> = network.request(Api.functions.messages.readHistory(peer: inputPeer, maxId: maxIncomingReadId))
-                    |> map(Optional.init)
-                    |> `catch` { _ -> Signal<Api.messages.AffectedMessages?, NoError> in
-                        return .single(nil)
-                    }
-                    |> mapToSignal { result -> Signal<Void, NoError> in
-                        if let result = result {
-                            switch result {
-                                case let .affectedMessages(affectedMessagesData):
-                                    let (pts, ptsCount) = (affectedMessagesData.pts, affectedMessagesData.ptsCount)
-                                    stateManager.addUpdateGroups([.updatePts(pts: pts, ptsCount: ptsCount)])
-                            }
+                    var pushSignal: Signal<Void, NoError>
+                    if SGSimpleSettings.shared.ghostModeReadReceipts {
+                        pushSignal = .complete()
+                    } else {
+                                            pushSignal = network.request(Api.functions.messages.readHistory(peer: inputPeer, maxId: maxIncomingReadId))
+                        |> map(Optional.init)
+                        |> `catch` { _ -> Signal<Api.messages.AffectedMessages?, NoError> in
+                            return .single(nil)
                         }
-                        return .complete()
+                        |> mapToSignal { result -> Signal<Void, NoError> in
+                            if let result = result {
+                                switch result {
+                                    case let .affectedMessages(affectedMessagesData):
+                                        let (pts, ptsCount) = (affectedMessagesData.pts, affectedMessagesData.ptsCount)
+                                        stateManager.addUpdateGroups([.updatePts(pts: pts, ptsCount: ptsCount)])
+                                }
+                            }
+                            return .complete()
+                        }
                     }
 
                     if markedUnread {

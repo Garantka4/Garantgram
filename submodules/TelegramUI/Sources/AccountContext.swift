@@ -330,7 +330,7 @@ public final class AccountContextImpl: AccountContext {
         self.userLimits = EngineConfiguration.UserLimits(UserLimitsConfiguration.defaultValue)
         self.peerNameColors = PeerNameColors.with(availableReplyColors: availableReplyColors, availableProfileColors: availableProfileColors)
         self.audioTranscriptionTrial = AudioTranscription.TrialState.defaultValue
-        self.isPremium = false
+        self.isPremium = true
         self.isFrozen = false
         
         self.downloadedMediaStoreManager = DownloadedMediaStoreManagerImpl(postbox: account.postbox, accountManager: sharedContext.accountManager)
@@ -580,7 +580,7 @@ public final class AccountContextImpl: AccountContext {
         
         self.userLimitsConfigurationDisposable = (self.engine.data.subscribe(TelegramEngine.EngineData.Item.Peer.Peer(id: account.peerId))
         |> mapToSignal { peer -> Signal<(Bool, EngineConfiguration.UserLimits), NoError> in
-            let isPremium = peer?.isPremium ?? false
+            let isPremium = true
             return self.engine.data.subscribe(TelegramEngine.EngineData.Item.Configuration.UserLimits(isPremium: isPremium))
             |> map { userLimits in
                 return (isPremium, userLimits)
@@ -607,7 +607,7 @@ public final class AccountContextImpl: AccountContext {
         
         self.audioTranscriptionTrialDisposable = (self.engine.data.subscribe(TelegramEngine.EngineData.Item.Peer.Peer(id: account.peerId))
         |> mapToSignal { peer -> Signal<AudioTranscription.TrialState, NoError> in
-            let isPremium = peer?.isPremium ?? false
+            let isPremium = true
             if isPremium {
                 return .single(AudioTranscription.TrialState(cooldownUntilTime: nil, remainingCount: 1))
             } else {

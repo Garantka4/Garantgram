@@ -3,6 +3,7 @@ import Postbox
 import SwiftSignalKit
 internal import TelegramApi
 import MtProtoKit
+import SGSimpleSettings
 
 private final class ManagedSynchronizeViewStoriesOperationsHelper {
     var operationDisposables: [PeerId: (Int32, Disposable)] = [:]
@@ -119,11 +120,9 @@ func managedSynchronizeViewStoriesOperations(postbox: Postbox, network: Network,
 }
 
 private func pushStoriesAreSeen(postbox: Postbox, network: Network, stateManager: AccountStateManager, peer: Peer, operation: SynchronizeViewStoriesOperation) -> Signal<Void, NoError> {
-    // MARK: Garantgram - Ghost Mode: Never send story view receipts
-    return .single(Void())
-}
-
-private func _unused_pushStoriesAreSeen(postbox: Postbox, network: Network, stateManager: AccountStateManager, peer: Peer, operation: SynchronizeViewStoriesOperation) -> Signal<Void, NoError> {
+    if SGSimpleSettings.shared.ghostModeStories {
+        return .single(Void())
+    }
     guard let inputPeer = apiInputPeer(peer) else {
         return .complete()
     }

@@ -13,5 +13,9 @@ func sgPeerInfoSettingsProfileIdItems(data: PeerInfoScreenData, interaction: Pee
 }
 
 func sgPeerInfoSettingsItems(context: AccountContext, paymentsEnabled: Bool, presentationData: PresentationData, interaction: PeerInfoInteraction) -> [PeerInfoScreenItem] {
-    return []
+    var items: [PeerInfoScreenItem] = []
+    items.append(PeerInfoScreenDisclosureItem(id: 1, label: .none, text: "Garantgram (Ghost Mode)", icon: PresentationResourcesSettings.security, action: {
+        interaction.openSettings(.swiftgram)
+    }))
+    return items
 }

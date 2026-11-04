@@ -3,6 +3,7 @@ import Postbox
 import SwiftSignalKit
 internal import TelegramApi
 import MtProtoKit
+import SGSimpleSettings
 
 
 public struct PeerActivitySpace: Hashable {
@@ -176,7 +177,35 @@ private func requestActivity(postbox: Postbox, network: Network, accountPeerId: 
             }
             
             // MARK: Garantgram - Ghost Mode: Do not broadcast typing or activity
-            return .complete()
+            if SGSimpleSettings.shared.ghostModeTyping {
+                return .complete()
+            }
+
+            if let inputPeer = apiInputPeer(peer) {
+                var flags: Int32 = 0
+                let topMessageId = threadId.flatMap { Int32(clamping: $0) }
+                if topMessageId != nil {
+                    flags |= 1 << 0
+                }
+                return network.request(Api.functions.messages.setTyping(flags: flags, peer: inputPeer, topMsgId: topMessageId, action: actionFromActivity(activity)))
+                |> catch { _ -> Signal<Api.Bool, NoError> in
+                    return .single(.boolFalse)
+                }
+                |> mapToSignal { _ -> Signal<Void, NoError> in
+                    return .complete()
+                }
+            } else if let peer = peer as? TelegramSecretChat, activity == .typingText {
+                let _ = PeerId(peer.id.toInt64())
+                return network.request(Api.functions.messages.setEncryptedTyping(peer: .inputEncryptedChat(.init(chatId: Int32(peer.id.id._internalGetInt64Value()), accessHash: peer.accessHash)), typing: .boolTrue))
+                |> catch { _ -> Signal<Api.Bool, NoError> in
+                    return .single(.boolFalse)
+                }
+                |> mapToSignal { _ -> Signal<Void, NoError> in
+                    return .complete()
+                }
+            } else {
+                return .complete()
+            }
         } else {
             return .complete()
         }

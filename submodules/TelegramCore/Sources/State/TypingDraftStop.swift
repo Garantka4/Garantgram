@@ -2,6 +2,7 @@ import Foundation
 import Postbox
 import SwiftSignalKit
 internal import TelegramApi
+import SGSimpleSettings
 
 // Applies a stop to the live draft at `peerAndThreadId`. Shared by the incoming
 // sendMessageStopDraftAction update and by the local Stop button, which cannot wait for a
@@ -87,10 +88,22 @@ func _internal_stopIncomingTypingDraft(postbox: Postbox, network: Network, peerI
         return (inputPeer, current.id)
     }
     |> mapToSignal { result -> Signal<Never, NoError> in
-        guard let _ = result else {
+        guard let (inputPeer, randomId) = result else {
             return .complete()
         }
         // MARK: Garantgram - Ghost Mode: Do not broadcast draft stop typing
-        return .complete()
+        if SGSimpleSettings.shared.ghostModeTyping {
+            return .complete()
+        }
+        var flags: Int32 = 0
+        let topMessageId = threadId.flatMap { Int32(clamping: $0) }
+        if topMessageId != nil {
+            flags |= 1 << 0
+        }
+        return network.request(Api.functions.messages.setTyping(flags: flags, peer: inputPeer, topMsgId: topMessageId, action: .sendMessageStopDraftAction(.init(randomId: randomId))))
+        |> `catch` { _ -> Signal<Api.Bool, NoError> in
+            return .single(.boolFalse)
+        }
+        |> ignoreValues
     }
 }

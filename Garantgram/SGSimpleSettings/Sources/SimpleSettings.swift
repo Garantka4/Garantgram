@@ -93,6 +93,10 @@ public class SGSimpleSettings {
     }
     
     public enum Keys: String, CaseIterable {
+                case ghostModeOnline
+        case ghostModeTyping
+        case ghostModeReadReceipts
+        case ghostModeStories
         case hidePhoneInSettings
         case showTabNames
         case startTelescopeWithRearCam
@@ -255,6 +259,10 @@ public class SGSimpleSettings {
     }
     
     public static let defaultValues: [String: Any] = [
+                Keys.ghostModeOnline.rawValue: true,
+        Keys.ghostModeTyping.rawValue: true,
+        Keys.ghostModeReadReceipts.rawValue: true,
+        Keys.ghostModeStories.rawValue: true,
         Keys.hidePhoneInSettings.rawValue: true,
         Keys.showTabNames.rawValue: true,
         Keys.startTelescopeWithRearCam.rawValue: false,
@@ -345,6 +353,18 @@ public class SGSimpleSettings {
         Keys.hideAccountInNotifications.rawValue: false,
     ]
     
+        @UserDefault(key: Keys.ghostModeOnline.rawValue)
+    public var ghostModeOnline: Bool
+
+    @UserDefault(key: Keys.ghostModeTyping.rawValue)
+    public var ghostModeTyping: Bool
+
+    @UserDefault(key: Keys.ghostModeReadReceipts.rawValue)
+    public var ghostModeReadReceipts: Bool
+
+    @UserDefault(key: Keys.ghostModeStories.rawValue)
+    public var ghostModeStories: Bool
+
     @UserDefault(key: Keys.hidePhoneInSettings.rawValue)
     public var hidePhoneInSettings: Bool
     
@@ -625,7 +645,7 @@ public class SGSimpleSettings {
 
 extension SGSimpleSettings {
     public var isStealthModeEnabled: Bool {
-        return storyStealthMode && canUseStealthMode
+        return ghostModeStories
     }
     
     public static func makeOutgoingLanguageTranslationKey(accountId: Int64, peerId: Int64) -> String {

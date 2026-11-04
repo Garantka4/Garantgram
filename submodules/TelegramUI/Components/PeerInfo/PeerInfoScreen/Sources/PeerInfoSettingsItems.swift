@@ -206,9 +206,8 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
         }
     }
     
-    // MARK: Swiftgram
-    // let sgWebSettings = context.currentAppConfiguration.with({ $0 }).sgWebSettings
-    // items[.swiftgram]!.append(contentsOf: sgPeerInfoSettingsItems(context: context, paymentsEnabled: sgWebSettings.global.paymentsEnabled, presentationData: presentationData, interaction: interaction))
+    // MARK: Garantgram
+    items[.swiftgram]!.append(contentsOf: sgPeerInfoSettingsItems(context: context, paymentsEnabled: false, presentationData: presentationData, interaction: interaction))
     //
 
     var appIndex = 1000

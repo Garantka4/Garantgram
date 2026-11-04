@@ -25,6 +25,9 @@ import UndoUI
 
 
 private enum SGControllerSection: Int32, SGItemListSection {
+    case ghostMode
+    case premiumFeatures
+    case adBlock
     case search
     case trending
     case content
@@ -45,6 +48,10 @@ private enum SGControllerSection: Int32, SGItemListSection {
 }
 
 private enum SGBoolSetting: String {
+    case ghostModeOnline
+    case ghostModeTyping
+    case ghostModeReadReceipts
+    case ghostModeStories
     case hidePhoneInSettings
     case showTabNames
     case showContactsTab
@@ -149,6 +156,23 @@ private func SGControllerEntries(presentationData: PresentationData, callListSet
     var entries: [SGControllerEntry] = []
     
     let id = SGItemListCounter()
+
+    entries.append(.header(id: id.count, section: .ghostMode, text: "РЕЖИМ НЕВИДИМКИ (GHOST MODE)", badge: nil))
+    entries.append(.toggle(id: id.count, section: .ghostMode, settingName: .ghostModeOnline, value: SGSimpleSettings.shared.ghostModeOnline, text: "Скрывать статус «В сети»", enabled: true))
+    entries.append(.notice(id: id.count, section: .ghostMode, text: "При нахождении в Telegram статус «В сети» не отправляется. Собеседники видят «Был(а) недавно»."))
+    entries.append(.toggle(id: id.count, section: .ghostMode, settingName: .ghostModeTyping, value: SGSimpleSettings.shared.ghostModeTyping, text: "Скрывать статус «Печатает...»", enabled: true))
+    entries.append(.notice(id: id.count, section: .ghostMode, text: "Собеседники не видят, когда вы набираете сообщение или записываете голосовое."))
+    entries.append(.toggle(id: id.count, section: .ghostMode, settingName: .ghostModeReadReceipts, value: SGSimpleSettings.shared.ghostModeReadReceipts, text: "Не отмечать прочитанным (Нечиталка)", enabled: true))
+    entries.append(.notice(id: id.count, section: .ghostMode, text: "Входящие сообщения остаются непрочитанными для собеседника (одна галочка)."))
+    entries.append(.toggle(id: id.count, section: .ghostMode, settingName: .ghostModeStories, value: SGSimpleSettings.shared.ghostModeStories, text: "Скрытный просмотр историй (Stories)", enabled: true))
+    entries.append(.notice(id: id.count, section: .ghostMode, text: "Просмотр историй анонимно без фиксации вашего профиля в списке зрителей."))
+
+    entries.append(.header(id: id.count, section: .premiumFeatures, text: "TELEGRAM PREMIUM (CLIENT-SIDE)", badge: nil))
+    entries.append(.toggle(id: id.count, section: .premiumFeatures, settingName: .quickTranslateButton, value: SGSimpleSettings.shared.quickTranslateButton, text: "Бесплатный перевод чатов", enabled: true))
+    entries.append(.notice(id: id.count, section: .premiumFeatures, text: "Перевод сообщений и целых чатов без необходимости подписки Telegram Premium."))
+
+    entries.append(.header(id: id.count, section: .adBlock, text: "БЛОКИРОВКА РЕКЛАМЫ (NO-ADS)", badge: nil))
+    entries.append(.notice(id: id.count, section: .adBlock, text: "Вся официальная спонсорская реклама в каналах полностью отключена на сетевом уровне."))
     
     entries.append(.searchInput(id: id.count, section: .search, title: NSAttributedString(string: "🔍"), text: state.searchQuery ?? "", placeholder: strings.Common_Search))
     
@@ -367,6 +391,14 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
           }
         },*/ setBoolValue: { setting, value in
         switch setting {
+        case .ghostModeOnline:
+            SGSimpleSettings.shared.ghostModeOnline = value
+        case .ghostModeTyping:
+            SGSimpleSettings.shared.ghostModeTyping = value
+        case .ghostModeReadReceipts:
+            SGSimpleSettings.shared.ghostModeReadReceipts = value
+        case .ghostModeStories:
+            SGSimpleSettings.shared.ghostModeStories = value
         case .hidePhoneInSettings:
             SGSimpleSettings.shared.hidePhoneInSettings = value
             askForRestart?()
@@ -730,7 +762,7 @@ public func sgSettingsController(context: AccountContext/*, focusOnItemTag: Int?
         
         let entries = SGControllerEntries(presentationData: presentationData, callListSettings: callListSettings, experimentalUISettings: experimentalUISettings, appConfiguration: appConfiguration, nameColors: PeerNameColors.with(availableReplyColors: availableReplyColors, availableProfileColors: availableProfileColors), state: state)
         
-        let controllerState = ItemListControllerState(presentationData: ItemListPresentationData(presentationData), title: .text("Swiftgram"), leftNavigationButton: nil, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: presentationData.strings.Common_Back))
+        let controllerState = ItemListControllerState(presentationData: ItemListPresentationData(presentationData), title: .text("Garantgram"), leftNavigationButton: nil, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: presentationData.strings.Common_Back))
         
         // TODO(swiftgram): focusOnItemTag support
         /* var index = 0
