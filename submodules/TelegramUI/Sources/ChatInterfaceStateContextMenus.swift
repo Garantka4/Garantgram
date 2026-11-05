@@ -2180,8 +2180,10 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
             }, action: noAction)))
         }
         if !isPinnedMessages, !isReplyThreadHead, data.canSelect {
+            var didAddSeparator = false
             if !selectAll || messages.count == 1 {
-                if !actions.isEmpty {
+                if !actions.isEmpty && !didAddSeparator {
+                    didAddSeparator = true
                     actions.append(.separator)
                 }
 
