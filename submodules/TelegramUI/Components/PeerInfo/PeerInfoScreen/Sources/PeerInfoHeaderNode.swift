@@ -1299,7 +1299,19 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                 let subtitleColor: UIColor
                 subtitleColor = .white
                 
-                subtitleStringText = presentationData.strings.Presence_online
+                if SGSimpleSettings.shared.ghostModeOnline {
+                    let now = Int32(Date().timeIntervalSince1970)
+                    var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
+                    if lastSeen == 0 {
+                        lastSeen = now - 120
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
+                    }
+                    let effectiveLastSeen = min(lastSeen, now - 60)
+                    let (statusText, _) = stringAndActivityForUserPresence(strings: presentationData.strings, dateTimeFormat: presentationData.dateTimeFormat, presence: EnginePeer.Presence(TelegramUserPresence(status: .present(until: effectiveLastSeen), lastActivity: effectiveLastSeen)), relativeTo: now, expanded: true)
+                    subtitleStringText = statusText
+                } else {
+                    subtitleStringText = presentationData.strings.Presence_online
+                }
                 subtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor)
                 smallSubtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white, shadowColor: titleShadowColor)
                 
@@ -1314,6 +1326,8 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                         subtitleColor = UIColor.white
                     }
                     panelSubtitleString = (panelStatusData.text, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
+                } else if SGSimpleSettings.shared.ghostModeOnline {
+                    panelSubtitleString = (subtitleStringText, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
                 }
             } else if let _ = threadData {
                 let subtitleColor: UIColor = .white

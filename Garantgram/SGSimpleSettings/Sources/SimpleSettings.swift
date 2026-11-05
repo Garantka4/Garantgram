@@ -97,6 +97,7 @@ public class SGSimpleSettings {
         case ghostModeTyping
         case ghostModeReadReceipts
         case ghostModeStories
+        case ghostModeLastSeenTimestamp
         case hidePhoneInSettings
         case showTabNames
         case startTelescopeWithRearCam
@@ -263,6 +264,7 @@ public class SGSimpleSettings {
         Keys.ghostModeTyping.rawValue: true,
         Keys.ghostModeReadReceipts.rawValue: true,
         Keys.ghostModeStories.rawValue: true,
+        Keys.ghostModeLastSeenTimestamp.rawValue: Int32(0),
         Keys.hidePhoneInSettings.rawValue: true,
         Keys.showTabNames.rawValue: true,
         Keys.startTelescopeWithRearCam.rawValue: false,
@@ -364,6 +366,9 @@ public class SGSimpleSettings {
 
     @UserDefault(key: Keys.ghostModeStories.rawValue)
     public var ghostModeStories: Bool
+
+    @UserDefault(key: Keys.ghostModeLastSeenTimestamp.rawValue)
+    public var ghostModeLastSeenTimestamp: Int32
 
     @UserDefault(key: Keys.hidePhoneInSettings.rawValue)
     public var hidePhoneInSettings: Bool

@@ -58,6 +58,9 @@ private final class AccountPresenceManagerImpl {
         } else {
             self.onlineTimer?.invalidate()
             self.onlineTimer = nil
+            if SGSimpleSettings.shared.ghostModeOnline && SGSimpleSettings.shared.ghostModeLastSeenTimestamp == 0 {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970) - 120
+            }
             request = self.network.request(Api.functions.account.updateStatus(offline: .boolTrue))
         }
         self.isPerformingUpdate.set(true)

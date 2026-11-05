@@ -2555,16 +2555,8 @@ final class PeerInfoScreenNode: ViewControllerTracingNode, PeerInfoScreenNodePro
             reactionSourceMessage = .single(nil)
         }
         
-        // MARK: Swiftgram
-        let nearestChatParticipantSignal = .single((nil, nil)) |> then(self.fetchNearestChatParticipant()) |> distinctUntilChanged { lhs, rhs in
-            if lhs.0 != rhs.0 {
-                return false
-            }
-            if lhs.1 != rhs.1 {
-                return false
-            }
-            return true
-        }
+        // MARK: Garantgram
+        let nearestChatParticipantSignal: Signal<(String?, Int32?), NoError> = .single((nil, nil))
         //
 
         self.dataDisposable = combineLatest(

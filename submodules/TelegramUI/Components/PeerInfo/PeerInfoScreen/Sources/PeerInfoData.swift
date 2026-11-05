@@ -1618,21 +1618,22 @@ func peerInfoScreenData(
                 if isMyProfile {
                     availablePanes?.insert(.stories, at: 0)
                     if availablePanes != nil, profileGiftsContext != nil, let cachedData = peerView.cachedData as? CachedUserData {
-                        if let starGiftsCount = cachedData.starGiftsCount, starGiftsCount > 0 {
+                        if (cachedData.starGiftsCount ?? 0) > 0 || (profileGiftsContext?.currentState?.gifts.count ?? 0) > 0 {
                             availablePanes?.insert(.gifts, at: 1)
                         }
                     }
                     if let hasStoryArchive, hasStoryArchive {
                         availablePanes?.append(.storyArchive)
                     }
-                } else if let hasStories {
-                    if hasStories, peerView.peers[peerView.peerId] is TelegramUser, peerView.peerId != context.account.peerId {
+                } else {
+                    let hasStoriesValue = hasStories ?? false
+                    if hasStoriesValue, peerView.peers[peerView.peerId] is TelegramUser, peerView.peerId != context.account.peerId {
                         availablePanes?.insert(.stories, at: 0)
                     }
                     
                     if availablePanes != nil, profileGiftsContext != nil, let cachedData = peerView.cachedData as? CachedUserData, peerView.peerId != context.account.peerId {
-                        if let starGiftsCount = cachedData.starGiftsCount, starGiftsCount > 0 {
-                            availablePanes?.insert(.gifts, at: hasStories ? 1 : 0)
+                        if (cachedData.starGiftsCount ?? 0) > 0 || (profileGiftsContext?.currentState?.gifts.count ?? 0) > 0 {
+                            availablePanes?.insert(.gifts, at: hasStoriesValue ? 1 : 0)
                         }
                     }
                     
@@ -1668,10 +1669,7 @@ func peerInfoScreenData(
                     if let recommendedBots, recommendedBots.count > 0 {
                         availablePanes?.append(.similarBots)
                     }
-                } else {
-                    availablePanes = nil
                 }
-                
                 if var currentAvailablePanes = availablePanes, let cachedData = peerView.cachedData as? CachedUserData, let mainProfileTab = cachedData.mainProfileTab {
                     let mainTabKey = PeerInfoPaneKey(tab: mainProfileTab)
                     if currentAvailablePanes.contains(mainTabKey) && currentAvailablePanes.first != mainTabKey {
