@@ -63,7 +63,9 @@ private final class AccountPresenceManagerImpl {
                     SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970) - 120
                 }
                 let _ = (self.network.request(Api.functions.users.getUsers(id: [.inputUserSelf]))
-                |> catch { _ in .single([]) }
+                |> `catch` { _ -> Signal<[Api.User], NoError> in
+                    return .single([])
+                }
                 |> deliverOn(self.queue)).start(next: { users in
                     if let user = users.first, let presence = TelegramUserPresence(apiUser: user) {
                         if presence.lastActivity > 0 {

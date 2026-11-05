@@ -1518,12 +1518,13 @@ private func finalStateWithUpdatesAndServerTime(accountPeerId: PeerId, postbox: 
             case let .updateUserStatus(updateUserStatusData):
                 let peerId = PeerId(namespace: Namespaces.Peer.CloudUser, id: PeerId.Id._internalFromInt64Value(updateUserStatusData.userId))
                 if peerId == accountPeerId {
-                    switch updateUserStatusData.status {
-                    case let .userStatusOnline(expires):
-                        let now = Int32(Date().timeIntervalSince1970)
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, now)
-                    case let .userStatusOffline(wasOnline):
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, wasOnline)
+                    let presence = TelegramUserPresence(apiStatus: updateUserStatusData.status)
+                    if presence.lastActivity > 0 {
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, presence.lastActivity)
+                    }
+                    switch presence.status {
+                    case let .present(until):
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, min(until, Int32(Date().timeIntervalSince1970)))
                     default:
                         break
                     }
