@@ -1804,7 +1804,7 @@ func peerInfoScreenData(
                         threadNotificationSettings: nil,
                         globalNotificationSettings: globalNotificationSettings,
                         isContact: peerView.peerIsContact,
-                        availablePanes: availablePanes ?? [],
+                        availablePanes: availablePanes,
                         groupsInCommon: groupsInCommon,
                         linkedDiscussionPeer: nil,
                         linkedMonoforumPeer: nil,
