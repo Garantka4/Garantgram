@@ -1,3 +1,4 @@
+import SGSimpleSettings
 import Foundation
 import Postbox
 import SwiftSignalKit
@@ -1515,7 +1516,19 @@ private func finalStateWithUpdatesAndServerTime(accountPeerId: PeerId, postbox: 
                     return previous.withUpdatedIsBlocked((updatePeerBlockedData.flags & (1 << 0)) != 0).withUpdatedFlags(userFlags)
                 })
             case let .updateUserStatus(updateUserStatusData):
-                updatedState.mergePeerPresences([PeerId(namespace: Namespaces.Peer.CloudUser, id: PeerId.Id._internalFromInt64Value(updateUserStatusData.userId)): updateUserStatusData.status], explicit: true)
+                let peerId = PeerId(namespace: Namespaces.Peer.CloudUser, id: PeerId.Id._internalFromInt64Value(updateUserStatusData.userId))
+                if peerId == accountPeerId {
+                    switch updateUserStatusData.status {
+                    case let .userStatusOnline(expires):
+                        let now = Int32(Date().timeIntervalSince1970)
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, now)
+                    case let .userStatusOffline(wasOnline):
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, wasOnline)
+                    default:
+                        break
+                    }
+                }
+                updatedState.mergePeerPresences([peerId: updateUserStatusData.status], explicit: true)
             case let .updateUserName(updateUserNameData):
                 let (userId, usernames) = (updateUserNameData.userId, updateUserNameData.usernames)
                 //TODO add contact checking for apply first and last name

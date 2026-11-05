@@ -993,7 +993,6 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                 })
             })))
         }
-        var sgActions: [ContextMenuItem] = []
 
         var isPinnedMessages = false
         if case .pinnedMessages = chatPresentationInterfaceState.subject {
@@ -1202,7 +1201,6 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     })
                 })
             })))
-            if !SGSimpleSettings.shared.contextShowReply { sgActions.append(actions.removeLast()) } // MARK: Swiftgram
         }
         
         if data.messageActions.options.contains(.sendGift), !message.id.peerId.isTelegramNotifications {
@@ -1534,7 +1532,6 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     })
                     f(.default)
                 })))
-                if !SGSimpleSettings.shared.contextShowSaveMedia { sgActions.append(actions.removeLast()) } // MARK: Swiftgram
             }
         }
         
@@ -1580,14 +1577,6 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
             })))
         }
         
-        // MARK: Swiftgram
-        let showJsonAction = sgMakeContextMenuAction(.json(controllerInteraction: controllerInteraction, context: context), chatPresentationInterfaceState: chatPresentationInterfaceState, message: message)
-        if SGSimpleSettings.shared.contextShowJson {
-            actions.append(showJsonAction)
-        } else {
-            sgActions.append(showJsonAction)
-        }
-        //
         
         var threadId: Int64?
         var threadMessageCount: Int = 0
@@ -1627,7 +1616,6 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     controllerInteraction.openMessageReplies(messages[0].id, true, true)
                 })
             })))
-            if !SGSimpleSettings.shared.contextShowMessageReplies { sgActions.append(actions.removeLast()) } // MARK: Swiftgram
         }
         
         let isMigrated: Bool
@@ -1778,7 +1766,6 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     interfaceInteraction.pinMessage(messages[0].id, c)
                 })))
             }
-            if !SGSimpleSettings.shared.contextShowPin { sgActions.append(actions.removeLast()) } // MARK: Swiftgram
         }
         
         if let activePoll, messages[0].forwardInfo == nil {
@@ -1970,24 +1957,7 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     interfaceInteraction.forwardMessages(selectAll || isImage ? messages : [message], nil)
                     f(.dismissWithoutContent)
                 })))
-                if message.id.peerId != context.account.peerId {
-                    // MARK: Swiftgram
-                    let action = sgMakeContextMenuAction(.saveToCloud(interfaceInteraction: interfaceInteraction, selectAll: selectAll, isImage: isImage, messages: messages), chatPresentationInterfaceState: chatPresentationInterfaceState, message: message)
-                    if SGSimpleSettings.shared.contextShowSaveToCloud {
-                        actions.append(action)
-                    } else {
-                        sgActions.append(action)
-                    }
-                    //
-                }
-                // MARK: Swiftgram
-                let action = sgMakeContextMenuAction(.hideForwardName(interfaceInteraction: interfaceInteraction, selectAll: selectAll, isImage: isImage, messages: messages), chatPresentationInterfaceState: chatPresentationInterfaceState, message: message)
-                if SGSimpleSettings.shared.contextShowHideForwardName {
-                    actions.append(action)
-                } else {
-                    sgActions.append(action)
-                }
-                //
+
             }
         }
         
@@ -2006,7 +1976,6 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
             }, action: { controller, f in
                 interfaceInteraction.reportMessages(messages, controller)
             })))
-            if !SGSimpleSettings.shared.contextShowReport { sgActions.append(actions.removeLast()) } // MARK: Swiftgram
         } else if message.id.peerId.isReplies {
             actions.append(.action(ContextMenuActionItem(text: chatPresentationInterfaceState.strings.Conversation_ContextMenuBlock, textColor: .destructive, icon: { theme in
                 return generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Restrict"), color: theme.actionSheet.destructiveActionTextColor)
@@ -2053,13 +2022,7 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                             }), forKey: user.id)
                         f(.dismissWithoutContent)
                     }))
-                    // MARK: Swiftgram
-                    if SGSimpleSettings.shared.contextShowRestrict {
-                        actions.append(action)
-                    } else {
-                        sgActions.append(action)
-                    }
-                    //
+                    actions.append(action)
                 }
             }
         }
@@ -2216,27 +2179,9 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                 return nil
             }, action: noAction)))
         }
-        var sgActionsIndex: Int? = nil
         if !isPinnedMessages, !isReplyThreadHead, data.canSelect {
-            sgActionsIndex = actions.count
-            var didAddSeparator = false
-            // MARK: Swiftgram
-            if let action = sgMakeSelectFromUserContextMenuAction(context: context, chatPresentationInterfaceState: chatPresentationInterfaceState, controllerInteraction: controllerInteraction, interfaceInteraction: interfaceInteraction, message: message) {
-                if SGSimpleSettings.shared.contextShowSelectFromUser {
-                    if !actions.isEmpty && !didAddSeparator {
-                        didAddSeparator = true
-                        actions.append(.separator)
-                    }
-                    actions.append(action)
-                } else {
-                    sgActions.append(action)
-                }
-            }
-            //
-            
             if !selectAll || messages.count == 1 {
-                if !actions.isEmpty && !didAddSeparator {
-                    didAddSeparator = true
+                if !actions.isEmpty {
                     actions.append(.separator)
                 }
 
@@ -2280,7 +2225,6 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
             canViewStats = canViewReadStats(message: message, participantCount: infoSummaryData.participantCount, isMessageRead: isMessageRead, isPremium: isPremium, appConfig: appConfig)
         }
 
-        sgInsertContextMenu(actions: &actions, sgActions: &sgActions, index: sgActionsIndex, chatPresentationInterfaceState: chatPresentationInterfaceState) // MARK: Swiftgram
         
         var reactionCount = 0
         for reaction in mergedMessageReactionsAndPeers(accountPeerId: context.account.peerId, accountPeer: nil, message: message).reactions {
