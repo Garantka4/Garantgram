@@ -579,11 +579,10 @@ public final class AccountContextImpl: AccountContext {
         })
         
         self.userLimitsConfigurationDisposable = (self.engine.data.subscribe(TelegramEngine.EngineData.Item.Peer.Peer(id: account.peerId))
-        |> mapToSignal { peer -> Signal<(Bool, EngineConfiguration.UserLimits), NoError> in
-            let isPremium = true
-            return self.engine.data.subscribe(TelegramEngine.EngineData.Item.Configuration.UserLimits(isPremium: isPremium))
+        |> mapToSignal { _ -> Signal<(Bool, EngineConfiguration.UserLimits), NoError> in
+            return self.engine.data.subscribe(TelegramEngine.EngineData.Item.Configuration.UserLimits(isPremium: true))
             |> map { userLimits in
-                return (isPremium, userLimits)
+                return (true, userLimits)
             }
         }
         |> deliverOnMainQueue).startStrict(next: { [weak self] isPremium, userLimits in
@@ -606,13 +605,8 @@ public final class AccountContextImpl: AccountContext {
         })
         
         self.audioTranscriptionTrialDisposable = (self.engine.data.subscribe(TelegramEngine.EngineData.Item.Peer.Peer(id: account.peerId))
-        |> mapToSignal { peer -> Signal<AudioTranscription.TrialState, NoError> in
-            let isPremium = true
-            if isPremium {
-                return .single(AudioTranscription.TrialState(cooldownUntilTime: nil, remainingCount: 1))
-            } else {
-                return self.engine.data.subscribe(TelegramEngine.EngineData.Item.Configuration.AudioTranscriptionTrial())
-            }
+        |> mapToSignal { _ -> Signal<AudioTranscription.TrialState, NoError> in
+            return .single(AudioTranscription.TrialState(cooldownUntilTime: nil, remainingCount: 1))
         }
         |> deliverOnMainQueue).startStrict(next: { [weak self] audioTranscriptionTrial in
             guard let self = self else {
