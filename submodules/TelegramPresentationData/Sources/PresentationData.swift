@@ -407,7 +407,7 @@ public func currentPresentationDataAndSettings(accountManager: AccountManager<Te
             }
         }
         
-        let effectiveColors = themeSettings.themeSpecificAccentColors[effectiveTheme.index] ?? PresentationThemeAccentColor(baseColor: .green)
+        let effectiveColors: PresentationThemeAccentColor? = themeSettings.themeSpecificAccentColors[effectiveTheme.index] ?? PresentationThemeAccentColor(baseColor: .green)
         let theme = makePresentationTheme(mediaBox: accountManager.mediaBox, themeReference: effectiveTheme, baseTheme: preferredBaseTheme, accentColor: effectiveColors?.colorFor(baseTheme: preferredBaseTheme ?? .day), bubbleColors: effectiveColors?.customBubbleColors ?? [], baseColor: effectiveColors?.baseColor) ?? defaultPresentationTheme
         
         var effectiveChatWallpaper: TelegramWallpaper = (themeSettings.themeSpecificChatWallpapers[coloredThemeIndex(reference: effectiveTheme, accentColor: effectiveColors)] ?? themeSettings.themeSpecificChatWallpapers[effectiveTheme.index]) ?? theme.chat.defaultWallpaper
@@ -736,7 +736,7 @@ public func updatedPresentationData(accountManager: AccountManager<TelegramAccou
         
         let contactSettings: ContactSynchronizationSettings = sharedData.entries[ApplicationSpecificSharedDataKeys.contactSynchronizationSettings]?.get(ContactSynchronizationSettings.self) ?? ContactSynchronizationSettings.defaultSettings
         
-        var currentColors = themeSettings.themeSpecificAccentColors[themeSettings.theme.index] ?? PresentationThemeAccentColor(baseColor: .green)
+        var currentColors: PresentationThemeAccentColor? = themeSettings.themeSpecificAccentColors[themeSettings.theme.index] ?? PresentationThemeAccentColor(baseColor: .green)
         if let colors = currentColors, colors.baseColor == .theme {
             currentColors = nil
         }
