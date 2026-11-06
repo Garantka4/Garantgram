@@ -1700,7 +1700,7 @@ func peerInfoScreenData(
                         currentPanes.insert(mainTabKey, at: 0)
                     }
                 }
-                var availablePanes = Optional(currentPanes)
+                let availablePanes = Optional(currentPanes)
                 
                 let peer = peerView.peers[userPeerId]
                 
