@@ -222,7 +222,7 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
             self?.openChatsController(activateSearch: false)
         }
         // MARK: Swiftgram
-        if showContactsTab {
+        if false && showContactsTab {
             controllers.append(contactsController)
         }
         //
@@ -272,7 +272,7 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
         }
         var controllers: [ViewController] = []
         // MARK: Swiftgram
-        if showContactsTab {
+        if false && showContactsTab {
             controllers.append(self.contactsController!)
         }
         //

@@ -819,7 +819,7 @@ final class AuthorizedApplicationContext {
         let showCallsTabSignal = context.sharedContext.accountManager.sharedData(keys: [ApplicationSpecificSharedDataKeys.callListSettings])
         |> map { sharedData -> (Bool, Bool) in
             var showCallsTabValue = CallListSettings.defaultSettings.showTab
-            var showContactsTabValue = CallListSettings.defaultSettings.showContactsTab
+            var showContactsTabValue = false
             if let settings = sharedData.entries[ApplicationSpecificSharedDataKeys.callListSettings]?.get(CallListSettings.self) {
                 showCallsTabValue = settings.showTab
                 showContactsTabValue = settings.showContactsTab

@@ -187,7 +187,7 @@ private enum ThemePickerControllerEntry: ItemListNodeEntry {
                     colorItems.append(.theme(theme))
                 }
             
-                var defaultColor: PresentationThemeAccentColor? = PresentationThemeAccentColor(baseColor: .blue)
+                var defaultColor: PresentationThemeAccentColor? = PresentationThemeAccentColor(baseColor: .green)
                 var colors = PresentationThemeBaseColor.allCases
                 colors = colors.filter { $0 != .custom && $0 != .preset && $0 != .theme }
                 if case let .builtin(name) = generalThemeReference {
@@ -199,15 +199,15 @@ private enum ThemePickerControllerEntry: ItemListNodeEntry {
                             colorItems.append(.preset(preset))
                         }
                     } else if name == .day {
-                        colorItems.append(.color(.blue))
-                        colors = colors.filter { $0 != .blue }
+                        colorItems.append(.color(.green))
+                        colors = colors.filter { $0 != .green }
             
                         for preset in dayColorPresets {
                             colorItems.append(.preset(preset))
                         }
                     } else if name == .night {
-                        colorItems.append(.color(.blue))
-                        colors = colors.filter { $0 != .blue }
+                        colorItems.append(.color(.green))
+                        colors = colors.filter { $0 != .green }
             
                         for preset in nightColorPresets {
                             colorItems.append(.preset(preset))
@@ -648,7 +648,7 @@ public func themePickerController(context: AccountContext, focusOnItemTag: Theme
                                     if isCurrent, let currentThemeIndex = themes.firstIndex(where: { $0.id == theme.theme.id }) {
                                         if let settings = theme.theme.settings?.first {
                                             if settings.baseTheme == .night {
-                                                selectAccentColorImpl?(nil, PresentationThemeAccentColor(baseColor: .blue))
+                                                selectAccentColorImpl?(nil, PresentationThemeAccentColor(baseColor: .green))
                                             } else {
                                                 selectAccentColorImpl?(nil, nil)
                                             }
@@ -913,7 +913,7 @@ public func themePickerController(context: AccountContext, focusOnItemTag: Theme
                                                     selectThemeImpl?(nil, .cloud(PresentationCloudTheme(theme: theme, resolvedWallpaper: nil, creatorAccountId: theme.isCreator ? context.account.id : nil)), false)
                                                 } else {
                                                     if settings.baseTheme == .night {
-                                                        selectAccentColorImpl?(nil, PresentationThemeAccentColor(baseColor: .blue))
+                                                        selectAccentColorImpl?(nil, PresentationThemeAccentColor(baseColor: .green))
                                                     } else {
                                                         selectAccentColorImpl?(nil, nil)
                                                     }
@@ -954,7 +954,7 @@ public func themePickerController(context: AccountContext, focusOnItemTag: Theme
             let automaticTheme = settings.automaticThemeSwitchSetting.theme
             var effectiveColors = settings.themeSpecificAccentColors[automaticTheme.index]
             if automaticTheme == .builtin(.night) && effectiveColors == nil {
-                effectiveColors = PresentationThemeAccentColor(baseColor: .blue)
+                effectiveColors = PresentationThemeAccentColor(baseColor: .green)
             }
             let themeSpecificWallpaper = (settings.themeSpecificChatWallpapers[coloredThemeIndex(reference: automaticTheme, accentColor: effectiveColors)] ?? settings.themeSpecificChatWallpapers[automaticTheme.index])
             

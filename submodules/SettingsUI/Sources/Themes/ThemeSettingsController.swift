@@ -807,7 +807,7 @@ public func themeSettingsController(context: AccountContext, focusOnItemTag: The
                                 if isCurrent, let currentThemeIndex = themes.firstIndex(where: { $0.id == theme.theme.id }) {
                                     if let settings = theme.theme.settings?.first {
                                         if settings.baseTheme == .night {
-                                            selectAccentColorImpl?(PresentationThemeAccentColor(baseColor: .blue))
+                                            selectAccentColorImpl?(PresentationThemeAccentColor(baseColor: .green))
                                         } else {
                                             selectAccentColorImpl?(nil)
                                         }
@@ -1071,7 +1071,7 @@ public func themeSettingsController(context: AccountContext, focusOnItemTag: The
                                                     selectThemeImpl?(.cloud(PresentationCloudTheme(theme: theme, resolvedWallpaper: nil, creatorAccountId: theme.isCreator ? context.account.id : nil)))
                                                 } else {
                                                     if settings.baseTheme == .night {
-                                                        selectAccentColorImpl?(PresentationThemeAccentColor(baseColor: .blue))
+                                                        selectAccentColorImpl?(PresentationThemeAccentColor(baseColor: .green))
                                                     } else {
                                                         selectAccentColorImpl?(nil)
                                                     }
