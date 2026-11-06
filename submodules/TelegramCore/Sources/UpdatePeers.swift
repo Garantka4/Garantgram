@@ -515,10 +515,6 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
 }
 
 func updatePeerPresenceLastActivities(transaction: Transaction, accountPeerId: PeerId, activities: [PeerId: Int32]) {
-    var activities = activities
-    // if activities[accountPeerId] != nil {
-    //     activities.removeValue(forKey: accountPeerId)
-    // }
     for (peerId, timestamp) in activities {
         transaction.updatePeerPresenceInternal(peerId: peerId, update: { previous in
             if let previous = previous as? TelegramUserPresence, previous.lastActivity < timestamp {
