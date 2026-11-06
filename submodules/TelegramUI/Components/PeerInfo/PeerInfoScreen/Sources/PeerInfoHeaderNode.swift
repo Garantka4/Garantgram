@@ -1300,15 +1300,20 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                 subtitleColor = .white
                 
                 if SGSimpleSettings.shared.ghostModeOnline {
-                    let now = Int32(Date().timeIntervalSince1970)
-                    var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
-                    if lastSeen == 0 || (now - lastSeen) > 600 {
-                        lastSeen = now - 120
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
+                    if let statusData = statusData, !statusData.text.isEmpty && statusData.text != presentationData.strings.Presence_online {
+                        subtitleStringText = statusData.text
+                    } else {
+                        let now = Int32(Date().timeIntervalSince1970)
+                        let lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
+                        let effectiveLastSeen: Int32
+                        if lastSeen > 0 && lastSeen <= now {
+                            effectiveLastSeen = lastSeen
+                        } else {
+                            effectiveLastSeen = now - 60
+                        }
+                        let (statusText, _) = stringAndActivityForUserPresence(strings: presentationData.strings, dateTimeFormat: presentationData.dateTimeFormat, presence: EnginePeer.Presence(TelegramUserPresence(status: .present(until: effectiveLastSeen), lastActivity: effectiveLastSeen)), relativeTo: now, expanded: true)
+                        subtitleStringText = statusText
                     }
-                    let effectiveLastSeen = min(lastSeen, now - 60)
-                    let (statusText, _) = stringAndActivityForUserPresence(strings: presentationData.strings, dateTimeFormat: presentationData.dateTimeFormat, presence: EnginePeer.Presence(TelegramUserPresence(status: .present(until: effectiveLastSeen), lastActivity: effectiveLastSeen)), relativeTo: now, expanded: true)
-                    subtitleStringText = statusText
                 } else {
                     subtitleStringText = presentationData.strings.Presence_online
                 }

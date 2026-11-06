@@ -1,3 +1,4 @@
+import SGSimpleSettings
 // MARK: Swiftgram
 import SGRegDateScheme
 import SGRegDate
@@ -1288,7 +1289,9 @@ func peerInfoScreenData(
                         return .none
                     }
                     if user.id == context.account.peerId {
-                        return .none
+                        if !SGSimpleSettings.shared.ghostModeOnline {
+                            return .none
+                        }
                     }
                     if user.isDeleted {
                         return .none

@@ -58,8 +58,11 @@ private final class AccountPresenceManagerImpl {
         } else {
             self.onlineTimer?.invalidate()
             self.onlineTimer = nil
-            if SGSimpleSettings.shared.ghostModeOnline && SGSimpleSettings.shared.ghostModeLastSeenTimestamp == 0 {
-                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970) - 120
+            if SGSimpleSettings.shared.ghostModeOnline {
+                let now = Int32(Date().timeIntervalSince1970)
+                if SGSimpleSettings.shared.ghostModeLastSeenTimestamp == 0 || (now - SGSimpleSettings.shared.ghostModeLastSeenTimestamp) > 300 {
+                    SGSimpleSettings.shared.ghostModeLastSeenTimestamp = now - 60
+                }
             }
             request = self.network.request(Api.functions.account.updateStatus(offline: .boolTrue))
         }
