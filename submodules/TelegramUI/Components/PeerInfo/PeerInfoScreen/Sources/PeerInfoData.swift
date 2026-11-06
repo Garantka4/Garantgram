@@ -1,4 +1,3 @@
-import SGSimpleSettings
 // MARK: Swiftgram
 import SGRegDateScheme
 import SGRegDate
@@ -1289,14 +1288,6 @@ func peerInfoScreenData(
                         return .none
                     }
                     if user.id == context.account.peerId {
-                        if let presence = view.peerPresences[userPeerId] as? TelegramUserPresence {
-                            if presence.lastActivity > 0 {
-                                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, presence.lastActivity)
-                            }
-                            if case let .present(until) = presence.status {
-                                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, min(until, Int32(Date().timeIntervalSince1970)))
-                            }
-                        }
                         return .none
                     }
                     if user.isDeleted {
@@ -1595,12 +1586,6 @@ func peerInfoScreenData(
             }
 
             let forcedLinkedCommunityId = Atomic<EnginePeer.Id?>(value: nil)
-            let profileGiftsState: Signal<ProfileGiftsContext.State?, NoError>
-            if let profileGiftsContext {
-                profileGiftsState = profileGiftsContext.state |> map(Optional.init)
-            } else {
-                profileGiftsState = .single(nil)
-            }
             
             return combineLatest(
                 .single(nil as RegDate?),
@@ -1624,58 +1609,52 @@ func peerInfoScreenData(
                 revenueContextAndState,
                 premiumGiftOptions,
                 webAppPermissions,
-                combineLatest(savedMusicContext.state, profileGiftsState),
+                savedMusicContext.state,
                 combineLatest(businessConnectedBot, walletBalance)
             )
-            |> mapToSignal { regDate, peerView, availablePanes, globalNotificationSettings, encryptionKeyFingerprint, status, hasStories, hasStoryArchive, recommendedBots, accountIsPremium, savedMessagesPeer, hasSavedMessagesChats, hasSavedMessages, hasSavedMessageTags, hasBotPreviewItems, personalChannel, privacySettings, starsRevenueContextAndState, revenueContextAndState, premiumGiftOptions, webAppPermissions, savedMusicAndGiftsState, businessConnectedBotAndWalletBalance -> Signal<PeerInfoScreenData, NoError> in // MARK: Swiftgram
-                let (savedMusicState, profileGiftsState) = savedMusicAndGiftsState
+            |> mapToSignal { regDate, peerView, availablePanes, globalNotificationSettings, encryptionKeyFingerprint, status, hasStories, hasStoryArchive, recommendedBots, accountIsPremium, savedMessagesPeer, hasSavedMessagesChats, hasSavedMessages, hasSavedMessageTags, hasBotPreviewItems, personalChannel, privacySettings, starsRevenueContextAndState, revenueContextAndState, premiumGiftOptions, webAppPermissions, savedMusicState, businessConnectedBotAndWalletBalance -> Signal<PeerInfoScreenData, NoError> in // MARK: Swiftgram
                 let (businessConnectedBot, walletBalance) = businessConnectedBotAndWalletBalance
-                var availablePanes: [PeerInfoPaneKey] = availablePanes ?? []
+                var currentPanes: [PeerInfoPaneKey] = availablePanes ?? []
                 if isMyProfile {
-                    if !availablePanes.contains(.stories) {
-                        availablePanes.insert(.stories, at: 0)
+                    if !currentPanes.contains(.stories) {
+                        currentPanes.insert(.stories, at: 0)
                     }
                     if profileGiftsContext != nil, let cachedData = peerView.cachedData as? CachedUserData {
-                        if (cachedData.starGiftsCount ?? 0) > 0 || (profileGiftsState?.count ?? 0) > 0 || !(profileGiftsState?.gifts.isEmpty ?? true) || forceHasGifts {
-                            let storiesIndex = availablePanes.firstIndex(of: .stories)
+                        if (cachedData.starGiftsCount ?? 0) > 0 || (profileGiftsContext?.currentState?.gifts.count ?? 0) > 0 || forceHasGifts {
+                            let storiesIndex = currentPanes.firstIndex(of: .stories)
                             let insertIndex = storiesIndex != nil ? (storiesIndex! + 1) : 0
-                            if !availablePanes.contains(.gifts) {
-                                availablePanes.insert(.gifts, at: insertIndex)
+                            if !currentPanes.contains(.gifts) {
+                                currentPanes.insert(.gifts, at: insertIndex)
                             }
                         }
                     }
                     if let hasStoryArchive, hasStoryArchive {
-                        if !availablePanes.contains(.storyArchive) {
-                            availablePanes.append(.storyArchive)
+                        if !currentPanes.contains(.storyArchive) {
+                            currentPanes.append(.storyArchive)
                         }
                     }
                 } else {
-                    let shouldHaveStories: Bool
-                    if let hasStories {
-                        shouldHaveStories = hasStories
-                    } else {
-                        shouldHaveStories = true
-                    }
-                    if shouldHaveStories, peerView.peers[peerView.peerId] is TelegramUser, peerView.peerId != context.account.peerId {
-                        if !availablePanes.contains(.stories) {
-                            availablePanes.insert(.stories, at: 0)
+                    let hasStoriesValue = hasStories ?? true
+                    if hasStoriesValue, peerView.peers[peerView.peerId] is TelegramUser, peerView.peerId != context.account.peerId {
+                        if !currentPanes.contains(.stories) {
+                            currentPanes.insert(.stories, at: 0)
                         }
                     }
                     
                     if profileGiftsContext != nil, let cachedData = peerView.cachedData as? CachedUserData, peerView.peerId != context.account.peerId {
-                        if (cachedData.starGiftsCount ?? 0) > 0 || (profileGiftsState?.count ?? 0) > 0 || !(profileGiftsState?.gifts.isEmpty ?? true) || forceHasGifts {
-                            let storiesIndex = availablePanes.firstIndex(of: .stories)
+                        if (cachedData.starGiftsCount ?? 0) > 0 || (profileGiftsContext?.currentState?.gifts.count ?? 0) > 0 || forceHasGifts {
+                            let storiesIndex = currentPanes.firstIndex(of: .stories)
                             let insertIndex = storiesIndex != nil ? (storiesIndex! + 1) : 0
-                            if !availablePanes.contains(.gifts) {
-                                availablePanes.insert(.gifts, at: insertIndex)
+                            if !currentPanes.contains(.gifts) {
+                                currentPanes.insert(.gifts, at: insertIndex)
                             }
                         }
                     }
                     
                     if groupsInCommon != nil, let cachedData = peerView.cachedData as? CachedUserData {
                         if cachedData.commonGroupCount != 0 {
-                            if !availablePanes.contains(.groupsInCommon) {
-                                availablePanes.append(.groupsInCommon)
+                            if !currentPanes.contains(.groupsInCommon) {
+                                currentPanes.append(.groupsInCommon)
                             }
                         }
                     }
@@ -1683,45 +1662,45 @@ func peerInfoScreenData(
                     if case .peer = chatLocation {
                         if peerId == context.account.peerId {
                             if hasSavedMessagesChats {
-                                if !availablePanes.contains(.savedMessagesChats) {
-                                    availablePanes.insert(.savedMessagesChats, at: 0)
+                                if !currentPanes.contains(.savedMessagesChats) {
+                                    currentPanes.insert(.savedMessagesChats, at: 0)
                                 }
                             }
                         } else if hasSavedMessages && hasSavedMessagesChats {
-                            if !availablePanes.contains(.savedMessages) {
-                                if let index = availablePanes.firstIndex(of: .media) {
-                                    availablePanes.insert(.savedMessages, at: index + 1)
+                            if !currentPanes.contains(.savedMessages) {
+                                if let index = currentPanes.firstIndex(of: .media) {
+                                    currentPanes.insert(.savedMessages, at: index + 1)
                                 } else {
-                                    availablePanes.insert(.savedMessages, at: 0)
+                                    currentPanes.insert(.savedMessages, at: 0)
                                 }
                             }
                         }
                         
                         if let user = peerView.peers[peerView.peerId] as? TelegramUser, let botInfo = user.botInfo, botInfo.flags.contains(.hasWebApp), botInfo.flags.contains(.canEdit) {
-                            if !availablePanes.contains(.botPreview) {
-                                availablePanes.insert(.botPreview, at: 0)
+                            if !currentPanes.contains(.botPreview) {
+                                currentPanes.insert(.botPreview, at: 0)
                             }
                         } else if let cachedData = peerView.cachedData as? CachedUserData, let botPreview = cachedData.botPreview, !botPreview.items.isEmpty {
-                            if !availablePanes.contains(.botPreview) {
-                                availablePanes.insert(.botPreview, at: 0)
+                            if !currentPanes.contains(.botPreview) {
+                                currentPanes.insert(.botPreview, at: 0)
                             }
                         }
                     }
                     
                     if let recommendedBots, recommendedBots.count > 0 {
-                        if !availablePanes.contains(.similarBots) {
-                            availablePanes.append(.similarBots)
+                        if !currentPanes.contains(.similarBots) {
+                            currentPanes.append(.similarBots)
                         }
                     }
                 }
-                if var currentAvailablePanes = Optional(availablePanes), let cachedData = peerView.cachedData as? CachedUserData, let mainProfileTab = cachedData.mainProfileTab {
+                if let cachedData = peerView.cachedData as? CachedUserData, let mainProfileTab = cachedData.mainProfileTab {
                     let mainTabKey = PeerInfoPaneKey(tab: mainProfileTab)
-                    if currentAvailablePanes.contains(mainTabKey) && currentAvailablePanes.first != mainTabKey {
-                        currentAvailablePanes = currentAvailablePanes.filter { $0 != mainTabKey }
-                        currentAvailablePanes.insert(mainTabKey, at: 0)
-                        availablePanes = currentAvailablePanes
+                    if currentPanes.contains(mainTabKey) && currentPanes.first != mainTabKey {
+                        currentPanes = currentPanes.filter { $0 != mainTabKey }
+                        currentPanes.insert(mainTabKey, at: 0)
                     }
                 }
+                var availablePanes = Optional(currentPanes)
                 
                 let peer = peerView.peers[userPeerId]
                 
@@ -1804,7 +1783,7 @@ func peerInfoScreenData(
                         threadNotificationSettings: nil,
                         globalNotificationSettings: globalNotificationSettings,
                         isContact: peerView.peerIsContact,
-                        availablePanes: availablePanes,
+                        availablePanes: availablePanes ?? [],
                         groupsInCommon: groupsInCommon,
                         linkedDiscussionPeer: nil,
                         linkedMonoforumPeer: nil,

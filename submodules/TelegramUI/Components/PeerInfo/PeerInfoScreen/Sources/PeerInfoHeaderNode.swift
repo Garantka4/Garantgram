@@ -1302,7 +1302,7 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                 if SGSimpleSettings.shared.ghostModeOnline {
                     let now = Int32(Date().timeIntervalSince1970)
                     var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
-                    if lastSeen == 0 {
+                    if lastSeen == 0 || (now - lastSeen) > 600 {
                         lastSeen = now - 120
                         SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
                     }

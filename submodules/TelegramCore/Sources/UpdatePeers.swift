@@ -1,4 +1,3 @@
-import SGSimpleSettings
 import Foundation
 import Postbox
 internal import TelegramApi
@@ -478,17 +477,6 @@ func updatePeerPresences(transaction: Transaction, accountPeerId: PeerId, peerPr
         }
     }
         
-    if let user = peerPresences[accountPeerId], let presence = TelegramUserPresence(apiUser: user) {
-        if presence.lastActivity > 0 {
-            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, presence.lastActivity)
-        }
-        switch presence.status {
-        case let .present(until):
-            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, min(until, Int32(Date().timeIntervalSince1970)))
-        default:
-            break
-        }
-    }
     parsedPresences.removeValue(forKey: accountPeerId)
         
     transaction.updatePeerPresencesInternal(presences: parsedPresences, merge: { previous, updated in
@@ -514,18 +502,6 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
         }
     }
     
-    if let status = peerPresences[accountPeerId] {
-        let presence = TelegramUserPresence(apiStatus: status.status)
-        if presence.lastActivity > 0 {
-            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, presence.lastActivity)
-        }
-        switch presence.status {
-        case let .present(until):
-            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, min(until, Int32(Date().timeIntervalSince1970)))
-        default:
-            break
-        }
-    }
     if parsedPresences[accountPeerId] != nil {
         parsedPresences.removeValue(forKey: accountPeerId)
     }
@@ -540,9 +516,6 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
 
 func updatePeerPresenceLastActivities(transaction: Transaction, accountPeerId: PeerId, activities: [PeerId: Int32]) {
     var activities = activities
-    if let activity = activities[accountPeerId] {
-        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, activity)
-    }
     if activities[accountPeerId] != nil {
         activities.removeValue(forKey: accountPeerId)
     }

@@ -58,27 +58,8 @@ private final class AccountPresenceManagerImpl {
         } else {
             self.onlineTimer?.invalidate()
             self.onlineTimer = nil
-            if SGSimpleSettings.shared.ghostModeOnline {
-                if SGSimpleSettings.shared.ghostModeLastSeenTimestamp == 0 {
-                    SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970) - 120
-                }
-                let _ = (self.network.request(Api.functions.users.getUsers(id: [.inputUserSelf]))
-                |> `catch` { _ -> Signal<[Api.User], NoError> in
-                    return .single([])
-                }
-                |> deliverOn(self.queue)).start(next: { users in
-                    if let user = users.first, let presence = TelegramUserPresence(apiUser: user) {
-                        if presence.lastActivity > 0 {
-                            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, presence.lastActivity)
-                        }
-                        switch presence.status {
-                        case let .present(until):
-                            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, min(until, Int32(Date().timeIntervalSince1970)))
-                        default:
-                            break
-                        }
-                    }
-                })
+            if SGSimpleSettings.shared.ghostModeOnline && SGSimpleSettings.shared.ghostModeLastSeenTimestamp == 0 {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970) - 120
             }
             request = self.network.request(Api.functions.account.updateStatus(offline: .boolTrue))
         }
