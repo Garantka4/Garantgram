@@ -29,8 +29,8 @@ public struct CallListSettings: Codable, Equatable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.showContactsTab = false
-        self._showTab = false
+        self.showContactsTab = (try? container.decode(Int32.self, forKey: "showContactsTab")) != nil ? false : false
+        self._showTab = (try? container.decodeIfPresent(Int32.self, forKey: "showTab")) != nil ? false : false
     }
     
     public func encode(to encoder: Encoder) throws {
