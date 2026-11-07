@@ -65,7 +65,6 @@
 | **Sideloadly** | 💻 Да | 7 дней (автообновление) | 🟢 Простая |
 | **AltStore / SideStore** | 💻 Один раз | 7 дней | 🟡 Средняя |
 | **Scarlet / ESign** | 📱 Нет | До отзыва сертификата | 🟢 Очень простая |
-| **TrollStore** | 📱 Нет | ♾️ Навсегда | 🟢 В 1 клик |
 
 <details>
 <summary><b>📦 Инструкция 1: Установка через Sideloadly (Самый надёжный способ)</b></summary>
@@ -86,14 +85,6 @@
 3. Скачайте [Garantgram.ipa](../../releases/latest/download/Garantgram.ipa) на iPhone.
 4. Откройте Scarlet, нажмите кнопку импорта в правом верхнем углу и выберите скачанный `.ipa`.
 5. Дождитесь завершения установки приложения на домашний экран.
-</details>
-
-<details>
-<summary><b>⚡ Инструкция 3: TrollStore (iOS 14.0 — 16.6.1 / 17.0)</b></summary>
-
-1. Скачайте [Garantgram.ipa](../../releases/latest/download/Garantgram.ipa) в Safari на iPhone.
-2. Нажмите «Поделиться» → выберите **TrollStore**.
-3. Приложение установится за 1 секунду и будет работать навсегда без переподписи.
 </details>
 
 ---
