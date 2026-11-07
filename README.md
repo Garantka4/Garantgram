@@ -4,7 +4,7 @@
 
 # ⚡ Garantgram for iOS
 
-**Ультимативный клиент Telegram для iPhone и iPad**  
+**Ультимативный клиент Telegram для iPhone**  
 *Приватность без компромиссов: полный Ghost-режим, чистый интерфейс без рекламы и фирменный стиль.*
 
 <br/>
@@ -61,7 +61,7 @@
 
 ---
 
-## 📲 Как установить Garantgram на iPhone / iPad
+## 📲 Как установить Garantgram на iPhone
 
 Готовый файл **`Garantgram.ipa`** всегда доступен в разделе **[Releases](https://github.com/Garantka4/Garantgram/releases/latest)**.
 
