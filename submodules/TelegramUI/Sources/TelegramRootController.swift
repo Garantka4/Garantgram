@@ -227,7 +227,7 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
         }
         //
         
-        if showCallsTab {
+        if false && showCallsTab {
             controllers.append(callListController)
         }
         controllers.append(chatListController)
@@ -276,7 +276,7 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
             controllers.append(self.contactsController!)
         }
         //
-        if showCallsTab {
+        if false && showCallsTab {
             controllers.append(self.callListController!)
         }
         controllers.append(self.chatListController!)

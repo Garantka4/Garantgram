@@ -7,7 +7,7 @@ public struct CallListSettings: Codable, Equatable {
     public var _showTab: Bool?
     
     public static var defaultSettings: CallListSettings {
-        return CallListSettings(showContactsTab: false, showTab: nil)
+        return CallListSettings(showContactsTab: false, showTab: false)
     }
     
     public var showTab: Bool {
@@ -15,7 +15,7 @@ public struct CallListSettings: Codable, Equatable {
             if let value = self._showTab {
                 return value
             } else {
-                return true
+                return false
             }
         } set {
             self._showTab = newValue
@@ -30,9 +30,7 @@ public struct CallListSettings: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.showContactsTab = false
-        if let value = try container.decodeIfPresent(Int32.self, forKey: "showTab") {
-            self._showTab = value != 0
-        }
+        self._showTab = false
     }
     
     public func encode(to encoder: Encoder) throws {

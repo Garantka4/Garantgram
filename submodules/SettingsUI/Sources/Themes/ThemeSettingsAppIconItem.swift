@@ -121,6 +121,7 @@ private final class ThemeSettingsAppIconNode : ASDisplayNode {
         self.lockNode.contentMode = .scaleAspectFit
         self.lockNode.displaysAsynchronously = false
         self.lockNode.isUserInteractionEnabled = false
+        self.lockNode.isHidden = true
         
         self.textNode = ImmediateTextNode()
         self.textNode.isUserInteractionEnabled = false
@@ -462,7 +463,7 @@ class ThemeSettingsAppIconItemNode: ListViewItemNode, ItemListItemNode {
                                     name = icon.name
                             }
                         
-                            imageNode.setup(theme: item.theme, icon: image, title: NSAttributedString(string: name, font: selected ? selectedTextFont : textFont, textColor: selected  ? item.theme.list.itemAccentColor : item.theme.list.itemPrimaryTextColor, paragraphAlignment: .center), locked: !item.isPremium && icon.isSGPro, color: item.theme.list.itemPrimaryTextColor, bordered: bordered, selected: selected, action: {
+                            imageNode.setup(theme: item.theme, icon: image, title: NSAttributedString(string: name, font: selected ? selectedTextFont : textFont, textColor: selected  ? item.theme.list.itemAccentColor : item.theme.list.itemPrimaryTextColor, paragraphAlignment: .center), locked: false, color: item.theme.list.itemPrimaryTextColor, bordered: bordered, selected: selected, action: {
                                 item.updated(icon)
                             })
                         }

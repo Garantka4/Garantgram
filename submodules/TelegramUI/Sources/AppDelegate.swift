@@ -1030,26 +1030,25 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             self.window?.rootViewController?.dismiss(animated: true, completion: nil)
         }, getAvailableAlternateIcons: {
             if #available(iOS 10.3, *) {
-                var icons = [
-                    PresentationAppIcon(name: "BlueIcon", imageName: "BlueIcon", isDefault: buildConfig.isAppStoreBuild),
-                    PresentationAppIcon(name: "New2", imageName: "New2"),
-                    PresentationAppIcon(name: "New1", imageName: "New1"),
-                    PresentationAppIcon(name: "BlackIcon", imageName: "BlackIcon"),
-                    PresentationAppIcon(name: "BlueClassicIcon", imageName: "BlueClassicIcon"),
-                    PresentationAppIcon(name: "BlackClassicIcon", imageName: "BlackClassicIcon"),
-                    PresentationAppIcon(name: "BlueFilledIcon", imageName: "BlueFilledIcon"),
-                    PresentationAppIcon(name: "BlackFilledIcon", imageName: "BlackFilledIcon")
+                let icons = [
+                    PresentationAppIcon(name: "SGDefault", imageName: "SGDefault", isDefault: true),
+                    PresentationAppIcon(name: "SGDay", imageName: "SGDay"),
+                    PresentationAppIcon(name: "SGBlack", imageName: "SGBlack"),
+                    PresentationAppIcon(name: "SGNight", imageName: "SGNight"),
+                    PresentationAppIcon(name: "SGSky", imageName: "SGSky"),
+                    PresentationAppIcon(name: "SGGlass", imageName: "SGGlass"),
+                    PresentationAppIcon(name: "SGNeon", imageName: "SGNeon"),
+                    PresentationAppIcon(name: "SGNeonBlue", imageName: "SGNeonBlue"),
+                    PresentationAppIcon(name: "SGGold", imageName: "SGGold"),
+                    PresentationAppIcon(name: "SGTitanium", imageName: "SGTitanium"),
+                    PresentationAppIcon(name: "SGInverted", imageName: "SGInverted"),
+                    PresentationAppIcon(name: "SGWhite", imageName: "SGWhite"),
+                    PresentationAppIcon(name: "SGSparkling", imageName: "SGSparkling"),
+                    PresentationAppIcon(name: "SGLegacy", imageName: "SGLegacy"),
+                    PresentationAppIcon(name: "SGPro", imageName: "SGPro"),
+                    PresentationAppIcon(name: "SGDucky", imageName: "SGDucky"),
+                    PresentationAppIcon(name: "SGBeta", imageName: "SGBeta")
                 ]
-                if buildConfig.isInternalBuild {
-                    icons.append(PresentationAppIcon(name: "WhiteFilledIcon", imageName: "WhiteFilledIcon"))
-                }
-                
-                icons.append(PresentationAppIcon(name: "Premium", imageName: "Premium", isPremium: true))
-                icons.append(PresentationAppIcon(name: "PremiumTurbo", imageName: "PremiumTurbo", isPremium: true))
-                icons.append(PresentationAppIcon(name: "PremiumBlack", imageName: "PremiumBlack", isPremium: true))
-                
-                
-                
                 return icons
             } else {
                 return []
