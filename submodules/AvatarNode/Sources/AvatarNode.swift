@@ -1079,8 +1079,8 @@ public final class AvatarNode: ASDisplayNode {
                             context.draw(anonymousSavedMessagesDarkIcon.cgImage!, in: CGRect(origin: CGPoint(x: floor((bounds.size.width - anonymousSavedMessagesDarkIcon.size.width) / 2.0), y: floor((bounds.size.height - anonymousSavedMessagesDarkIcon.size.height) / 2.0)), size: anonymousSavedMessagesDarkIcon.size))
                         }
                     } else {
-                        if let anonymousSavedMessagesIcon = anonymousSavedMessagesIcon {
-                            context.draw(anonymousSavedMessagesIcon.cgImage!, in: CGRect(origin: CGPoint(x: floor((bounds.size.width - anonymousSavedMessagesIcon.size.width) / 2.0), y: floor((bounds.size.height - anonymousSavedMessagesIcon.size.height) / 2.0)), size: anonymousSavedMessagesIcon.size))
+                        if let anonymousSavedMessagesIcon = anonymousSavedMessagesIcon, let cgImage = anonymousSavedMessagesIcon.cgImage {
+                            context.draw(cgImage, in: CGRect(origin: CGPoint(x: floor((bounds.size.width - anonymousSavedMessagesIcon.size.width) / 2.0), y: floor((bounds.size.height - anonymousSavedMessagesIcon.size.height) / 2.0)), size: anonymousSavedMessagesIcon.size))
                         }
                     }
                 } else if case .myNotesIcon = parameters.icon {

@@ -1032,7 +1032,6 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             if #available(iOS 10.3, *) {
                 let icons = [
                     PresentationAppIcon(name: "SGDefault", imageName: "SGDefault", isDefault: true),
-                    PresentationAppIcon(name: "SGDay", imageName: "SGDay"),
                     PresentationAppIcon(name: "SGBlack", imageName: "SGBlack"),
                     PresentationAppIcon(name: "SGNight", imageName: "SGNight"),
                     PresentationAppIcon(name: "SGSky", imageName: "SGSky"),
@@ -1045,8 +1044,6 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                     PresentationAppIcon(name: "SGWhite", imageName: "SGWhite"),
                     PresentationAppIcon(name: "SGSparkling", imageName: "SGSparkling"),
                     PresentationAppIcon(name: "SGLegacy", imageName: "SGLegacy"),
-                    PresentationAppIcon(name: "SGPro", imageName: "SGPro"),
-                    PresentationAppIcon(name: "SGDucky", imageName: "SGDucky"),
                     PresentationAppIcon(name: "SGBeta", imageName: "SGBeta")
                 ]
                 return icons

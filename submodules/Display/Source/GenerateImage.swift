@@ -323,9 +323,11 @@ public func generateTintedImage(image: UIImage?, color: UIColor, backgroundColor
         context.translateBy(x: imageRect.midX, y: imageRect.midY)
         context.scaleBy(x: flipHorizontally ? -1.0 : 1.0, y: -1.0)
         context.translateBy(x: -imageRect.midX, y: -imageRect.midY)
-        context.clip(to: imageRect, mask: image.cgImage!)
-        context.setFillColor(color.cgColor)
-        context.fill(imageRect)
+        if let cgImage = image.cgImage {
+            context.clip(to: imageRect, mask: cgImage)
+            context.setFillColor(color.cgColor)
+            context.fill(imageRect)
+        }
         context.restoreGState()
     }
     

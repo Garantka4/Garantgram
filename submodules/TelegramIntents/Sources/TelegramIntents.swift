@@ -23,8 +23,8 @@ private let savedMessagesAvatar: UIImage = {
         context.scaleBy(x: factor, y: -factor)
         context.translateBy(x: -size.width / 2.0, y: -size.height / 2.0)
         
-        if let savedMessagesIcon = generateTintedImage(image: UIImage(bundleImageName: "Avatar/SavedMessagesIcon"), color: .white) {
-            context.draw(savedMessagesIcon.cgImage!, in: CGRect(origin: CGPoint(x: floor((size.width - savedMessagesIcon.size.width) / 2.0), y: floor((size.height - savedMessagesIcon.size.height) / 2.0)), size: savedMessagesIcon.size))
+        if let savedMessagesIcon = generateTintedImage(image: UIImage(bundleImageName: "Avatar/SavedMessagesIcon"), color: .white), let cgImage = savedMessagesIcon.cgImage {
+            context.draw(cgImage, in: CGRect(origin: CGPoint(x: floor((size.width - savedMessagesIcon.size.width) / 2.0), y: floor((size.height - savedMessagesIcon.size.height) / 2.0)), size: savedMessagesIcon.size))
         }
     })!
 }()

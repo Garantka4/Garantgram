@@ -36,8 +36,18 @@ class ShareRootController: UIViewController {
             let languagesCategory = "ios"
             
             let appGroupName = "group.\(baseAppBundleId)"
-            try! PasscodeEnvironment.shared.configure(PasscodeConfiguration(appGroupIdentifier: appGroupName, processRole: .appExtension))
-            let maybeAppGroupUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName)
+            do {
+                try PasscodeEnvironment.shared.configure(PasscodeConfiguration(appGroupIdentifier: appGroupName, processRole: .appExtension))
+            } catch {
+                try? PasscodeEnvironment.shared.configure(PasscodeConfiguration(appGroupIdentifier: appGroupName, processRole: .appExtension), privateAccessGroup: { nil })
+            }
+            let maybeAppGroupUrl: URL? = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName) ?? {
+                let docUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("AppGroup")
+                if let docUrl = docUrl {
+                    try? FileManager.default.createDirectory(at: docUrl, withIntermediateDirectories: true, attributes: nil)
+                }
+                return docUrl
+            }()
             
             guard let appGroupUrl = maybeAppGroupUrl else {
                 return

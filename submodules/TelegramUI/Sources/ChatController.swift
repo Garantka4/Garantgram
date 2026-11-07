@@ -4953,7 +4953,9 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
                         }, sendMessagesWithSignals: { [weak self] signals, _, _, _ in
                             if let strongSelf = self {
                                 strongSelf.interfaceInteraction?.setupEditMessage(messageId, { _ in })
-                                strongSelf.editMessageMediaWithLegacySignals(signals!)
+                                if let signals {
+                                    strongSelf.editMessageMediaWithLegacySignals(signals)
+                                }
                             }
                         }, present: { [weak self] c, a in
                             self?.present(c, in: .window(.root), with: a)
@@ -9363,7 +9365,11 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
             }
         }
         
-        self.enqueueMediaMessageDisposable.set((legacyAssetPickerEnqueueMessages(context: self.context, account: self.context.account, signals: signals!, originalMediaReference: originalMediaReference)
+        guard let signals else {
+            completionImpl?()
+            return
+        }
+        self.enqueueMediaMessageDisposable.set((legacyAssetPickerEnqueueMessages(context: self.context, account: self.context.account, signals: signals, originalMediaReference: originalMediaReference)
         |> deliverOnMainQueue).startStrict(next: { [weak self] items in
             guard let strongSelf = self else {
                 return

@@ -240,7 +240,8 @@ extension PeerInfoScreenNode {
                         })
                     }, sendMessagesWithSignals: { [weak self] signals, silentPosting, scheduleTime, _ in
                         if let strongSelf = self {
-                            strongSelf.enqueueMediaMessageDisposable.set((legacyAssetPickerEnqueueMessages(context: strongSelf.context, account: strongSelf.context.account, signals: signals!)
+                            guard let signals else { return }
+                            strongSelf.enqueueMediaMessageDisposable.set((legacyAssetPickerEnqueueMessages(context: strongSelf.context, account: strongSelf.context.account, signals: signals)
                             |> deliverOnMainQueue).startStrict(next: { [weak self] messages in
                                 if let strongSelf = self {
                                     let effectiveScheduleTime = scheduleTime == 0 ? nil : scheduleTime

@@ -395,8 +395,7 @@ public func legacyAssetPickerEnqueueMessages(
                             if let thumbnail = thumbnail {
                                 let resource = LocalFileMediaResource(fileId: Int64.random(in: Int64.min ... Int64.max))
                                 let thumbnailSize = thumbnail.size.aspectFitted(CGSize(width: 320.0, height: 320.0))
-                                let thumbnailImage = TGScaleImageToPixelSize(thumbnail, thumbnailSize)!
-                                if let thumbnailData = thumbnailImage.jpegData(compressionQuality: 0.4) {
+                                if let thumbnailImage = TGScaleImageToPixelSize(thumbnail, thumbnailSize), let thumbnailData = thumbnailImage.jpegData(compressionQuality: 0.4) {
                                     TelegramEngine(account: account).resources.storeResourceData(id: EngineMediaResource.Id(resource.id), data: thumbnailData)
                                     representations.append(TelegramMediaImageRepresentation(dimensions: PixelDimensions(thumbnailSize), resource: resource, progressiveSizes: [], immediateThumbnailData: nil, hasVideo: false, isPersonal: false))
                                 }
