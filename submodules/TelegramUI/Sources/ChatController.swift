@@ -9366,7 +9366,7 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
         }
         
         guard let signals else {
-            completionImpl?()
+            completion()
             return
         }
         self.enqueueMediaMessageDisposable.set((legacyAssetPickerEnqueueMessages(context: self.context, account: self.context.account, signals: signals, originalMediaReference: originalMediaReference)
