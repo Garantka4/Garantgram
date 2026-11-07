@@ -10,7 +10,7 @@
 <br/>
 
 [![Latest Release](https://img.shields.io/github/v/release/Garantka4/Garantgram?color=34C759&label=Latest%20Release&logo=apple&style=for-the-badge)](https://github.com/Garantka4/Garantgram/releases/latest)
-[![Platform](https://img.shields.io/badge/Platform-iOS%2015.0%2B-000000?style=for-the-badge&logo=apple)](https://github.com/Garantka4/Garantgram)
+[![Platform](https://img.shields.io/badge/Platform-iOS%2016.0%2B-000000?style=for-the-badge&logo=apple)](https://github.com/Garantka4/Garantgram)
 [![License](https://img.shields.io/badge/License-GPL--2.0-blue?style=for-the-badge)](LICENSE)
 [![Ghost Mode](https://img.shields.io/badge/Ghost%20Mode-100%25%20Active-34C759?style=for-the-badge&logo=ghost)](https://github.com/Garantka4/Garantgram)
 [![Ad Free](https://img.shields.io/badge/Ads-100%25%20Blocked-red?style=for-the-badge)](https://github.com/Garantka4/Garantgram)
@@ -58,12 +58,11 @@
 
 ## 📲 Как установить Garantgram на iPhone / iPad
 
-Готовый файл **`Garantgram.ipa`** всегда доступен в разделе **[Releases](../../releases/latest)**.
+Готовый файл **`Garantgram.ipa`** всегда доступен в разделе **[Releases](https://github.com/Garantka4/Garantgram/releases/latest)**.
 
 | Способ | Нужен ПК? | Срок работы | Сложность |
 | :--- | :---: | :---: | :---: |
-| **Sideloadly** | 💻 Да | 7 дней (автообновление) | 🟢 Простая |
-| **AltStore / SideStore** | 💻 Один раз | 7 дней | 🟡 Средняя |
+| **Sideloadly** | 💻 Да | 7 дней (автообновление по Wi-Fi) | 🟢 Простая |
 | **Scarlet / ESign** | 📱 Нет | До отзыва сертификата | 🟢 Очень простая |
 
 <details>
@@ -71,7 +70,7 @@
 
 1. Скачайте бесплатную программу [Sideloadly](https://sideloadly.io/) на компьютер (Windows / macOS).
 2. Подключите iPhone проводом к компьютеру и запустите Sideloadly.
-3. Скачайте свежий [Garantgram.ipa](../../releases/latest/download/Garantgram.ipa).
+3. Скачайте свежий [Garantgram.ipa](https://github.com/Garantka4/Garantgram/releases/latest/download/Garantgram.ipa).
 4. Перетащите файл Garantgram.ipa в окно Sideloadly.
 5. Укажите свой Apple ID и нажмите кнопку **Start**.
 6. **Доверие сертификату**: После установки откройте на iPhone: *Настройки → Основные → VPN и управление устройством*, выберите свой Apple ID и нажмите **«Доверять»**.
@@ -84,13 +83,15 @@
 </details>
 
 <details>
-<summary><b>📱 Инструкция 2: Установка без ПК через Scarlet / ESign</b></summary>
+<summary><b>📱 Инструкция 2: Установка без ПК через Scarlet / ESign (Прямо с телефона)</b></summary>
 
 1. Откройте в Safari сайт установщика (например, [usescarlet.com](https://usescarlet.com/)).
-2. Установите Scarlet по прямому бесплатному сертификату.
-3. Скачайте [Garantgram.ipa](../../releases/latest/download/Garantgram.ipa) на iPhone.
-4. Откройте Scarlet, нажмите кнопку импорта в правом верхнем углу и выберите скачанный `.ipa`.
-5. Дождитесь завершения установки приложения на домашний экран.
+2. Нажмите **Install** и подтвердите установку Scarlet по прямому сертификату.
+3. Перейдите в: *Настройки → Основные → VPN и управление устройством* и подтвердите доверие появившемуся сертификату.
+4. Скачайте свежий [Garantgram.ipa](https://github.com/Garantka4/Garantgram/releases/latest/download/Garantgram.ipa) в Safari.
+5. Откройте Scarlet, нажмите кнопку импорта в правом верхнем углу и выберите скачанный Garantgram.ipa.
+6. Дождитесь завершения установки приложения на экран «Домой».
+7. *(Если не был включен ранее)* Включите **«Режим разработчика»** в: *Настройки → Конфиденциальность и безопасность → Режим разработчика*.
 </details>
 
 ---

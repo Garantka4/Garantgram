@@ -1,40 +1,34 @@
 ---
-name: "\U0001F41E Bug Report"
-about: "Report a bug if something isn't working as expected in Telegram Messenger for iOS."
-title: ""
+name: "🐛 Сообщить об ошибке"
+about: "Сообщить о баге или проблеме в работе Garantgram для iOS."
+title: "[BUG] "
 labels: bug
 assignees: ""
 ---
 
-<!-- Thanks for reporting issues of Telegram Messenger for iOS! 
-This is a bug report template. Please, be as descriptive as possible. Issues lacking detail, or for any other reason than to report a bug, may be closed without action.
+### Чеклист перед созданием
+- [ ] Я проверил(а), что проблема воспроизводится на последней версии Garantgram
+- [ ] Я проверил(а) список открытых [Issues](https://github.com/Garantka4/Garantgram/issues), такого обращения ещё нет
 
-First, complete the checklist by replacing the empty checkboxes [] with checked ones [x]. -->
+### Описание проблемы
+Кратко и понятно опишите, что пошло не так.
 
-### Checklist
-- [ ] I am reporting an issue in existing functionality that does not work as intended
-- [ ] I've searched for existing [GitHub issues](https://github.com/telegrammessenger/Telegram-iOS/issues)
+### Ожидаемое поведение
+Как функция должна работать правильно.
 
-### Description
-Describe the issue that you are experiencing
+### Фактическое поведение
+Что происходит на самом деле.
 
-### Expected Behavior
-Tell us what should happen
+### Шаги для воспроизведения
+1. Открыть...
+2. Нажать на...
+3. Увидеть ошибку...
 
-### Actual Behavior
-Tell us what happens instead
+### Скриншоты или запись экрана
+Прикрепите скриншот или видео, если это наглядно демонстрирует баг.
 
-### Steps to Reproduce
-1. 
-2. 
-3. 
-
-### Screenshots and Videos 
-Remove, if not applicable
-
-### Environment
-**Device:** `iPhone/iPad X`
-
-**iOS version**: `13.X`
-
-**App version:** `7.X`
+### Окружение
+- **Модель устройства:** `iPhone ...`
+- **Версия iOS:** `iOS 16 / 17 / 18`
+- **Версия Garantgram:** `13.1.1`
+- **Способ установки:** `Sideloadly / Scarlet / ESign`
