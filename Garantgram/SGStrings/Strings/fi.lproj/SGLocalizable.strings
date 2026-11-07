@@ -207,7 +207,7 @@
 "PayWall.AppIcons.Notice" = "Mukauta Garantgramin ulkoasu aloitusnäytölläsi.";
 
 "PayWall.About.Title" = "Tietoja Garantgram Prosta";
-"PayWall.About.Notice" = "Garantgramin ilmainen versio tarjoaa kymmeniä ominaisuuksia ja parannuksia Telegram-sovellukseen verrattuna. Innovointi ja Garantgramin synkronointi kuukausittaisiin Telegram-päivityksiin vaatii valtavasti aikaa ja kallista laitteistoa.\n\nGarantgram on avoimen lähdekoodin sovellus, joka kunnioittaa yksityisyyttäsi eikä vaivaa sinua mainoksilla. Tilatessasi Garantgram Prota saat pääsyn eksklusiivisiin ominaisuuksiin ja tuet itsenäistä kehittäjää.\n\n- @Kylmakalle";
+"PayWall.About.Notice" = "Garantgramin ilmainen versio tarjoaa kymmeniä ominaisuuksia ja parannuksia Telegram-sovellukseen verrattuna. Innovointi ja Garantgramin synkronointi kuukausittaisiin Telegram-päivityksiin vaatii valtavasti aikaa ja kallista laitteistoa.\n\nGarantgram on avoimen lähdekoodin sovellus, joka kunnioittaa yksityisyyttäsi eikä vaivaa sinua mainoksilla. Tilatessasi Garantgram Prota saat pääsyn eksklusiivisiin ominaisuuksiin ja tuet itsenäistä kehittäjää.\n\n- @garantgram_ios";
 
 "PayWall.RestorePurchases" = "Palauta ostot";
 "PayWall.Terms" = "Käyttöehdot";

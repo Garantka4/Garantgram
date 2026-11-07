@@ -14,11 +14,16 @@
 [![License](https://img.shields.io/badge/License-GPL--2.0-blue?style=for-the-badge)](LICENSE)
 [![Ghost Mode](https://img.shields.io/badge/Ghost%20Mode-100%25%20Active-34C759?style=for-the-badge&logo=ghost)](https://github.com/Garantka4/Garantgram)
 [![Ad Free](https://img.shields.io/badge/Ads-100%25%20Blocked-red?style=for-the-badge)](https://github.com/Garantka4/Garantgram)
+[![Telegram](https://img.shields.io/badge/Telegram-@garantgram__ios-2BA6E1?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/garantgram_ios)
 
 <br/>
 
 <a href="https://github.com/Garantka4/Garantgram/releases/latest/download/Garantgram.ipa">
   <img src="https://img.shields.io/badge/⬇️_СКАЧАТЬ_GARANTGRAM.IPA-34C759?style=for-the-badge&labelColor=1a1a1a&color=34C759" height="42" />
+</a>
+&nbsp;&nbsp;
+<a href="https://t.me/garantgram_ios">
+  <img src="https://img.shields.io/badge/📢_TELEGRAM_КАНАЛ-2BA6E1?style=for-the-badge&labelColor=1a1a1a&color=2BA6E1" height="42" />
 </a>
 
 <br/><br/>

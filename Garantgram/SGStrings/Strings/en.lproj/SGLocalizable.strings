@@ -243,9 +243,9 @@
 "PayWall.About.Title" = "About Garantgram Pro";
 "PayWall.About.Notice" = "Free version of Garantgram provides dozens of features and improvements over Telegram app. Innovating and keeping Garantgram in sync with monthly Telegram updates is a huge effort that requires a lot of time and expensive hardware.\n\nGarantgram is an open-source app that respects your privacy and doesn't bother you with ads. Subscribing to Garantgram Pro you get access to exclusive features and support an independent developer.";
 /* DO NOT TRANSLATE */
-"PayWall.About.Signature" = "@Kylmakalle";
+"PayWall.About.Signature" = "@garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.SignatureURL" = "https://t.me/Kylmakalle";
+"PayWall.About.SignatureURL" = "https://t.me/garantgram_ios";
 
 "PayWall.ProSupport.Title" = "Troubles with payment?";
 "PayWall.ProSupport.Contact" = "No worries!";

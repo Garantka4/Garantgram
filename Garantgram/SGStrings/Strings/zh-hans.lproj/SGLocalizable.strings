@@ -217,11 +217,11 @@
 "PayWall.AppIcons.Notice" = "自定义 Garantgram 在主屏幕上的外观。";
 
 "PayWall.About.Title" = "关于 Garantgram Pro";
-"PayWall.About.Notice" = "Garantgram 的免费版本提供超过 Telegram 应用的多个功能和改进。创新并保持 Garantgram 与每月的 Telegram 更新同步是一项庞大的工作，需要耗费大量的时间和昂贵的硬件。\n\nGarantgram 是一个开源应用，尊重您的隐私，并且不打扰您广告。订阅 Garantgram Pro，您将获得独享特性并支持独立开发者。\n\n- @Kylmakalle";
+"PayWall.About.Notice" = "Garantgram 的免费版本提供超过 Telegram 应用的多个功能和改进。创新并保持 Garantgram 与每月的 Telegram 更新同步是一项庞大的工作，需要耗费大量的时间和昂贵的硬件。\n\nGarantgram 是一个开源应用，尊重您的隐私，并且不打扰您广告。订阅 Garantgram Pro，您将获得独享特性并支持独立开发者。\n\n- @garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.Signature" = "@Kylmakalle";
+"PayWall.About.Signature" = "@garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.SignatureURL" = "https://t.me/Kylmakalle";
+"PayWall.About.SignatureURL" = "https://t.me/garantgram_ios";
 
 "PayWall.ProSupport.Title" = "支付问题？";
 "PayWall.ProSupport.Contact" = "不用担心！";

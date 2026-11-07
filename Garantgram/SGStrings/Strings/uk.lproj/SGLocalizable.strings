@@ -213,11 +213,11 @@
 "PayWall.AppIcons.Notice" = "Налаштуйте вигляд Garantgram на вашому домашньому екрані.";
 
 "PayWall.About.Title" = "Про Garantgram Pro";
-"PayWall.About.Notice" = "Безкоштовна версія Garantgram надає десятки функцій та покращень у порівнянні з додатком Telegram. Інновації та підтримка Garantgram в актуальному стані з місячними оновленнями Telegram потребує величезних зусиль, що вимагають багато часу та дорогого обладнання.\n\nGarantgram — це додаток з відкритим кодом, який поважає вашу конфіденційність і не турбує вас рекламою. Підписуючись на Garantgram Pro, ви отримуєте доступ до ексклюзивних функцій і підтримуєте незалежного розробника.\n\n- @Kylmakalle";
+"PayWall.About.Notice" = "Безкоштовна версія Garantgram надає десятки функцій та покращень у порівнянні з додатком Telegram. Інновації та підтримка Garantgram в актуальному стані з місячними оновленнями Telegram потребує величезних зусиль, що вимагають багато часу та дорогого обладнання.\n\nGarantgram — це додаток з відкритим кодом, який поважає вашу конфіденційність і не турбує вас рекламою. Підписуючись на Garantgram Pro, ви отримуєте доступ до ексклюзивних функцій і підтримуєте незалежного розробника.\n\n- @garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.Signature" = "@Kylmakalle";
+"PayWall.About.Signature" = "@garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.SignatureURL" = "https://t.me/Kylmakalle";
+"PayWall.About.SignatureURL" = "https://t.me/garantgram_ios";
 
 "PayWall.ProSupport.Title" = "Проблеми з оплатою?";
 "PayWall.ProSupport.Contact" = "Не хвилюйтеся!";

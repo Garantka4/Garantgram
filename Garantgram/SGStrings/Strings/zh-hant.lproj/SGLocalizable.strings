@@ -219,9 +219,9 @@
 "PayWall.About.Title" = "關於 Garantgram Pro";
 "PayWall.About.Notice" = "Garantgram 免費版本提供比 Telegram 應用更多的功能和改進。創新和保持 Garantgram 與 Telegram 更新同步是一項巨大的努力，需要大量的時間和昂貴的硬體。\n\nGarantgram 是一個尊重您隱私且不會打擾您廣告的開源應用。訂閱 Garantgram Pro，您可以訪問獨家功能並支持獨立開發者。";
 /* DO NOT TRANSLATE */
-"PayWall.About.Signature" = "@Kylmakalle";
+"PayWall.About.Signature" = "@garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.SignatureURL" = "https://t.me/Kylmakalle";
+"PayWall.About.SignatureURL" = "https://t.me/garantgram_ios";
 
 "PayWall.ProSupport.Title" = "支付問題？";
 "PayWall.ProSupport.Contact" = "不用擔心！";

@@ -234,9 +234,9 @@
 "PayWall.About.Title" = "Sobre o Garantgram Pro";
 "PayWall.About.Notice" = "A versão gratuita do Garantgram oferece dezenas de recursos e melhorias em relação ao aplicativo Telegram. Inovar e manter o Garantgram em sincronia com as atualizações mensais do Telegram é um grande esforço que requer muito tempo e hardware caro.\n\nO Garantgram é um aplicativo de código aberto que respeita sua privacidade e não incomoda você com anúncios. Ao se inscrever no Garantgram Pro, você obtém acesso a recursos exclusivos e apoia um desenvolvedor independente.";
 /* DO NOT TRANSLATE */
-"PayWall.About.Signature" = "@Kylmakalle";
+"PayWall.About.Signature" = "@garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.SignatureURL" = "https://t.me/Kylmakalle";
+"PayWall.About.SignatureURL" = "https://t.me/garantgram_ios";
 
 "PayWall.ProSupport.Title" = "Problemas com pagamento?";
 "PayWall.ProSupport.Contact" = "Não se preocupe!";

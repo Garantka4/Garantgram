@@ -216,9 +216,9 @@
 "PayWall.About.Title" = "Garantgram Proについて";
 "PayWall.About.Notice" = "Garantgramの無料版は、Telegramアプリ上で数十の機能と改善を提供します。 毎月のTelegramのアップデートとGarantgramの同期を革新し、維持することは多くの時間と高価なハードウェアを必要とする膨大な努力です。\n\nGarantgramはプライバシーを尊重し、広告を気にしないオープンソースのアプリです。 Garantgram Proに登録すると、排他的な機能にアクセスでき、独立した開発者をサポートできます。";
 /* DO NOT TRANSLATE */
-"PayWall.About.Signature" = "@Kylmakalle";
+"PayWall.About.Signature" = "@garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.SignatureURL" = "https://t.me/Kylmakalle";
+"PayWall.About.SignatureURL" = "https://t.me/garantgram_ios";
 
 "PayWall.ProSupport.Title" = "お支払いに問題がありますか？";
 "PayWall.ProSupport.Contact" = "心配ないさ！";

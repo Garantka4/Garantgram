@@ -237,9 +237,9 @@
 "PayWall.About.Title" = "О Garantgram Pro";
 "PayWall.About.Notice" = "Бесплатная версия Garantgram предлагает десятки функций и улучшений по сравнению с приложением Telegram. Новые функции и синхронизация Garantgram с ежемесячными обновлениями Telegram — это огромные усилия, требующие много времени и дорогой техники.\n\nGarantgram — это приложение с открытым исходным кодом, которое уважает вашу конфиденциальность и не беспокоит вас рекламой. Подписываясь на Garantgram Pro, вы получаете доступ к эксклюзивным функциям и поддерживаете независимого разработчика.";
 /* DO NOT TRANSLATE */
-"PayWall.About.Signature" = "@Kylmakalle";
+"PayWall.About.Signature" = "@garantgram_ios";
 /* DO NOT TRANSLATE */
-"PayWall.About.SignatureURL" = "https://t.me/Kylmakalle";
+"PayWall.About.SignatureURL" = "https://t.me/garantgram_ios";
 
 "PayWall.ProSupport.Title" = "Проблемы с оплатой?";
 "PayWall.ProSupport.Contact" = "Не беда!";
