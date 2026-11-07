@@ -1190,10 +1190,16 @@ public final class CoreVirtualListView: UIView {
         guard hasItems || hasNewSize || hasNewInsets || hasScrollTo || hasDirty
                 || hasDirtyAttachments || hasAdditionalScrollDistance else { return }
 
-        if let newItems, let duplicate = Self.firstDuplicatePair(in: newItems) {
-            preconditionFailure(
-                "applyChanges: items must be mutually unique by identity. Duplicate at indices \(duplicate.first) and \(duplicate.second)."
-            )
+        var newItems = newItems
+        if let items = newItems, let _ = Self.firstDuplicatePair(in: items) {
+            var seen = Set<AnyHashable>()
+            var uniqueItems: [CoreListItem] = []
+            for item in items {
+                if seen.insert(item.identity).inserted {
+                    uniqueItems.append(item)
+                }
+            }
+            newItems = uniqueItems
         }
 
         if activeWindow.isEmpty, let newSize { logicalSize = newSize }

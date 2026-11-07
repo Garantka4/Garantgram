@@ -955,6 +955,16 @@ final class CoreListChatHistoryBackend: ASDisplayNode, ChatHistoryListViewBacken
                     updated[update.index] = CoreListEntryItem(stableId: update.stableId, stableVersion: stableVersion, listItem: update.item, backend: self, leftInset: self.currentInsets.left, rightInset: self.currentInsets.right)
                 }
             }
+            // Deduplicate updated entries by stableId to prevent duplicate identities
+            var seenStableIds = Set<UInt64>()
+            var uniqueEntries: [CoreListEntryItem] = []
+            for entry in updated {
+                if seenStableIds.insert(entry.stableId).inserted {
+                    uniqueEntries.append(entry)
+                }
+            }
+            updated = uniqueEntries
+
             // Neighbors are a function of final adjacency, so they are computed once the array has
             // settled rather than per-operation. Same index bases as ListView.neighbors(at:) — the
             // backend feeds items in ListView index order.

@@ -94,6 +94,10 @@ public enum ChatHistoryEntry: Identifiable, Comparable {
             switch infoData {
             case .newThreadInfo:
                 return UInt64(7) << 40
+            case let .userInfo(peer, _, _, _, _):
+                return (UInt64(8) << 40) | (UInt64(peer.id.id._internalGetInt64Value() & 0xFFFFFFFF))
+            case .botInfo:
+                return UInt64(6) << 40
             default:
                 return UInt64(6) << 40
             }   
