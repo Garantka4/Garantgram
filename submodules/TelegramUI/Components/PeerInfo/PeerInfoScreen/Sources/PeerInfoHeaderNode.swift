@@ -1308,7 +1308,7 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                         let (statusText, _) = stringAndActivityForUserPresence(strings: presentationData.strings, dateTimeFormat: presentationData.dateTimeFormat, presence: EnginePeer.Presence(TelegramUserPresence(status: .present(until: lastSeen), lastActivity: lastSeen)), relativeTo: now, expanded: true)
                         subtitleStringText = statusText
                     } else {
-                        subtitleStringText = presentationData.strings.LastSeen_Recently
+                        subtitleStringText = presentationData.strings.LastSeen_Lately
                     }
                 } else {
                     subtitleStringText = presentationData.strings.Presence_online
