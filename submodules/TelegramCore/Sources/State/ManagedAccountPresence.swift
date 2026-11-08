@@ -44,8 +44,16 @@ private final class AccountPresenceManagerImpl {
     }
     
     private func updatePresence(_ isOnline: Bool) {
+        if SGSimpleSettings.shared.ghostModeOnline {
+            self.onlineTimer?.invalidate()
+            self.onlineTimer = nil
+            self.currentRequestDisposable.set(nil)
+            self.isPerformingUpdate.set(false)
+            return
+        }
+        
         let request: Signal<Api.Bool, MTRpcError>
-        if isOnline && !SGSimpleSettings.shared.ghostModeOnline {
+        if isOnline {
             let timer = SignalKitTimer(timeout: 30.0, repeat: false, completion: { [weak self] in
                 guard let strongSelf = self else {
                     return
@@ -58,12 +66,6 @@ private final class AccountPresenceManagerImpl {
         } else {
             self.onlineTimer?.invalidate()
             self.onlineTimer = nil
-            if SGSimpleSettings.shared.ghostModeOnline {
-                let now = Int32(Date().timeIntervalSince1970)
-                if SGSimpleSettings.shared.ghostModeLastSeenTimestamp == 0 || (now - SGSimpleSettings.shared.ghostModeLastSeenTimestamp) > 300 {
-                    SGSimpleSettings.shared.ghostModeLastSeenTimestamp = now - 60
-                }
-            }
             request = self.network.request(Api.functions.account.updateStatus(offline: .boolTrue))
         }
         self.isPerformingUpdate.set(true)
