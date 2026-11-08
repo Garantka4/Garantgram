@@ -201,7 +201,7 @@ public final class PeerSelectionControllerImpl: ViewController, PeerSelectionCon
         }
         
         if params.hasFilters {
-            self._ready.set(.never())
+            self._ready.set(self.peerSelectionNode.ready |> timeout(0.25, queue: .mainQueue(), alternate: .single(true)))
             
             self.tabContainerNode = ChatListFilterTabContainerNode(context: self.context)
             self.reloadFilters()
@@ -447,6 +447,8 @@ public final class PeerSelectionControllerImpl: ViewController, PeerSelectionCon
         
         if !self.hasFilters {
             self._ready.set(self.peerSelectionNode.ready)
+        } else {
+            self._ready.set(self.peerSelectionNode.ready |> timeout(0.25, queue: .mainQueue(), alternate: .single(true)))
         }
     }
     
@@ -592,17 +594,18 @@ public final class PeerSelectionControllerImpl: ViewController, PeerSelectionCon
             strongSelf.peerSelectionNode.mainContainerNode?.updateAvailableFilters(availableFilters, limit: filtersLimit)
             
             if let mainContainerNode = strongSelf.peerSelectionNode.mainContainerNode {
+                let readySignal = (mainContainerNode.currentItemNode.ready |> timeout(0.25, queue: .mainQueue(), alternate: .single(true)))
                 if isPremium == nil && items.isEmpty {
-                    strongSelf.ready.set(mainContainerNode.currentItemNode.ready)
+                    strongSelf.ready.set(readySignal)
                 } else if !strongSelf.initializedFilters {
                     if selectedEntryId != mainContainerNode.currentItemFilter {
                         mainContainerNode.switchToFilter(id: selectedEntryId, animated: false, completion: { [weak self] in
                             if let strongSelf = self {
-                                strongSelf.ready.set(mainContainerNode.currentItemNode.ready)
+                                strongSelf.ready.set(readySignal)
                             }
                         })
                     } else {
-                        strongSelf.ready.set(mainContainerNode.currentItemNode.ready)
+                        strongSelf.ready.set(readySignal)
                     }
                     strongSelf.initializedFilters = true
                 }

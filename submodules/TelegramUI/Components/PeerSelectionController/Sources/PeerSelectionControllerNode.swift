@@ -885,6 +885,10 @@ final class PeerSelectionControllerNode: ASDisplayNode {
 
         if let chatListNode = self.chatListNode {
             self.readyValue.set(chatListNode.ready)
+        } else if let mainContainerNode = self.mainContainerNode {
+            self.readyValue.set(mainContainerNode.ready)
+        } else {
+            self.readyValue.set(.single(true))
         }
     }
 

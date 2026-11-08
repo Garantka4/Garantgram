@@ -19,6 +19,7 @@ extension ChatControllerImpl {
         let _ = (self.context.engine.data.get(EngineDataMap(
             messageIds.map(TelegramEngine.EngineData.Item.Messages.Message.init)
         ))
+        |> timeout(0.3, queue: .mainQueue(), alternate: .single([:]))
         |> deliverOnMainQueue).startStandalone(next: { [weak self] messages in
             let sortedMessages = messages.values.compactMap { $0?._asMessage() }.sorted { lhs, rhs in
                 return lhs.id < rhs.id
@@ -461,8 +462,8 @@ extension ChatControllerImpl {
                                     }
                                     if !isChatPinnedMessages {
                                         maybeChat.updateChatPresentationInterfaceState(animated: false, interactive: true, { $0.updatedInterfaceState({ $0.withUpdatedForwardMessageIds(messages.map { $0.id }).withoutSelectionState() }) })
-                                        strongSelf.dismiss()
                                         strongController.dismiss()
+                                        let _ = navigationController.popToViewController(maybeChat, animated: true)
                                         return
                                     }
                                 }
@@ -497,9 +498,12 @@ extension ChatControllerImpl {
                                     strongSelf.controllerNavigationDisposable.set((chatController.ready.get()
                                     |> SwiftSignalKit.filter { $0 }
                                     |> take(1)
+                                    |> timeout(0.2, queue: .mainQueue(), alternate: .single(true))
                                     |> deliverOnMainQueue).startStrict(next: { [weak navigationController] _ in
-                                        viewControllers.removeAll(where: { $0 is PeerSelectionController })
-                                        navigationController?.setViewControllers(viewControllers, animated: true)
+                                        guard let navigationController = navigationController else { return }
+                                        var currentViewControllers = navigationController.viewControllers
+                                        currentViewControllers.removeAll(where: { $0 is PeerSelectionController })
+                                        navigationController.setViewControllers(currentViewControllers, animated: true)
                                     }))
                                 }
                             }
