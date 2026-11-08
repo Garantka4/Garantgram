@@ -61,15 +61,13 @@ jobs:
           chmod +x "$BAZEL_FILE"
           ls -lh "$BAZEL_DIR"
 
-          # Pre-cache rules_rust 0.74.0 to avoid GitHub CDN 504 timeouts
-          REPO_CACHE="/private/var/tmp/bazel_repo_cache/content_addressable/sha256/d8bcc1e111e98270dc03172e22ef7af9c2f94f3269801618a2b83d20890f8df5"
-          mkdir -p "$REPO_CACHE"
-          TMP_RR="/tmp/rules_rust_dl"
-          mkdir -p "$TMP_RR"
-          gh release download 0.74.0 --repo bazelbuild/rules_rust --pattern "rules_rust-0.74.0.tar.gz" --dir "$TMP_RR" --clobber
-          cp "$TMP_RR/rules_rust-0.74.0.tar.gz" "$REPO_CACHE/file"
-          chmod 644 "$REPO_CACHE/file"
-          ls -lh "$REPO_CACHE"
+          # Pre-download heavy dependencies into proxy cache
+          PROXY_CACHE="/tmp/bazel_gh_proxy_cache"
+          mkdir -p "$PROXY_CACHE"
+          gh release download 0.74.0 --repo bazelbuild/rules_rust --pattern "rules_rust-0.74.0.tar.gz" --dir "$PROXY_CACHE/rules_rust" --clobber || true
+          if [ -f "$PROXY_CACHE/rules_rust/rules_rust-0.74.0.tar.gz" ]; then
+            cp "$PROXY_CACHE/rules_rust/rules_rust-0.74.0.tar.gz" "$PROXY_CACHE/bazelbuild_rules_rust_0.74.0_rules_rust-0.74.0.tar.gz"
+          fi
 
       - name: Build the App
         env:
@@ -77,11 +75,11 @@ jobs:
         run: |
           set -x
 
-          # start local mirror server for rules_rust downloader_config
-          pkill -f "http.server 8088" || true
-          python3 -m http.server 8088 --directory /tmp/rules_rust_dl &
+          # start local mirror proxy for Bazel downloads
+          pkill -f "bazel_proxy.py" || true
+          python3 build-system/bazel_proxy.py &
           sleep 2
-          curl -I http://127.0.0.1:8088/rules_rust-0.74.0.tar.gz || true
+          curl -I http://127.0.0.1:8088/proxy/bazelbuild/rules_cc/releases/download/0.2.20/rules_cc-0.2.20.tar.gz || true
 
           # source code paths are included in the final binary, so we need to make them stable across builds
           SOURCE_DIR=/Users/Shared/telegram-ios
