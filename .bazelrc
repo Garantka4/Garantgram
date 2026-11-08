@@ -1,3 +1,6 @@
+common --repository_cache=/private/var/tmp/bazel_repo_cache
+common --experimental_repository_downloader_retries=10
+
 build --action_env=ZERO_AR_DATE=1
 
 build --enable_platform_specific_config
