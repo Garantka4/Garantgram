@@ -1028,7 +1028,8 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
         // the only surface it has been built and verified against. `rotated` is `false` by default on
         // this initializer, so every other list built from it (the overlay audio player's playlist, the
         // shared-context message list, an embedded chat preview) keeps `ListViewImpl` without naming it.
-        var useCoreListBackend = rotated
+        // CoreList is experimental and causes crashes on history transactions; disable by default in favor of rock-solid ListViewImpl
+        var useCoreListBackend = false
         // The Debug Settings switch keeps its original meaning — force CoreList on — which after the
         // default flip is only reachable for the non-rotated lists above.
         if context.sharedContext.immediateExperimentalUISettings.coreListChatBackend {
