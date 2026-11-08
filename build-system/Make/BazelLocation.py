@@ -105,22 +105,30 @@ def locate_bazel(base_path, cache_host_or_path, cache_dir):
 
 
     if not os.path.isfile(bazel_path):
-        call_executable([
-            'curl',
-            '-L',
-            'https://github.com/bazelbuild/bazel/releases/download/{version}/{name}'.format(
-                version=versions.bazel_version,
-                name=bazel_name
-            ),
-            '--output',
-            bazel_path
-        ])
+        for attempt in range(5):
+            call_executable([
+                'curl',
+                '-L',
+                '--retry', '5',
+                '--retry-delay', '3',
+                '--retry-all-errors',
+                'https://github.com/bazelbuild/bazel/releases/download/{version}/{name}'.format(
+                    version=versions.bazel_version,
+                    name=bazel_name
+                ),
+                '--output',
+                bazel_path
+            ])
 
-        if os.path.isfile(bazel_path) and versions.bazel_version_sha256 is not None:
-            test_sha256 = calculate_sha256(bazel_path)
-            if test_sha256 != versions.bazel_version_sha256:
-                print(f"Bazel at {bazel_path} does not match SHA256 {versions.bazel_version_sha256}, removing")
-                os.remove(bazel_path)
+            if os.path.isfile(bazel_path) and versions.bazel_version_sha256 is not None:
+                test_sha256 = calculate_sha256(bazel_path)
+                if test_sha256 == versions.bazel_version_sha256:
+                    break
+                else:
+                    print(f"Bazel at {bazel_path} does not match SHA256 {versions.bazel_version_sha256} (got {test_sha256}), retrying ({attempt + 1}/5)...")
+                    os.remove(bazel_path)
+                    import time
+                    time.sleep(3)
 
         if resolved_cache_host is not None and versions.bazel_version_sha256 is not None:
             http_cache_host = transform_cache_host_into_http(resolved_cache_host)
