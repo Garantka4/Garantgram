@@ -1,3 +1,4 @@
+common --downloader_config=downloader.cfg
 common --repository_cache=/private/var/tmp/bazel_repo_cache
 common --experimental_repository_downloader_retries=10
 

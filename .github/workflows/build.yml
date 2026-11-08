@@ -77,6 +77,12 @@ jobs:
         run: |
           set -x
 
+          # start local mirror server for rules_rust downloader_config
+          pkill -f "http.server 8088" || true
+          python3 -m http.server 8088 --directory /tmp/rules_rust_dl &
+          sleep 2
+          curl -I http://127.0.0.1:8088/rules_rust-0.74.0.tar.gz || true
+
           # source code paths are included in the final binary, so we need to make them stable across builds
           SOURCE_DIR=/Users/Shared/telegram-ios
 
