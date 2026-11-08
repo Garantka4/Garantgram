@@ -105,28 +105,54 @@ def locate_bazel(base_path, cache_host_or_path, cache_dir):
 
 
     if not os.path.isfile(bazel_path):
-        for attempt in range(5):
-            call_executable([
-                'curl',
-                '-L',
-                '--retry', '5',
-                '--retry-delay', '3',
-                '--retry-all-errors',
-                'https://github.com/bazelbuild/bazel/releases/download/{version}/{name}'.format(
-                    version=versions.bazel_version,
-                    name=bazel_name
-                ),
-                '--output',
-                bazel_path
-            ])
+        gh_path = shutil.which('gh')
+        if gh_path:
+            try:
+                os.makedirs(os.path.dirname(bazel_path), exist_ok=True)
+                print(f"Downloading Bazel {versions.bazel_version} using gh release download...")
+                call_executable([
+                    gh_path,
+                    'release',
+                    'download',
+                    versions.bazel_version,
+                    '--repo', 'bazelbuild/bazel',
+                    '--pattern', bazel_name,
+                    '--dir', os.path.dirname(bazel_path),
+                    '--clobber'
+                ], check_result=False)
+            except Exception as e:
+                print(f"gh download failed: {e}")
 
-            if os.path.isfile(bazel_path) and versions.bazel_version_sha256 is not None:
-                test_sha256 = calculate_sha256(bazel_path)
-                if test_sha256 == versions.bazel_version_sha256:
-                    break
-                else:
-                    print(f"Bazel at {bazel_path} does not match SHA256 {versions.bazel_version_sha256} (got {test_sha256}), retrying ({attempt + 1}/5)...")
-                    os.remove(bazel_path)
+        if os.path.isfile(bazel_path) and versions.bazel_version_sha256 is not None:
+            test_sha256 = calculate_sha256(bazel_path)
+            if test_sha256 != versions.bazel_version_sha256:
+                print(f"Bazel at {bazel_path} does not match SHA256 {versions.bazel_version_sha256} (got {test_sha256}), removing")
+                os.remove(bazel_path)
+
+        if not os.path.isfile(bazel_path):
+            import urllib.request
+            url = 'https://github.com/bazelbuild/bazel/releases/download/{version}/{name}'.format(
+                version=versions.bazel_version,
+                name=bazel_name
+            )
+            for attempt in range(5):
+                try:
+                    print(f"Downloading Bazel from {url} via urllib (attempt {attempt + 1}/5)...")
+                    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'})
+                    with urllib.request.urlopen(req, timeout=120) as resp, open(bazel_path, 'wb') as out_f:
+                        shutil.copyfileobj(resp, out_f)
+                    if os.path.isfile(bazel_path) and versions.bazel_version_sha256 is not None:
+                        test_sha256 = calculate_sha256(bazel_path)
+                        if test_sha256 == versions.bazel_version_sha256:
+                            print(f"Successfully downloaded Bazel matching SHA256 {test_sha256}")
+                            break
+                        else:
+                            print(f"Bazel at {bazel_path} does not match SHA256 {versions.bazel_version_sha256} (got {test_sha256}), retrying...")
+                            os.remove(bazel_path)
+                except Exception as e:
+                    print(f"urllib download attempt {attempt + 1} failed: {e}")
+                    if os.path.isfile(bazel_path):
+                        os.remove(bazel_path)
                     import time
                     time.sleep(3)
 

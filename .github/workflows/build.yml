@@ -49,7 +49,21 @@ jobs:
           cp -R $GITHUB_WORKSPACE /Users/Shared/
           mv /Users/Shared/$(basename $GITHUB_WORKSPACE) /Users/Shared/telegram-ios
 
+      - name: Pre-download Bazel
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -x
+          BAZEL_DIR="/Users/Shared/telegram-ios/build-input"
+          mkdir -p "$BAZEL_DIR"
+          BAZEL_FILE="$BAZEL_DIR/bazel-9.2.0-darwin-arm64"
+          gh release download 9.2.0 --repo bazelbuild/bazel --pattern "bazel-9.2.0-darwin-arm64" --dir "$BAZEL_DIR" --clobber
+          chmod +x "$BAZEL_FILE"
+          ls -lh "$BAZEL_DIR"
+
       - name: Build the App
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -x
 
