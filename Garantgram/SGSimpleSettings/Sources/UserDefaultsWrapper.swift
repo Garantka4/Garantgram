@@ -21,7 +21,7 @@ public class UserDefault<T> /*where T: AllowedUserDefaultTypes*/ {
     public let key: String
     public let userDefaults: UserDefaults
     private var cachedValue: T?
-    private let lock = NSLock()
+    private let lock = NSRecursiveLock()
     
     public init(key: String, userDefaults: UserDefaults = .standard) {
         self.key = key
