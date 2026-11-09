@@ -129,6 +129,9 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
             |> distinctUntilChanged
             |> deliverOn(Queue.mainQueue())).startStrict(next: { value in
                 context.sharedContext.mainWindow?.setForceBadgeHidden(!value)
+                if !value {
+                    SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+                }
             })
             
             self.storyUploadEventsDisposable = (context.engine.messages.allStoriesUploadEvents()

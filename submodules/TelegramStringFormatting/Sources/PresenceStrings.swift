@@ -571,61 +571,72 @@ public func stringForStoryActivityTimestamp(strings: PresentationStrings, dateTi
     }
 }
 
+private func formatPresenceTimestamp(strings: PresentationStrings, dateTimeFormat: PresentationDateTimeFormat, statusTimestamp: Int32, relativeTo timestamp: Int32, expanded: Bool) -> (String, Bool) {
+    if statusTimestamp >= timestamp {
+        return (strings.Presence_online, true)
+    } else {
+        let difference = timestamp - statusTimestamp
+        if difference < 60 {
+            return (strings.LastSeen_JustNow, false)
+        } else if difference < 60 * 60 && !expanded {
+            let minutes = difference / 60
+            return (strings.LastSeen_MinutesAgo(minutes), false)
+        } else {
+            var t: time_t = time_t(statusTimestamp)
+            var timeinfo: tm = tm()
+            localtime_r(&t, &timeinfo)
+            
+            var now: time_t = time_t(timestamp)
+            var timeinfoNow: tm = tm()
+            localtime_r(&now, &timeinfoNow)
+            
+            if timeinfo.tm_year != timeinfoNow.tm_year {
+                return (strings.LastSeen_AtDate(stringForTimestamp(day: timeinfo.tm_mday, month: timeinfo.tm_mon + 1, year: timeinfo.tm_year, dateTimeFormat: dateTimeFormat)).string, false)
+            }
+            
+            let dayDifference = timeinfo.tm_yday - timeinfoNow.tm_yday
+            if dayDifference == 0 || dayDifference == -1 {
+                let day: RelativeTimestampFormatDay
+                if dayDifference == 0 {
+                    if expanded {
+                        day = .today
+                    } else {
+                        let minutes = difference / (60 * 60)
+                        return (strings.LastSeen_HoursAgo(minutes), false)
+                    }
+                } else {
+                    day = .yesterday
+                }
+                return (stringForUserPresence(strings: strings, day: day, dateTimeFormat: dateTimeFormat, hours: timeinfo.tm_hour, minutes: timeinfo.tm_min), false)
+            } else {
+                return (strings.LastSeen_AtDate(stringForTimestamp(day: timeinfo.tm_mday, month: timeinfo.tm_mon + 1, year: timeinfo.tm_year, dateTimeFormat: dateTimeFormat)).string, false)
+            }
+        }
+    }
+}
+
 public func stringAndActivityForUserPresence(strings: PresentationStrings, dateTimeFormat: PresentationDateTimeFormat, presence: EnginePeer.Presence, relativeTo timestamp: Int32, expanded: Bool = false) -> (String, Bool) {
     switch presence.status {
     case let .present(statusTimestamp):
-        if statusTimestamp >= timestamp {
-            return (strings.Presence_online, true)
-        } else {
-            let difference = timestamp - statusTimestamp
-            if difference < 60 {
-                return (strings.LastSeen_JustNow, false)
-            } else if difference < 60 * 60 && !expanded {
-                let minutes = difference / 60
-                return (strings.LastSeen_MinutesAgo(minutes), false)
-            } else {
-                var t: time_t = time_t(statusTimestamp)
-                var timeinfo: tm = tm()
-                localtime_r(&t, &timeinfo)
-                
-                var now: time_t = time_t(timestamp)
-                var timeinfoNow: tm = tm()
-                localtime_r(&now, &timeinfoNow)
-                
-                if timeinfo.tm_year != timeinfoNow.tm_year {
-                    return (strings.LastSeen_AtDate(stringForTimestamp(day: timeinfo.tm_mday, month: timeinfo.tm_mon + 1, year: timeinfo.tm_year, dateTimeFormat: dateTimeFormat)).string, false)
-                }
-                
-                let dayDifference = timeinfo.tm_yday - timeinfoNow.tm_yday
-                if dayDifference == 0 || dayDifference == -1 {
-                    let day: RelativeTimestampFormatDay
-                    if dayDifference == 0 {
-                        if expanded {
-                            day = .today
-                        } else {
-                            let minutes = difference / (60 * 60)
-                            return (strings.LastSeen_HoursAgo(minutes), false)
-                        }
-                    } else {
-                        day = .yesterday
-                    }
-                    return (stringForUserPresence(strings: strings, day: day, dateTimeFormat: dateTimeFormat, hours: timeinfo.tm_hour, minutes: timeinfo.tm_min), false)
-                } else {
-                    return (strings.LastSeen_AtDate(stringForTimestamp(day: timeinfo.tm_mday, month: timeinfo.tm_mon + 1, year: timeinfo.tm_year, dateTimeFormat: dateTimeFormat)).string, false)
-                }
-            }
-        }
-    case .recently:
+        return formatPresenceTimestamp(strings: strings, dateTimeFormat: dateTimeFormat, statusTimestamp: statusTimestamp, relativeTo: timestamp, expanded: expanded)
+    case .recently, .lastWeek, .lastMonth:
         let activeUntil = presence.lastActivity + 30
         if activeUntil >= timestamp {
             return (strings.Presence_online, true)
+        } else if presence.lastActivity > 0 {
+            return formatPresenceTimestamp(strings: strings, dateTimeFormat: dateTimeFormat, statusTimestamp: presence.lastActivity, relativeTo: timestamp, expanded: expanded)
         } else {
-            return (strings.LastSeen_Lately, false)
+            switch presence.status {
+            case .recently:
+                return (strings.LastSeen_Lately, false)
+            case .lastWeek:
+                return (strings.LastSeen_WithinAWeek, false)
+            case .lastMonth:
+                return (strings.LastSeen_WithinAMonth, false)
+            default:
+                return (strings.LastSeen_Lately, false)
+            }
         }
-    case .lastWeek:
-        return (strings.LastSeen_WithinAWeek, false)
-    case .lastMonth:
-        return (strings.LastSeen_WithinAMonth, false)
     case .longTimeAgo:
         return (strings.LastSeen_ALongTimeAgo, false)
     }

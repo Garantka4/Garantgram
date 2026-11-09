@@ -1302,13 +1302,15 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                 if SGSimpleSettings.shared.ghostModeOnline {
                     if let statusData = statusData, !statusData.text.isEmpty && statusData.text != presentationData.strings.Presence_online {
                         subtitleStringText = statusData.text
-                    } else if SGSimpleSettings.shared.ghostModeLastSeenTimestamp > 0 && (Int32(Date().timeIntervalSince1970) - SGSimpleSettings.shared.ghostModeLastSeenTimestamp) > 120 {
+                    } else {
                         let now = Int32(Date().timeIntervalSince1970)
-                        let lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
+                        var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
+                        if lastSeen == 0 || lastSeen > now {
+                            lastSeen = now - 60
+                            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
+                        }
                         let (statusText, _) = stringAndActivityForUserPresence(strings: presentationData.strings, dateTimeFormat: presentationData.dateTimeFormat, presence: EnginePeer.Presence(TelegramUserPresence(status: .present(until: lastSeen), lastActivity: lastSeen)), relativeTo: now, expanded: true)
                         subtitleStringText = statusText
-                    } else {
-                        subtitleStringText = presentationData.strings.LastSeen_Lately
                     }
                 } else {
                     subtitleStringText = presentationData.strings.Presence_online
