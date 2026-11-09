@@ -9,6 +9,7 @@ import AccountContext
 import UniversalMediaPlayer
 import TelegramAudio
 import TelegramPresentationData
+import SGSimpleSettings
 
 private struct AccountTasks {
     let stateSynchronization: Bool
@@ -782,7 +783,8 @@ public final class SharedWakeupManager {
                     account.shouldBeServiceTaskMaster.set(.single(.never))
                 }
                 account.shouldExplicitelyKeepWorkerConnections.set(.single(tasks.backgroundAudio || tasks.backgroundLocation || tasks.importantTasks.pendingStoryCount != 0 || tasks.importantTasks.pendingMessageCount != 0))
-                account.shouldKeepOnlinePresence.set(.single(primary && self.inForeground))
+                let shouldKeepOnline = primary && self.inForeground && !SGSimpleSettings.shared.ghostModeOnline
+                account.shouldKeepOnlinePresence.set(.single(shouldKeepOnline))
                 account.shouldKeepBackgroundDownloadConnections.set(.single(tasks.backgroundDownloads))
             }
             

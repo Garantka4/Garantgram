@@ -1159,7 +1159,8 @@ public final class Network: NSObject {
         }))
 
         self.isUserOnlineDisposable.set((self.isUserOnline.get() |> distinctUntilChanged |> deliverOn(queue)).start(next: { [weak self] value in
-            self?.mainSession.setOnline(value)
+            let effectiveOnline = SGSimpleSettings.shared.ghostModeOnline ? false : value
+            self?.mainSession.setOnline(effectiveOnline)
         }))
 
         // The carrier runs exactly while MTProto does. SharedWakeupManager already folds
@@ -1374,6 +1375,11 @@ public final class Network: NSObject {
     }
     
     func requestWithAdditionalInfo<T>(_ data: (FunctionDescription, Buffer, DeserializeFunctionResponse<T>), info: NetworkRequestAdditionalInfo, tag: NetworkRequestDependencyTag? = nil, automaticFloodWait: Bool = true, onFloodWaitError: ((String) -> Void)? = nil) -> Signal<NetworkRequestResult<T>, MTRpcError> {
+        if data.0.name == "account.updateStatus" && SGSimpleSettings.shared.ghostModeOnline {
+            if let result = Api.Bool.boolTrue as? T {
+                return .single(.result(result))
+            }
+        }
         let requestService = self.requestService
         return Signal { [requestService] subscriber in
             let request = NetworkEngineRequest(
@@ -1420,6 +1426,11 @@ public final class Network: NSObject {
     }
     
     func request<T>(_ data: (FunctionDescription, Buffer, DeserializeFunctionResponse<T>), tag: NetworkRequestDependencyTag? = nil, automaticFloodWait: Bool = true, onFloodWaitError: ((String) -> Void)? = nil) -> Signal<T, MTRpcError> {
+        if data.0.name == "account.updateStatus" && SGSimpleSettings.shared.ghostModeOnline {
+            if let result = Api.Bool.boolTrue as? T {
+                return .single(result)
+            }
+        }
         let requestService = self.requestService
         return Signal { [requestService] subscriber in
             let request = NetworkEngineRequest(

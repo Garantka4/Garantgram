@@ -21,6 +21,7 @@ public class UserDefault<T> /*where T: AllowedUserDefaultTypes*/ {
     public let key: String
     public let userDefaults: UserDefaults
     private var cachedValue: T?
+    private let lock = NSLock()
     
     public init(key: String, userDefaults: UserDefaults = .standard) {
         self.key = key
@@ -29,6 +30,9 @@ public class UserDefault<T> /*where T: AllowedUserDefaultTypes*/ {
     
     public var wrappedValue: T {
         get {
+            self.lock.lock()
+            defer { self.lock.unlock() }
+            
             #if DEBUG && false
             SGtrace("UD.\(key)", what: "GET")
             #endif
@@ -40,14 +44,18 @@ public class UserDefault<T> /*where T: AllowedUserDefaultTypes*/ {
                 return strongCachedValue
             }
             
-            cachedValue = readFromUserDefaults()
+            let value = readFromUserDefaults()
+            cachedValue = value
             
             #if DEBUG
             SGtrace("UD.\(key)", what: "EXTRACTED: \(cachedValue!)")
             #endif
-            return cachedValue!
+            return value
         }
         set {
+            self.lock.lock()
+            defer { self.lock.unlock() }
+            
             cachedValue = newValue
             #if DEBUG
             SGtrace("UD.\(key)", what: "CACHE UPDATED \(cachedValue!)")

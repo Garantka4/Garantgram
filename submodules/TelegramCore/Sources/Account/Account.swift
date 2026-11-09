@@ -5,6 +5,7 @@ import MtProtoKit
 internal import TelegramApi
 import CryptoUtils
 import EncryptionProvider
+import SGSimpleSettings
 
 private let accountRecordToActiveKeychainId = Atomic<[AccountRecordId: Int]>(value: [:])
 
@@ -1377,10 +1378,17 @@ public class Account {
         #if os(iOS)
         // iOS only for now: the Rust engine is the macOS default, and its online keepalive cadence
         // (pings every 1-2 s while the account is in front) has not been measured there.
-        network.isUserOnline.set(self.shouldKeepOnlinePresence.get())
+        network.isUserOnline.set(self.shouldKeepOnlinePresence.get() |> map { value in
+            if SGSimpleSettings.shared.ghostModeOnline {
+                return false
+            }
+            return value
+        })
         #endif
         let _ = (postbox.transaction { transaction -> Void in
-            transaction.updatePeerPresencesInternal(presences: [peerId: TelegramUserPresence(status: .present(until: Int32.max - 1), lastActivity: 0)], merge: { _, updated in return updated })
+            if !SGSimpleSettings.shared.ghostModeOnline {
+                transaction.updatePeerPresencesInternal(presences: [peerId: TelegramUserPresence(status: .present(until: Int32.max - 1), lastActivity: 0)], merge: { _, updated in return updated })
+            }
             transaction.setNeedsPeerGroupMessageStatsSynchronization(groupId: Namespaces.PeerGroup.archive, namespace: Namespaces.Message.Cloud)
         }).start()
         self.notificationAutolockReportManager = NotificationAutolockReportManager(deadline: self.autolockReportDeadline.get(), network: network)
