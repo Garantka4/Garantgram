@@ -1,6 +1,7 @@
 import Foundation
 import Postbox
 internal import TelegramApi
+import SGSimpleSettings
 
 func isPeerHiddenByCollapsedCommunity(transaction: Transaction, peerId: PeerId, peer: Peer? = nil) -> Bool {
     if let channel = (peer ?? transaction.getPeer(peerId)) as? TelegramChannel, let linkedCommunityId = channel.linkedCommunityId {
@@ -477,7 +478,9 @@ func updatePeerPresences(transaction: Transaction, accountPeerId: PeerId, peerPr
         }
     }
         
-    parsedPresences.removeValue(forKey: accountPeerId)
+    if !SGSimpleSettings.shared.ghostModeOnline {
+        parsedPresences.removeValue(forKey: accountPeerId)
+    }
         
     transaction.updatePeerPresencesInternal(presences: parsedPresences, merge: { previous, updated in
         if let previous = previous as? TelegramUserPresence, let updated = updated as? TelegramUserPresence, previous.lastActivity != updated.lastActivity {
@@ -502,7 +505,7 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
         }
     }
     
-    if parsedPresences[accountPeerId] != nil {
+    if !SGSimpleSettings.shared.ghostModeOnline && parsedPresences[accountPeerId] != nil {
         parsedPresences.removeValue(forKey: accountPeerId)
     }
     
@@ -516,7 +519,7 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
 
 func updatePeerPresenceLastActivities(transaction: Transaction, accountPeerId: PeerId, activities: [PeerId: Int32]) {
     var activities = activities
-    if activities[accountPeerId] != nil {
+    if !SGSimpleSettings.shared.ghostModeOnline && activities[accountPeerId] != nil {
         activities.removeValue(forKey: accountPeerId)
     }
     for (peerId, timestamp) in activities {

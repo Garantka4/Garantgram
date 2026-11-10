@@ -1305,12 +1305,28 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                     } else {
                         let now = Int32(Date().timeIntervalSince1970)
                         var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
-                        if lastSeen == 0 || lastSeen > now {
-                            lastSeen = now - 60
+                        if lastSeen == 0 {
+                            lastSeen = now - 120
                             SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
                         }
-                        let (statusText, _) = stringAndActivityForUserPresence(strings: presentationData.strings, dateTimeFormat: presentationData.dateTimeFormat, presence: EnginePeer.Presence(TelegramUserPresence(status: .present(until: lastSeen), lastActivity: lastSeen)), relativeTo: now, expanded: true)
-                        subtitleStringText = statusText
+                        let effectiveLastSeen = min(lastSeen, now - 60)
+                        var t: time_t = time_t(effectiveLastSeen)
+                        var timeinfo: tm = tm()
+                        localtime_r(&t, &timeinfo)
+                        
+                        var nowT: time_t = time_t(now)
+                        var timeinfoNow: tm = tm()
+                        localtime_r(&nowT, &timeinfoNow)
+                        
+                        let day: RelativeTimestampFormatDay
+                        if timeinfo.tm_year == timeinfoNow.tm_year && timeinfo.tm_yday == timeinfoNow.tm_yday {
+                            day = .today
+                        } else if timeinfo.tm_year == timeinfoNow.tm_year && timeinfo.tm_yday == timeinfoNow.tm_yday - 1 {
+                            day = .yesterday
+                        } else {
+                            day = .today
+                        }
+                        subtitleStringText = stringForUserPresence(strings: presentationData.strings, day: day, dateTimeFormat: presentationData.dateTimeFormat, hours: timeinfo.tm_hour, minutes: timeinfo.tm_min)
                     }
                 } else {
                     subtitleStringText = presentationData.strings.Presence_online
