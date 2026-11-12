@@ -1467,9 +1467,6 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                     self.mainWindow.topLevelOverlayControllers = [context.sharedApplicationContext.overlayMediaController, context.notificationController]
                     (context.context.sharedContext as? SharedAccountContextImpl)?.notificationController = context.notificationController
                     var authorizeNotifications = true
-                    if #available(iOS 10.0, *) {
-                        authorizeNotifications = false
-                    }
                     self.registerForNotifications(context: context.context, authorize: authorizeNotifications)
                     
                     self.resetIntentsIfNeeded(context: context.context)
