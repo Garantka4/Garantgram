@@ -619,24 +619,17 @@ public func stringAndActivityForUserPresence(strings: PresentationStrings, dateT
     switch presence.status {
     case let .present(statusTimestamp):
         return formatPresenceTimestamp(strings: strings, dateTimeFormat: dateTimeFormat, statusTimestamp: statusTimestamp, relativeTo: timestamp, expanded: expanded)
-    case .recently, .lastWeek, .lastMonth:
+    case .recently:
         let activeUntil = presence.lastActivity + 30
         if activeUntil >= timestamp {
             return (strings.Presence_online, true)
-        } else if presence.lastActivity > 0 {
-            return formatPresenceTimestamp(strings: strings, dateTimeFormat: dateTimeFormat, statusTimestamp: presence.lastActivity, relativeTo: timestamp, expanded: expanded)
         } else {
-            switch presence.status {
-            case .recently:
-                return (strings.LastSeen_Lately, false)
-            case .lastWeek:
-                return (strings.LastSeen_WithinAWeek, false)
-            case .lastMonth:
-                return (strings.LastSeen_WithinAMonth, false)
-            default:
-                return (strings.LastSeen_Lately, false)
-            }
+            return (strings.LastSeen_Lately, false)
         }
+    case .lastWeek:
+        return (strings.LastSeen_WithinAWeek, false)
+    case .lastMonth:
+        return (strings.LastSeen_WithinAMonth, false)
     case .longTimeAgo:
         return (strings.LastSeen_ALongTimeAgo, false)
     }
