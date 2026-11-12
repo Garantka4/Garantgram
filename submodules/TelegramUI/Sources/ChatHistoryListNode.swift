@@ -1029,16 +1029,12 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
         // the only surface it has been built and verified against. `rotated` is `false` by default on
         // this initializer, so every other list built from it (the overlay audio player's playlist, the
         // shared-context message list, an embedded chat preview) keeps `ListViewImpl` without naming it.
-        var useCoreListBackend = rotated
-        // The Debug Settings switch keeps its original meaning — force CoreList on — which after the
-        // default flip is only reachable for the non-rotated lists above.
+        // CoreList is experimental and causes desyncs on history/search; disable in favor of rock-solid ListViewImpl
+        var useCoreListBackend = false
         if context.sharedContext.immediateExperimentalUISettings.coreListChatBackend {
             useCoreListBackend = true
         }
-        // Server rollback. It outranks the debug switch deliberately: the point of a killswitch is that
-        // setting it guarantees no CoreList in the field, and a device-local opt-out for the flag already
-        // exists (turn the switch off).
-        if let value = context.getAppConfigValue("ios_killswitch_disable_corelist_chat_backend") as? Bool, value {
+        if let _ = context.getAppConfigValue("ios_killswitch_disable_corelist_chat_backend") {
             useCoreListBackend = false
         }
         self.usesCoreListBackend = useCoreListBackend
@@ -4196,15 +4192,6 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
             return
         }
         self.hasActiveTransition = true
-        let watchdogId = self.takeNextHistoryLocationId()
-        self.currentTransitionWatchdogId = watchdogId
-        Queue.mainQueue().after(1.5) { [weak self] in
-            guard let strongSelf = self else { return }
-            if strongSelf.hasActiveTransition && strongSelf.currentTransitionWatchdogId == watchdogId {
-                strongSelf.hasActiveTransition = false
-                strongSelf.dequeueHistoryViewTransitions()
-            }
-        }
         let transition = self.enqueuedHistoryViewTransitions.removeFirst()
 
         // Record live arrivals before creating their content nodes. Loading another history
