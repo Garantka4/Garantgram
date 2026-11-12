@@ -498,37 +498,39 @@ public final class ChatMessageItemImpl: ChatMessageItem, CustomStringConvertible
     
     public func updateNode(async: @escaping (@escaping () -> Void) -> Void, node: @escaping () -> ListViewItemNode, params: ListViewItemLayoutParams, neighbors: ListViewItemNeighbors, animation: ListViewItemUpdateAnimation, completion: @escaping (ListViewItemNodeLayout, @escaping (ListViewItemApply) -> Void) -> Void) {
         Queue.mainQueue().async {
-            if let nodeValue = node() as? ChatMessageItemView {
-                nodeValue.setupItem(self, synchronousLoad: false)
+            guard let nodeValue = node() as? ChatMessageItemView else {
+                completion(ListViewItemNodeLayout(contentSize: CGSize(), insets: UIEdgeInsets()), { _ in })
+                return
+            }
+            nodeValue.setupItem(self, synchronousLoad: false)
+            
+            let nodeLayout = nodeValue.asyncLayout()
+            
+            let isRotated = self.controllerInteraction.chatIsRotated
+            
+            async {
+                let (top, bottom, dateAtBottom) = self.merged(with: ChatHistoryItemNeighbors(neighbors), isRotated: isRotated)
                 
-                let nodeLayout = nodeValue.asyncLayout()
+                var disableDate = self.disableDate
+                if let subject = self.associatedData.subject, case let .messageOptions(_, _, info) = subject {
+                    switch info {
+                    case .reply, .link:
+                        disableDate = true
+                    default:
+                        break
+                    }
+                }
                 
-                let isRotated = self.controllerInteraction.chatIsRotated
-                
-                async {
-                    let (top, bottom, dateAtBottom) = self.merged(with: ChatHistoryItemNeighbors(neighbors), isRotated: isRotated)
-                    
-                    var disableDate = self.disableDate
-                    if let subject = self.associatedData.subject, case let .messageOptions(_, _, info) = subject {
-                        switch info {
-                        case .reply, .link:
-                            disableDate = true
-                        default:
-                            break
+                let (layout, apply) = nodeLayout(self, params, top, bottom, disableDate ? ChatMessageHeaderSpec(hasDate: false, hasTopic: false) : dateAtBottom)
+                Queue.mainQueue().async {
+                    completion(layout, { info in
+                        apply(animation, info, false)
+                        if let nodeValue = node() as? ChatMessageItemView {
+                            nodeValue.safeInsets = UIEdgeInsets(top: 0.0, left: params.leftInset, bottom: 0.0, right: params.rightInset)
+                            nodeValue.updateSelectionState(animated: false)
+                            nodeValue.updateHighlightedState(animated: false)
                         }
-                    }
-                    
-                    let (layout, apply) = nodeLayout(self, params, top, bottom, disableDate ? ChatMessageHeaderSpec(hasDate: false, hasTopic: false) : dateAtBottom)
-                    Queue.mainQueue().async {
-                        completion(layout, { info in
-                            apply(animation, info, false)
-                            if let nodeValue = node() as? ChatMessageItemView {
-                                nodeValue.safeInsets = UIEdgeInsets(top: 0.0, left: params.leftInset, bottom: 0.0, right: params.rightInset)
-                                nodeValue.updateSelectionState(animated: false)
-                                nodeValue.updateHighlightedState(animated: false)
-                            }
-                        })
-                    }
+                    })
                 }
             }
         }

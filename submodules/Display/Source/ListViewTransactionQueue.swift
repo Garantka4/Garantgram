@@ -13,28 +13,43 @@ public final class ListViewTransactionQueue {
     
     public func addTransaction(_ transaction: @escaping ListViewTransaction) {
         precondition(Thread.isMainThread)
-        let beginTransaction = self.transactions.count == 0
+        let beginTransaction = self.transactions.isEmpty
         self.transactions.append(transaction)
         
         if beginTransaction {
-            transaction({ [weak self] in
-                precondition(Thread.isMainThread)
-                
-                if Thread.isMainThread {
-                    if let strongSelf = self {
-                        strongSelf.endTransaction()
-                    }
-                } else {
-                    Queue.mainQueue().async {
-                        if let strongSelf = self {
-                            strongSelf.endTransaction()
-                        }
-                    }
-                }
-            })
-        } else {
-            assert(true)
+            self.runCurrentTransaction()
         }
+    }
+    
+    private func runCurrentTransaction() {
+        guard let currentTransaction = self.transactions.first else {
+            return
+        }
+        
+        var isCompleted = false
+        let onComplete: () -> Void = { [weak self] in
+            precondition(Thread.isMainThread)
+            guard !isCompleted else {
+                return
+            }
+            isCompleted = true
+            
+            if Thread.isMainThread {
+                self?.endTransaction()
+            } else {
+                Queue.mainQueue().async {
+                    self?.endTransaction()
+                }
+            }
+        }
+        
+        Queue.mainQueue().after(1.0) {
+            if !isCompleted {
+                onComplete()
+            }
+        }
+        
+        currentTransaction(onComplete)
     }
     
     private func endTransaction() {
@@ -45,22 +60,8 @@ public final class ListViewTransactionQueue {
                 let _ = self.transactions.removeFirst()
             }
             
-            if let nextTransaction = self.transactions.first {
-                nextTransaction({ [weak self] in
-                    precondition(Thread.isMainThread)
-                    
-                    if Thread.isMainThread {
-                        if let strongSelf = self {
-                            strongSelf.endTransaction()
-                        }
-                    } else {
-                        Queue.mainQueue().async {
-                            if let strongSelf = self {
-                                strongSelf.endTransaction()
-                            }
-                        }
-                    }
-                })
+            if !self.transactions.isEmpty {
+                self.runCurrentTransaction()
             }
         }
     }

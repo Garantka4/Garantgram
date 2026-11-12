@@ -1915,6 +1915,8 @@ open class ListViewImpl: ASDisplayNode, ListView, ASScrollViewDelegate, ASGestur
                     
                     transactionCompletion()
                 })
+            } else {
+                transactionCompletion()
             }
         })
     }

@@ -58,21 +58,22 @@ public class ChatUnreadItem: ListViewItem, ChatHistoryItemWithHeaders {
     
     public func updateNode(async: @escaping (@escaping () -> Void) -> Void, node: @escaping () -> ListViewItemNode, params: ListViewItemLayoutParams, neighbors: ListViewItemNeighbors, animation: ListViewItemUpdateAnimation, completion: @escaping (ListViewItemNodeLayout, @escaping (ListViewItemApply) -> Void) -> Void) {
         Queue.mainQueue().async {
-            if let nodeValue = node() as? ChatUnreadItemNode {
-                let nodeLayout = nodeValue.asyncLayout()
-                
-                async {
-                    let dateAtBottom = !chatItemsHaveCommonDateHeader(self.header.id, ChatHistoryItemNeighbors(neighbors).next)
-                    
-                    let (layout, apply) = nodeLayout(self, params, dateAtBottom)
-                    Queue.mainQueue().async {
-                        completion(layout, { _ in
-                            apply(animation)
-                        })
-                    }
-                }
-            } else {
+            guard let nodeValue = node() as? ChatUnreadItemNode else {
                 assertionFailure()
+                completion(ListViewItemNodeLayout(contentSize: CGSize(), insets: UIEdgeInsets()), { _ in })
+                return
+            }
+            let nodeLayout = nodeValue.asyncLayout()
+            
+            async {
+                let dateAtBottom = !chatItemsHaveCommonDateHeader(self.header.id, ChatHistoryItemNeighbors(neighbors).next)
+                
+                let (layout, apply) = nodeLayout(self, params, dateAtBottom)
+                Queue.mainQueue().async {
+                    completion(layout, { _ in
+                        apply(animation)
+                    })
+                }
             }
         }
     }
