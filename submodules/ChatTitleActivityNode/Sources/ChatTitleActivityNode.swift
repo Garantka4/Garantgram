@@ -96,6 +96,7 @@ public class ChatTitleActivityNode: ASDisplayNode {
     private func transitionToContentNode(_ node: ChatTitleActivityContentNode?, state: ChatTitleActivityNodeState, fromState: ChatTitleActivityNodeState, animation: ChatTitleActivityAnimationStyle = .crossfade, completion: @escaping () -> Void) {
         if let previousContentNode = self.contentNode {
             if case .none = animation {
+                previousContentNode.layer.removeAllAnimations()
                 previousContentNode.removeFromSupernode()
                 self.contentNode = node
                 if let contentNode = self.contentNode {
@@ -117,14 +118,26 @@ public class ChatTitleActivityNode: ASDisplayNode {
                         contentNode.animateIn(from: fromState, style: animation)
                     }
                 }
-                previousContentNode.animateOut(to: state, style: animation) {
-                    previousContentNode.removeFromSupernode()
+                previousContentNode.animateOut(to: state, style: animation) { [weak previousContentNode] in
+                    previousContentNode?.removeFromSupernode()
                 }
             }
         } else {
             self.contentNode = node
             if let contentNode = self.contentNode {
                 self.addSubnode(contentNode)
+            }
+        }
+        
+        if let subnodes = self.subnodes {
+            for subnode in subnodes {
+                if subnode !== self.contentNode {
+                    if let prev = previousContentNode, subnode === prev {
+                        continue
+                    }
+                    subnode.layer.removeAllAnimations()
+                    subnode.removeFromSupernode()
+                }
             }
         }
     }

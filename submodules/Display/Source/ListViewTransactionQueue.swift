@@ -43,12 +43,6 @@ public final class ListViewTransactionQueue {
             }
         }
         
-        Queue.mainQueue().after(1.0) {
-            if !isCompleted {
-                onComplete()
-            }
-        }
-        
         currentTransaction(onComplete)
     }
     

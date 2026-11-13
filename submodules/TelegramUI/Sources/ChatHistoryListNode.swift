@@ -562,7 +562,6 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
     private var dequeuedInitialTransitionOnLayout = false
     private var enqueuedHistoryViewTransitions: [ChatHistoryListViewTransition] = []
     private var hasActiveTransition = false
-    private var currentTransitionWatchdogId: Int32 = 0
     var layoutActionOnViewTransition: ((ChatHistoryListViewTransition) -> (ChatHistoryListViewTransition, ListViewUpdateSizeAndInsets?), Int64?)?
     
     public let historyState = ValuePromise<ChatHistoryNodeHistoryState>()
@@ -1029,12 +1028,11 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
         // the only surface it has been built and verified against. `rotated` is `false` by default on
         // this initializer, so every other list built from it (the overlay audio player's playlist, the
         // shared-context message list, an embedded chat preview) keeps `ListViewImpl` without naming it.
-        // CoreList is experimental and causes desyncs on history/search; disable in favor of rock-solid ListViewImpl
-        var useCoreListBackend = false
+        var useCoreListBackend = rotated
         if context.sharedContext.immediateExperimentalUISettings.coreListChatBackend {
             useCoreListBackend = true
         }
-        if let _ = context.getAppConfigValue("ios_killswitch_disable_corelist_chat_backend") {
+        if let value = context.getAppConfigValue("ios_killswitch_disable_corelist_chat_backend") as? Bool, value {
             useCoreListBackend = false
         }
         self.usesCoreListBackend = useCoreListBackend
@@ -4192,16 +4190,6 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
             return
         }
         self.hasActiveTransition = true
-        let watchdogId = self.takeNextHistoryLocationId()
-        self.currentTransitionWatchdogId = watchdogId
-        Queue.mainQueue().after(0.8) { [weak self] in
-            guard let strongSelf = self else { return }
-            if strongSelf.hasActiveTransition && strongSelf.currentTransitionWatchdogId == watchdogId {
-                strongSelf.currentTransitionWatchdogId = 0
-                strongSelf.hasActiveTransition = false
-                strongSelf.dequeueHistoryViewTransitions()
-            }
-        }
         let transition = self.enqueuedHistoryViewTransitions.removeFirst()
 
         // Record live arrivals before creating their content nodes. Loading another history
@@ -4798,7 +4786,6 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
                         strongSelf.listView.chatHistoryTransaction(deleteIndices: [], insertIndicesAndItems: [], updateIndicesAndItems: [], options: [.Synchronous], scrollToItem: ListViewScrollToItem(index: listIndex, position: .bottom(0.0), animated: false, curve: .Default(duration: nil), directionHint: .Down, hold: .always, excludesAttachedHeaderSpace: true), additionalScrollDistance: 0.0, updateSizeAndInsets: nil, stationaryItemRange: nil, updateOpaqueState: nil, completion: { _ in })
                     }
                 }
-                strongSelf.currentTransitionWatchdogId = 0
                 strongSelf.hasActiveTransition = false
                 
                 if let previousCloneView {
@@ -4850,7 +4837,7 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
             if foundCorrelationMessage {
                 self.layoutActionOnViewTransition = nil
                 let (mappedTransition, updateSizeAndInsets) = layoutActionOnViewTransition(transition)
-                self.listView.chatHistoryTransaction(deleteIndices: mappedTransition.deleteItems, insertIndicesAndItems: mappedTransition.insertItems, updateIndicesAndItems: mappedTransition.updateItems, options: mappedTransition.options.union(.Synchronous), scrollToItem: mappedTransition.scrollToItem, updateSizeAndInsets: updateSizeAndInsets, stationaryItemRange: mappedTransition.stationaryItemRange, updateOpaqueState: ChatHistoryTransactionOpaqueState(historyView: transition.historyView), completion: { result in
+                self.listView.chatHistoryTransaction(deleteIndices: mappedTransition.deleteItems, insertIndicesAndItems: transition.insertItems, updateIndicesAndItems: transition.updateItems, options: mappedTransition.options.union(.Synchronous), scrollToItem: mappedTransition.scrollToItem, updateSizeAndInsets: updateSizeAndInsets, stationaryItemRange: mappedTransition.stationaryItemRange, updateOpaqueState: ChatHistoryTransactionOpaqueState(historyView: transition.historyView), completion: { result in
                     completion(true, result)
                 })
             } else {

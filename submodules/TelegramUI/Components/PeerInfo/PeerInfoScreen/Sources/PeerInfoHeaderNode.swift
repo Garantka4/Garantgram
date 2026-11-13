@@ -1299,38 +1299,7 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                 let subtitleColor: UIColor
                 subtitleColor = .white
                 
-                if SGSimpleSettings.shared.ghostModeOnline {
-                    if let statusData = statusData, !statusData.text.isEmpty && statusData.text != presentationData.strings.Presence_online {
-                        subtitleStringText = statusData.text
-                    } else {
-                        let now = Int32(Date().timeIntervalSince1970)
-                        var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
-                        if lastSeen == 0 {
-                            lastSeen = now - 120
-                            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
-                        }
-                        let effectiveLastSeen = min(lastSeen, now - 60)
-                        var t: time_t = time_t(effectiveLastSeen)
-                        var timeinfo: tm = tm()
-                        localtime_r(&t, &timeinfo)
-                        
-                        var nowT: time_t = time_t(now)
-                        var timeinfoNow: tm = tm()
-                        localtime_r(&nowT, &timeinfoNow)
-                        
-                        let day: RelativeTimestampFormatDay
-                        if timeinfo.tm_year == timeinfoNow.tm_year && timeinfo.tm_yday == timeinfoNow.tm_yday {
-                            day = .today
-                        } else if timeinfo.tm_year == timeinfoNow.tm_year && timeinfo.tm_yday == timeinfoNow.tm_yday - 1 {
-                            day = .yesterday
-                        } else {
-                            day = .today
-                        }
-                        subtitleStringText = stringForUserPresence(strings: presentationData.strings, day: day, dateTimeFormat: presentationData.dateTimeFormat, hours: timeinfo.tm_hour, minutes: timeinfo.tm_min)
-                    }
-                } else {
-                    subtitleStringText = presentationData.strings.Presence_online
-                }
+                subtitleStringText = presentationData.strings.Presence_online
                 subtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor)
                 smallSubtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white, shadowColor: titleShadowColor)
                 
@@ -1345,8 +1314,6 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                         subtitleColor = UIColor.white
                     }
                     panelSubtitleString = (panelStatusData.text, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
-                } else if SGSimpleSettings.shared.ghostModeOnline {
-                    panelSubtitleString = (subtitleStringText, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
                 }
             } else if let _ = threadData {
                 let subtitleColor: UIColor = .white
