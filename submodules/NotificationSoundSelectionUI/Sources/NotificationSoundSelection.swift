@@ -261,7 +261,7 @@ private final class AudioPlayerWrapper: NSObject, AVAudioPlayerDelegate {
         
         super.init()
         
-        self.player = try? AVAudioPlayer(contentsOf: url, fileTypeHint: "mp3")
+        self.player = (try? AVAudioPlayer(contentsOf: url, fileTypeHint: url.pathExtension.isEmpty ? "mp3" : url.pathExtension)) ?? (try? AVAudioPlayer(contentsOf: url))
         self.player?.delegate = self
     }
     
@@ -286,12 +286,12 @@ public func fileNameForNotificationSound(account: Account, notificationSoundList
     case .default:
         if let defaultSound = defaultSound {
             if case .default = defaultSound {
-                return "\(100)"
+                return "0"
             } else {
                 return fileNameForNotificationSound(account: account, notificationSoundList: notificationSoundList, sound: defaultSound, defaultSound: nil)
             }
         } else {
-            return "\(100)"
+            return "0"
         }
     case let .bundledModern(id):
         return "\(id + 100)"
@@ -299,7 +299,7 @@ public func fileNameForNotificationSound(account: Account, notificationSoundList
         return "\(id + 2)"
     case let .cloud(fileId):
         guard let notificationSoundList = notificationSoundList else {
-            return ""
+            return "0"
         }
         for sound in notificationSoundList.sounds {
             if sound.file.fileId.id == fileId {
@@ -308,7 +308,7 @@ public func fileNameForNotificationSound(account: Account, notificationSoundList
                 }
             }
         }
-        return ""
+        return "0"
     }
 }
 
@@ -329,7 +329,7 @@ public func playSound(context: AccountContext, notificationSoundList: Notificati
                         })
                         currentPlayer?.play()
                     } else if !filePath.isEmpty {
-                        if let url = getAppBundle().url(forResource: filePath, withExtension: "m4a") {
+                        if let url = getAppBundle().url(forResource: filePath, withExtension: "m4a") ?? getAppBundle().url(forResource: filePath, withExtension: "mp3") {
                             currentPlayer = AudioPlayerWrapper(url: url, completed: {
                                 deactivateImpl?()
                             })

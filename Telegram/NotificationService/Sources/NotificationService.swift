@@ -731,7 +731,10 @@ private struct NotificationContent: CustomStringConvertible {
             content.threadIdentifier = threadId
         }
         if let sound = self.sound {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: sound))
+            let soundName = (sound == "default") ? "0.m4a" : sound
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: soundName))
+        } else {
+            content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "0.m4a"))
         }
         if let badge = self.badge {
             content.badge = badge as NSNumber
@@ -1417,7 +1420,7 @@ private final class NotificationServiceHandler {
                                     }
                                 }
                             } else if let sound = aps["sound"] as? String {
-                                content.sound = sound
+                                content.sound = (sound == "default") ? "0.m4a" : sound
                             }
 
                             if let storyId {
@@ -1464,7 +1467,7 @@ private final class NotificationServiceHandler {
                             content.userInfo["peerId"] = "777000"
                             content.userInfo["accountId"] = "\(recordId.int64)"
                             if let sound = aps["sound"] as? String {
-                                content.sound = sound
+                                content.sound = (sound == "default") ? "0.m4a" : sound
                             }
                             if let alert = aps["alert"] as? [String: Any] {
                                 if let topicTitleValue = payloadJson["topic_title"] as? String {
