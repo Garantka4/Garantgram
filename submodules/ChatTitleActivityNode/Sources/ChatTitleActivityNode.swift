@@ -94,7 +94,8 @@ public class ChatTitleActivityNode: ASDisplayNode {
     }
     
     private func transitionToContentNode(_ node: ChatTitleActivityContentNode?, state: ChatTitleActivityNodeState, fromState: ChatTitleActivityNodeState, animation: ChatTitleActivityAnimationStyle = .crossfade, completion: @escaping () -> Void) {
-        if let previousContentNode = self.contentNode {
+        let previousContentNode = self.contentNode
+        if let previousContentNode = previousContentNode {
             if case .none = animation {
                 previousContentNode.layer.removeAllAnimations()
                 previousContentNode.removeFromSupernode()
