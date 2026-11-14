@@ -226,7 +226,7 @@ final class DataUsageScreenComponent: Component {
             case .videos:
                 return UIColor(rgb: 0x0088ff)
             case .files:
-                return UIColor(rgb: 0x34C759)
+                return UIColor(rgb: 0xFFFFFF)
             case .music:
                 return UIColor(rgb: 0xFF2D55)
             case .messages:

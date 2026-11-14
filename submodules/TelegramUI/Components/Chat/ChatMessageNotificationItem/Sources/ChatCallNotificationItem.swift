@@ -165,7 +165,7 @@ final class ChatCallNotificationItemNode: NotificationItemNode {
             component: AnyComponent(PlainButtonComponent(
                 content: AnyComponent(ZStack([
                     AnyComponentWithIdentity(id: 1, component: AnyComponent(Circle(
-                        fillColor: UIColor(rgb: 0x34C759),
+                        fillColor: UIColor(rgb: 0xFFFFFF),
                         size: CGSize(width: avatarSize, height: avatarSize)
                     ))),
                     AnyComponentWithIdentity(id: 2, component: AnyComponent(BundleIconComponent(

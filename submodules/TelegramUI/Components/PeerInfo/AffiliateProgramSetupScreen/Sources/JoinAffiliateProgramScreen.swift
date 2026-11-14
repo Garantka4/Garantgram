@@ -753,7 +753,7 @@ private final class JoinAffiliateProgramScreenComponent: Component {
                     let linkIconBadgeSize = linkIconBadge.update(
                         transition: .immediate,
                         component: AnyComponent(BorderedBadgeComponent(
-                            backgroundColor: UIColor(rgb: 0x34C759),
+                            backgroundColor: UIColor(rgb: 0xFFFFFF),
                             cutoutColor: environment.theme.list.plainBackgroundColor,
                             content: AnyComponent(HStack([
                                 AnyComponentWithIdentity(id: 0, component: AnyComponent(BundleIconComponent(

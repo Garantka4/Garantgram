@@ -107,7 +107,7 @@ public func renderAttachAppIcon(iconImage: UIImage?) -> UIImage? {
 }
 
 let colorRed = UIColor(rgb: 0xFF453A)
-let colorGreen = UIColor(rgb: 0x34C759)
+let colorGreen = UIColor(rgb: 0xFFFFFF)
 let colorBlue = UIColor(rgb: 0x0a84ff)
 let colorLightBlue = UIColor(rgb: 0x32ADE6)
 let colorTeal = UIColor(rgb: 0x00c7be)

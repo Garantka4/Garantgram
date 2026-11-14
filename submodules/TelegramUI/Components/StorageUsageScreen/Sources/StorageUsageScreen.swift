@@ -286,7 +286,7 @@ final class StorageUsageScreenComponent: Component {
             case .videos:
                 return UIColor(rgb: 0x3478F6)
             case .files:
-                return UIColor(rgb: 0x34C759)
+                return UIColor(rgb: 0xFFFFFF)
             case .music:
                 return UIColor(rgb: 0xFF2D55)
             case .other:
@@ -1464,7 +1464,7 @@ final class StorageUsageScreenComponent: Component {
                 component: AnyComponent(PieChartComponent(
                     theme: environment.theme,
                     strings: environment.strings,
-                    emptyColor: UIColor(rgb: 0x34C759),
+                    emptyColor: UIColor(rgb: 0xFFFFFF),
                     chartData: chartData
                 )),
                 environment: {},
@@ -1479,7 +1479,7 @@ final class StorageUsageScreenComponent: Component {
                 pieChartTransition.setFrame(view: pieChartComponentView, frame: pieChartFrame)
             }
             if let _ = self.aggregatedData, listCategories.isEmpty {
-                let checkColor = UIColor(rgb: 0x34C759)
+                let checkColor = UIColor(rgb: 0xFFFFFF)
                 
                 let doneStatusNode: RadialStatusNode
                 var animateIn = false
