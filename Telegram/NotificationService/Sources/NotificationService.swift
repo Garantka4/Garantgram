@@ -346,7 +346,7 @@ private func avatarRoundImage(size: CGSize, source: UIImage, isStory: Bool) -> U
         context?.clip()
         
         let colors: [CGColor] = [
-            UIColor(rgb: 0x34C76F).cgColor,
+            UIColor(rgb: 0xFFFFFF).cgColor,
             UIColor(rgb: 0x3DA1FD).cgColor
         ]
         var locations: [CGFloat] = [0.0, 1.0]
@@ -450,7 +450,7 @@ private func avatarViewLettersImage(size: CGSize, peerId: PeerId, letters: [Stri
         context?.clip()
         
         let colors: [CGColor] = [
-            UIColor(rgb: 0x34C76F).cgColor,
+            UIColor(rgb: 0xFFFFFF).cgColor,
             UIColor(rgb: 0x3DA1FD).cgColor
         ]
         var locations: [CGFloat] = [0.0, 1.0]

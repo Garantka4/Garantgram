@@ -623,7 +623,7 @@ final class VoiceChatMainStageNode: ASDisplayNode {
         }
         self.effectiveSpeakingPeerId = effectiveSpeakingPeerId
         if let getAudioLevel = self.getAudioLevel, let peerId = effectiveSpeakingPeerId {
-            let wavesColor = UIColor(rgb: 0x34c759)
+            let wavesColor = UIColor(rgb: 0xffffff)
             if let speakingAudioLevelView = self.speakingAudioLevelView {
                 speakingAudioLevelView.removeFromSuperview()
                 self.speakingAudioLevelView = nil

@@ -140,7 +140,7 @@ private let backgroundCornerRadius: CGFloat = 14.0
 private let avatarSize: CGFloat = 40.0
 
 private let accentColor: UIColor = UIColor(rgb: 0x0088ff)
-private let constructiveColor: UIColor = UIColor(rgb: 0x34c759)
+private let constructiveColor: UIColor = UIColor(rgb: 0xffffff)
 private let destructiveColor: UIColor = UIColor(rgb: 0xff3b30)
 
 class VoiceChatParticipantStatusNode: ASDisplayNode {
@@ -819,7 +819,7 @@ class VoiceChatParticipantItemNode: ItemListRevealOptionsItemNode {
                 updatedTitle = true
             }
             
-            var wavesColor = UIColor(rgb: 0x34c759)
+            var wavesColor = UIColor(rgb: 0xffffff)
             if case let .text(_, _, textColor) = item.text {
                 switch textColor {
                     case .accent:

@@ -77,7 +77,7 @@ private func avatarViewLettersImage(size: CGSize, peerId: EnginePeer.Id, letters
         context?.clip()
         
         let colors: [CGColor] = [
-            UIColor(rgb: 0x34C76F).cgColor,
+            UIColor(rgb: 0xFFFFFF).cgColor,
             UIColor(rgb: 0x3DA1FD).cgColor
         ]
         var locations: [CGFloat] = [0.0, 1.0]

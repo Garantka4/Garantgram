@@ -714,7 +714,7 @@ private final class CommunityEditScreenComponent: Component {
         private let avatarDisposable = MetaDisposable()
         private let avatarUploadStatusDisposable = MetaDisposable()
 
-        private let cachedAdminsIcon = renderSettingsIcon(name: "Item List/Icons/Admin", backgroundColors: [UIColor(rgb: 0x34C759)])
+        private let cachedAdminsIcon = renderSettingsIcon(name: "Item List/Icons/Admin", backgroundColors: [UIColor(rgb: 0xFFFFFF)])
         private let cachedRequestsIcon = renderSettingsIcon(name: "Item List/Icons/Requests", backgroundColors: [UIColor(rgb: 0x0079ff)])
         private let cachedBannedIcon = renderSettingsIcon(name: "Item List/Icons/Block", backgroundColors: [UIColor(rgb: 0xFF453A)])
 

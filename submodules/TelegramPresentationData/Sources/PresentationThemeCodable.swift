@@ -1039,7 +1039,7 @@ extension PresentationThemeChatList: Codable {
             pinnedArchiveAvatarColor: try values.decode(PresentationThemeArchiveAvatarColors.self, forKey: .pinnedArchiveAvatar),
             unpinnedArchiveAvatarColor: try values.decode(PresentationThemeArchiveAvatarColors.self, forKey: .unpinnedArchiveAvatar),
             onlineDotColor: try decodeColor(values, .onlineDot),
-            storyUnseenColors: (try? values.decode(PresentationThemeGradientColors.self, forKey: .storyUnseen)) ?? PresentationThemeGradientColors(topColor: UIColor(rgb: 0x34C76F), bottomColor: UIColor(rgb: 0x3DA1FD)),
+            storyUnseenColors: (try? values.decode(PresentationThemeGradientColors.self, forKey: .storyUnseen)) ?? PresentationThemeGradientColors(topColor: UIColor(rgb: 0xFFFFFF), bottomColor: UIColor(rgb: 0xE0E0E0)),
             storyUnseenPrivateColors: (try? values.decode(PresentationThemeGradientColors.self, forKey: .storyUnseenPrivate)) ?? PresentationThemeGradientColors(topColor: UIColor(rgb: 0x7CD636), bottomColor: UIColor(rgb: 0x26B470)),
             storySeenColors: (try? values.decode(PresentationThemeGradientColors.self, forKey: .storySeen)) ?? PresentationThemeGradientColors(topColor: UIColor(rgb: 0xD8D8E1), bottomColor: UIColor(rgb: 0xD8D8E1))
         )

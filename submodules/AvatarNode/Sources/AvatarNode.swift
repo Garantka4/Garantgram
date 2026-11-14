@@ -342,7 +342,7 @@ public final class AvatarNode: ASDisplayNode {
     ]
     
     static let repostColors: [UIColor] = [
-        UIColor(rgb: 0x3DA1FD), UIColor(rgb: 0x34C76F)
+        UIColor(rgb: 0x3DA1FD), UIColor(rgb: 0xFFFFFF)
     ]
     
     public final class ContentNode: ASDisplayNode {

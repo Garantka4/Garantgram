@@ -3,7 +3,7 @@ import UIKit
 import TelegramCore
 import TelegramUIPreferences
 
-private let defaultDarkTintedAccentColor = UIColor(rgb: 0x30D158)
+private let defaultDarkTintedAccentColor = UIColor(rgb: 0xFFFFFF)
 public let defaultDarkTintedPresentationTheme = makeDefaultDarkTintedPresentationTheme(preview: false)
 
 private extension PresentationThemeBaseColor {
@@ -716,12 +716,12 @@ public func makeDefaultDarkTintedPresentationTheme(extendingThemeReference: Pres
         sectionHeaderFillColor: .black,
         sectionHeaderTextColor: mainSecondaryTextColor.withAlphaComponent(0.5),
         verifiedIconFillColor: accentColor,
-        verifiedIconForegroundColor: .white,
+        verifiedIconForegroundColor: .black,
         secretIconColor: UIColor(rgb: 0x89df9e),
         pinnedArchiveAvatarColor: PresentationThemeArchiveAvatarColors(backgroundColors: PresentationThemeGradientColors(topColor: UIColor(rgb: 0x72d5fd), bottomColor: UIColor(rgb: 0x2a9ef1)), foregroundColor: .white),
         unpinnedArchiveAvatarColor: PresentationThemeArchiveAvatarColors(backgroundColors: PresentationThemeGradientColors(topColor: accentColor.withMultiplied(hue: 0.985, saturation: 0.268, brightness: 0.47), bottomColor: accentColor.withMultiplied(hue: 0.98, saturation: 0.268, brightness: 0.39)), foregroundColor: additionalBackgroundColor),
-        onlineDotColor: UIColor(rgb: 0x4cc91f),
-        storyUnseenColors: PresentationThemeGradientColors(topColor: UIColor(rgb: 0x34C76F), bottomColor: UIColor(rgb: 0x3DA1FD)),
+        onlineDotColor: UIColor(rgb: 0xffffff),
+        storyUnseenColors: PresentationThemeGradientColors(topColor: UIColor(rgb: 0xffffff), bottomColor: UIColor(rgb: 0xe0e0e0)),
         storyUnseenPrivateColors: PresentationThemeGradientColors(topColor: UIColor(rgb: 0x7CD636), bottomColor: UIColor(rgb: 0x26B470)),
         storySeenColors: PresentationThemeGradientColors(topColor: mainForegroundColor, bottomColor: mainForegroundColor)
     )

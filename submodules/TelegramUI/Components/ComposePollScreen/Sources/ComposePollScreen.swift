@@ -1541,7 +1541,7 @@ final class ComposePollScreenComponent: Component {
                 self.cachedAddIcon = renderSettingsIcon(name: "Item List/Icons/Add", backgroundColors: [UIColor(rgb: 0x32ADE6)])
                 self.cachedRevoteIcon = renderSettingsIcon(name: "Item List/Icons/Update", backgroundColors: [UIColor(rgb: 0x5E5CE6)])
                 self.cachedShuffleIcon = renderSettingsIcon(name: "Item List/Icons/Shuffle", backgroundColors: [UIColor(rgb: 0xAF52DE)])
-                self.cachedQuizIcon = renderSettingsIcon(name: "Item List/Icons/Checkbox", backgroundColors: [UIColor(rgb: 0x34C759)])
+                self.cachedQuizIcon = renderSettingsIcon(name: "Item List/Icons/Checkbox", backgroundColors: [UIColor(rgb: 0xFFFFFF)])
                 self.cachedDurationIcon = renderSettingsIcon(name: "Item List/Icons/Timer", backgroundColors: [UIColor(rgb: 0xFF453A)])
                 self.cachedSubscribersIcon = renderSettingsIcon(name: "Item List/Icons/Profile", backgroundColors: [UIColor(rgb: 0x0A84FF)])
                 self.cachedCountryIcon = renderSettingsIcon(name: "Item List/Icons/Flag", backgroundColors: [UIColor(rgb: 0xFF9F0A)])

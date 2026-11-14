@@ -5,7 +5,7 @@ import Display
 import TelegramPresentationData
 import ChatTitleActivityNode
 
-private let constructiveColor: UIColor = UIColor(rgb: 0x34c759)
+private let constructiveColor: UIColor = UIColor(rgb: 0xffffff)
 
 final class VoiceChatTitleNode: ASDisplayNode {
     private var theme: PresentationTheme

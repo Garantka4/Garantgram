@@ -26,7 +26,7 @@ private let avatarSize: CGFloat = 50.0
 private let videoSize = CGSize(width: 180.0, height: 180.0)
 
 private let accentColor: UIColor = UIColor(rgb: 0x0088ff)
-private let constructiveColor: UIColor = UIColor(rgb: 0x34c759)
+private let constructiveColor: UIColor = UIColor(rgb: 0xffffff)
 private let destructiveColor: UIColor = UIColor(rgb: 0xff3b30)
 
 private let borderLineWidth: CGFloat = 2.0
@@ -476,7 +476,7 @@ class VoiceChatFullscreenParticipantItemNode: ItemListRevealOptionsItemNode {
                 titleAttributedString = NSAttributedString(string: channel.title, font: currentBoldFont, textColor: titleColor)
             }
         
-            var wavesColor = UIColor(rgb: 0x34c759)
+            var wavesColor = UIColor(rgb: 0xffffff)
             var gradient: VoiceChatTileHighlightNode.Gradient = .active
             switch item.color {
                 case .accent:

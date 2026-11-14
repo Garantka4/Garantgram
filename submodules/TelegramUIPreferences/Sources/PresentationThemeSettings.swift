@@ -410,7 +410,7 @@ public enum PresentationThemeBaseColor: Int32, CaseIterable {
             case .cyan:
                 value = 0x00c2ed
             case .green:
-                value = 0x29b327
+                value = 0xffffff
             case .pink:
                 value = 0xeb6ca4
             case .orange:
@@ -652,12 +652,12 @@ public struct PresentationThemeSettings: Codable {
     }
     
     public static var defaultSettings: PresentationThemeSettings {
-        let greenAccent = PresentationThemeAccentColor(baseColor: .green)
+        let whiteAccent = PresentationThemeAccentColor(baseColor: .white)
         let defaultAccentColors: [Int64: PresentationThemeAccentColor] = [
-            PresentationThemeReference.builtin(.dayClassic).index: greenAccent,
-            PresentationThemeReference.builtin(.day).index: greenAccent,
-            PresentationThemeReference.builtin(.night).index: greenAccent,
-            PresentationThemeReference.builtin(.nightAccent).index: greenAccent
+            PresentationThemeReference.builtin(.dayClassic).index: whiteAccent,
+            PresentationThemeReference.builtin(.day).index: whiteAccent,
+            PresentationThemeReference.builtin(.night).index: whiteAccent,
+            PresentationThemeReference.builtin(.nightAccent).index: whiteAccent
         ]
         return PresentationThemeSettings(theme: .builtin(.dayClassic), themePreferredBaseTheme: [:], themeSpecificAccentColors: defaultAccentColors, themeSpecificChatWallpapers: [:], useSystemFont: true, fontSize: .regular, listsFontSize: .regular, chatBubbleSettings: .default, automaticThemeSwitchSetting: AutomaticThemeSwitchSetting(force: false, trigger: .system, theme: .builtin(.night)), largeEmoji: true, reduceMotion: false)
     }

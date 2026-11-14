@@ -1242,10 +1242,10 @@ public final class PeerListItemComponent: Component {
                             image = readIconImage
                         } else if case .repost = component.subtitleAccessory {
                             image = repostIconImage
-                            color = UIColor(rgb: 0x34c759)
+                            color = UIColor(rgb: 0xffffff)
                         } else if case .forward = component.subtitleAccessory {
                             image = forwardIconImage
-                            color = UIColor(rgb: 0x34c759)
+                            color = UIColor(rgb: 0xffffff)
                         }
                         iconView = UIImageView(image: image)
                         iconView.tintColor = color

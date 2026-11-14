@@ -522,7 +522,7 @@ public final class StoryFooterPanelComponent: Component {
                     self.externalContainerView.addSubview(repostStatsIcon)
                 }
                 
-                transition.setTintColor(view: repostStatsIcon, color: UIColor(rgb: 0x34c759).mixedWith(.white, alpha: component.expandFraction))
+                transition.setTintColor(view: repostStatsIcon, color: UIColor(rgb: 0xffffff).mixedWith(.white, alpha: component.expandFraction))
                 
                 let repostStatsText: AnimatedCountLabelView
                 if let current = self.repostStatsText {
