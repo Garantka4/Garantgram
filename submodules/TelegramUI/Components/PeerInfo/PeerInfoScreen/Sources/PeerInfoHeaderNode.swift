@@ -1298,22 +1298,48 @@ final class PeerInfoHeaderNode: ASDisplayNode {
             } else if self.isMyProfile {
                 let subtitleColor: UIColor
                 subtitleColor = .white
-                
-                subtitleStringText = presentationData.strings.Presence_online
-                subtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor)
-                smallSubtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white, shadowColor: titleShadowColor)
-                
-                usernameString = ("", MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white))
 
-                let (maybePanelStatusData, _, _) = panelStatusData
-                if let panelStatusData = maybePanelStatusData {
-                    let subtitleColor: UIColor
-                    if panelStatusData.isActivity {
-                        subtitleColor = UIColor.white
-                    } else {
-                        subtitleColor = UIColor.white
+                if SGSimpleSettings.shared.ghostModeOnline {
+                    let now = Int32(Date().timeIntervalSince1970)
+                    var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
+                    if lastSeen == 0 {
+                        lastSeen = now - 300
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
                     }
-                    panelSubtitleString = (panelStatusData.text, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
+                    // Drift forward up to 10 min every 30 min, but always stay ≥2 min in the past
+                    if now - lastSeen > 1800 {
+                        let drifted = min(lastSeen + 600, now - 120)
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = drifted
+                        lastSeen = drifted
+                    }
+                    let effectiveLastSeen = min(lastSeen, now - 120)
+                    var timeinfo = tm()
+                    var t = time_t(effectiveLastSeen)
+                    localtime_r(&t, &timeinfo)
+                    let hours = Int(timeinfo.tm_hour)
+                    let minutes = Int(timeinfo.tm_min)
+                    let timeString = String(format: "%d:%02d", hours, minutes)
+                    subtitleStringText = presentationData.strings.LastSeen_TodayAt(timeString).string
+                    subtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor)
+                    smallSubtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white, shadowColor: titleShadowColor)
+                    usernameString = ("", MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white))
+                    panelSubtitleString = (subtitleStringText, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
+                } else {
+                    subtitleStringText = presentationData.strings.Presence_online
+                    subtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor)
+                    smallSubtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white, shadowColor: titleShadowColor)
+                    usernameString = ("", MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white))
+
+                    let (maybePanelStatusData, _, _) = panelStatusData
+                    if let panelStatusData = maybePanelStatusData {
+                        let subtitleColor: UIColor
+                        if panelStatusData.isActivity {
+                            subtitleColor = UIColor.white
+                        } else {
+                            subtitleColor = UIColor.white
+                        }
+                        panelSubtitleString = (panelStatusData.text, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
+                    }
                 }
             } else if let _ = threadData {
                 let subtitleColor: UIColor = .white
