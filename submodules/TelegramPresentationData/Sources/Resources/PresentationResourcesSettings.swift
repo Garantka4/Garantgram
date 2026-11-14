@@ -37,7 +37,12 @@ public func renderSettingsIcon(name: String, scaleFactor: CGFloat = 1.0, backgro
                 
                 context.saveGState()
                 context.clip(to: imageRect, mask: maskImage)
-                context.setFillColor(UIColor.white.cgColor)
+                let isLightBackground = backgroundColors.contains { color in
+                    var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+                    color.getRed(&r, green: &g, blue: &b, alpha: &a)
+                    return (r * 0.299 + g * 0.587 + b * 0.114) > 0.7
+                }
+                context.setFillColor(isLightBackground ? UIColor.black.cgColor : UIColor.white.cgColor)
                 context.fill(imageRect)
                 context.restoreGState()
             }
