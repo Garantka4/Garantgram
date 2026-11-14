@@ -1303,18 +1303,11 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                     let now = Int32(Date().timeIntervalSince1970)
                     var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
                     if lastSeen == 0 {
-                        lastSeen = now - 300
+                        lastSeen = now
                         SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
                     }
-                    // Drift forward up to 10 min every 30 min, but always stay ≥2 min in the past
-                    if now - lastSeen > 1800 {
-                        let drifted = min(lastSeen + 600, now - 120)
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = drifted
-                        lastSeen = drifted
-                    }
-                    let effectiveLastSeen = min(lastSeen, now - 120)
                     var timeinfo = tm()
-                    var t = time_t(effectiveLastSeen)
+                    var t = time_t(lastSeen)
                     localtime_r(&t, &timeinfo)
                     let hours = Int(timeinfo.tm_hour)
                     let minutes = Int(timeinfo.tm_min)

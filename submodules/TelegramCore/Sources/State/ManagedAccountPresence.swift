@@ -45,10 +45,22 @@ private final class AccountPresenceManagerImpl {
     
     private func updatePresence(_ isOnline: Bool) {
         if SGSimpleSettings.shared.ghostModeOnline {
-            self.onlineTimer?.invalidate()
-            self.onlineTimer = nil
             self.currentRequestDisposable.set(nil)
             self.isPerformingUpdate.set(false)
+            if isOnline {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+                let timer = SignalKitTimer(timeout: 30.0, repeat: false, completion: { [weak self] in
+                    guard let strongSelf = self else {
+                        return
+                    }
+                    strongSelf.updatePresence(true)
+                }, queue: self.queue)
+                self.onlineTimer = timer
+                timer.start()
+            } else {
+                self.onlineTimer?.invalidate()
+                self.onlineTimer = nil
+            }
             return
         }
         
