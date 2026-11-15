@@ -115,7 +115,7 @@ let colorRed = UIColor(rgb: 0xFF453A)
 let colorGreen = UIColor(rgb: 0xFFFFFF)
 let colorBlue = UIColor(rgb: 0x0a84ff)
 let colorLightBlue = UIColor(rgb: 0x32ADE6)
-let colorTeal = UIColor(rgb: 0x00c7be)
+let colorTeal = UIColor(rgb: 0xFFFFFF)
 let colorOrange = UIColor(rgb: 0xFF9F0A)
 let colorPurple = UIColor(rgb: 0xAF52DE)
 let colorGray = UIColor(rgb: 0x8E8E93)
@@ -277,11 +277,11 @@ public struct PresentationResourcesSettings {
         context.clear(bounds)
         
         let colorsArray: [CGColor] = [
-            UIColor(rgb: 0x3ba1f2).cgColor,
-            UIColor(rgb: 0x3ba1f2).cgColor,
-            UIColor(rgb: 0x39b3b4).cgColor,
-            UIColor(rgb: 0x34c27d).cgColor,
-            UIColor(rgb: 0x34c27d).cgColor
+            UIColor(rgb: 0xffffff).cgColor,
+            UIColor(rgb: 0xffffff).cgColor,
+            UIColor(rgb: 0xd1d1d6).cgColor,
+            UIColor(rgb: 0x8e8e93).cgColor,
+            UIColor(rgb: 0x8e8e93).cgColor
         ]
         var locations: [CGFloat] = [0.0, 0.15, 0.5, 0.85, 1.0]
         let gradient = CGGradient(colorsSpace: deviceColorSpace, colors: colorsArray as CFArray, locations: &locations)!

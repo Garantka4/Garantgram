@@ -323,7 +323,7 @@ public final class AvatarNode: ASDisplayNode {
         [UIColor(rgb: 0xff516a), UIColor(rgb: 0xff885e)],
         [UIColor(rgb: 0xffa85c), UIColor(rgb: 0xffcd6a)],
         [UIColor(rgb: 0x665fff), UIColor(rgb: 0x82b1ff)],
-        [UIColor(rgb: 0x54cb68), UIColor(rgb: 0xa0de7e)],
+        [UIColor(rgb: 0x8e8e93), UIColor(rgb: 0xd1d1d6)],
         [UIColor(rgb: 0x4acccd), UIColor(rgb: 0x00fcfd)],
         [UIColor(rgb: 0x2a9ef1), UIColor(rgb: 0x72d5fd)],
         [UIColor(rgb: 0xd669ed), UIColor(rgb: 0xe0a2f3)],
