@@ -324,7 +324,6 @@ filegroup(
 # MARK: Swiftgram alternative icons
 alternate_icon_folders = [
     "SGDefault",
-    "SGBlack",
     "SGLegacy",
     "SGInverted",
     "SGWhite",

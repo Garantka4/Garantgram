@@ -1299,7 +1299,12 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                 let subtitleColor: UIColor
                 subtitleColor = .white
 
-                if SGSimpleSettings.shared.ghostModeOnline {
+                if let statusData = statusData, !statusData.text.isEmpty {
+                    subtitleStringText = statusData.text
+                    if statusData.isActivity {
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+                    }
+                } else if SGSimpleSettings.shared.ghostModeOnline {
                     let now = Int32(Date().timeIntervalSince1970)
                     var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
                     if lastSeen == 0 {
@@ -1313,27 +1318,14 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                     let minutes = Int(timeinfo.tm_min)
                     let timeString = String(format: "%d:%02d", hours, minutes)
                     subtitleStringText = presentationData.strings.LastSeen_TodayAt(timeString).string
-                    subtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor)
-                    smallSubtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white, shadowColor: titleShadowColor)
-                    usernameString = ("", MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white))
-                    panelSubtitleString = (subtitleStringText, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
                 } else {
                     subtitleStringText = presentationData.strings.Presence_online
-                    subtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor)
-                    smallSubtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white, shadowColor: titleShadowColor)
-                    usernameString = ("", MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white))
-
-                    let (maybePanelStatusData, _, _) = panelStatusData
-                    if let panelStatusData = maybePanelStatusData {
-                        let subtitleColor: UIColor
-                        if panelStatusData.isActivity {
-                            subtitleColor = UIColor.white
-                        } else {
-                            subtitleColor = UIColor.white
-                        }
-                        panelSubtitleString = (panelStatusData.text, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
-                    }
                 }
+                
+                subtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor)
+                smallSubtitleAttributes = MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white, shadowColor: titleShadowColor)
+                usernameString = ("", MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white))
+                panelSubtitleString = (subtitleStringText, MultiScaleTextState.Attributes(font: Font.regular(17.0), color: subtitleColor))
             } else if let _ = threadData {
                 let subtitleColor: UIColor = .white
                 

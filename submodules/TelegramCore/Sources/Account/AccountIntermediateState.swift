@@ -1,4 +1,5 @@
 import Foundation
+import SGSimpleSettings
 import Postbox
 import SwiftSignalKit
 internal import TelegramApi
@@ -370,6 +371,13 @@ struct AccountMutableState {
     }
     
     mutating func addMessages(_ messages: [StoreMessage], location: AddMessagesLocation) {
+        if SGSimpleSettings.shared.ghostModeOnline {
+            for m in messages {
+                if !m.flags.contains(.Incoming) && m.timestamp > 0 {
+                    SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, m.timestamp)
+                }
+            }
+        }
         self.addOperation(.AddMessages(messages, location))
     }
     

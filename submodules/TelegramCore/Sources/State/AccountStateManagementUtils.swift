@@ -1,4 +1,5 @@
 import Foundation
+import SGSimpleSettings
 import Postbox
 import SwiftSignalKit
 internal import TelegramApi
@@ -1515,7 +1516,18 @@ private func finalStateWithUpdatesAndServerTime(accountPeerId: PeerId, postbox: 
                     return previous.withUpdatedIsBlocked((updatePeerBlockedData.flags & (1 << 0)) != 0).withUpdatedFlags(userFlags)
                 })
             case let .updateUserStatus(updateUserStatusData):
-                updatedState.mergePeerPresences([PeerId(namespace: Namespaces.Peer.CloudUser, id: PeerId.Id._internalFromInt64Value(updateUserStatusData.userId)): updateUserStatusData.status], explicit: true)
+                let userPeerId = PeerId(namespace: Namespaces.Peer.CloudUser, id: PeerId.Id._internalFromInt64Value(updateUserStatusData.userId))
+                if userPeerId == accountPeerId {
+                    switch updateUserStatusData.status {
+                    case .userStatusOnline:
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+                    case let .userStatusOffline(wasOnline):
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, wasOnline)
+                    default:
+                        break
+                    }
+                }
+                updatedState.mergePeerPresences([userPeerId: updateUserStatusData.status], explicit: true)
             case let .updateUserName(updateUserNameData):
                 let (userId, usernames) = (updateUserNameData.userId, updateUserNameData.usernames)
                 //TODO add contact checking for apply first and last name

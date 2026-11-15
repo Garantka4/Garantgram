@@ -387,9 +387,6 @@ class ThemeSettingsAppIconItemNode: ListViewItemNode, ItemListItemNode {
                                 case "SGDefault":
                                     name = item.strings.Appearance_AppIconDefault
                                     bordered = false
-                                case "SGBlack":
-                                    name = "Black"
-                                    bordered = false
                                 case "SGLegacy":
                                     name = "Legacy"
                                     bordered = false

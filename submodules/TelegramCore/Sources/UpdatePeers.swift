@@ -478,6 +478,17 @@ func updatePeerPresences(transaction: Transaction, accountPeerId: PeerId, peerPr
         }
     }
         
+    if let myPresence = parsedPresences[accountPeerId] as? TelegramUserPresence {
+        switch myPresence.status {
+        case .present:
+            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+        default:
+            if myPresence.lastActivity > 0 {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, myPresence.lastActivity)
+            }
+        }
+    }
+
     if !SGSimpleSettings.shared.ghostModeOnline {
         parsedPresences.removeValue(forKey: accountPeerId)
     }
@@ -505,6 +516,17 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
         }
     }
     
+    if let myPresence = parsedPresences[accountPeerId] as? TelegramUserPresence {
+        switch myPresence.status {
+        case .present:
+            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+        default:
+            if myPresence.lastActivity > 0 {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, myPresence.lastActivity)
+            }
+        }
+    }
+
     if !SGSimpleSettings.shared.ghostModeOnline && parsedPresences[accountPeerId] != nil {
         parsedPresences.removeValue(forKey: accountPeerId)
     }
@@ -519,6 +541,9 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
 
 func updatePeerPresenceLastActivities(transaction: Transaction, accountPeerId: PeerId, activities: [PeerId: Int32]) {
     var activities = activities
+    if let myTimestamp = activities[accountPeerId] {
+        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, myTimestamp)
+    }
     if !SGSimpleSettings.shared.ghostModeOnline && activities[accountPeerId] != nil {
         activities.removeValue(forKey: accountPeerId)
     }

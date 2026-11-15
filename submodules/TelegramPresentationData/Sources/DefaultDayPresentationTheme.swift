@@ -464,8 +464,8 @@ public func makeDefaultDayPresentationTheme(extendingThemeReference: Presentatio
     let switchColors = PresentationThemeSwitch(
         frameColor: UIColor(rgb: 0xe9e9ea),
         handleColor: UIColor(rgb: 0xffffff),
-        contentColor: UIColor(rgb: 0x35c759),
-        positiveColor: UIColor(rgb: 0x00c900),
+        contentColor: UIColor(rgb: 0xffffff),
+        positiveColor: UIColor(rgb: 0xffffff),
         negativeColor: UIColor(rgb: 0xff3b30)
     )
     

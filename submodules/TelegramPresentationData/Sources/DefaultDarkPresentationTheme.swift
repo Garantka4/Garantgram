@@ -404,8 +404,8 @@ public func makeDefaultDarkPresentationTheme(extendingThemeReference: Presentati
     let switchColors = PresentationThemeSwitch(
         frameColor: UIColor(rgb: 0x39393d),
         handleColor: UIColor(rgb: 0x121212),
-        contentColor: UIColor(rgb: 0x67ce67),
-        positiveColor: UIColor(rgb: 0x08a723),
+        contentColor: UIColor(rgb: 0xffffff),
+        positiveColor: UIColor(rgb: 0xffffff),
         negativeColor: UIColor(rgb: 0xeb5545)
     )
 
