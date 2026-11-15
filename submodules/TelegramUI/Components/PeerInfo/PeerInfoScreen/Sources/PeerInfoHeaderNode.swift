@@ -1299,25 +1299,30 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                 let subtitleColor: UIColor
                 subtitleColor = .white
 
+                let now = Int32(Date().timeIntervalSince1970)
+                var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
+                if lastSeen == 0 {
+                    lastSeen = now
+                    SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
+                }
+
                 if let statusData = statusData, !statusData.text.isEmpty {
                     subtitleStringText = statusData.text
                     if statusData.isActivity {
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = now
                     }
                 } else if SGSimpleSettings.shared.ghostModeOnline {
-                    let now = Int32(Date().timeIntervalSince1970)
-                    var lastSeen = SGSimpleSettings.shared.ghostModeLastSeenTimestamp
-                    if lastSeen == 0 {
-                        lastSeen = now
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
+                    if now - lastSeen < 60 {
+                        subtitleStringText = presentationData.strings.Presence_online
+                    } else {
+                        var timeinfo = tm()
+                        var t = time_t(lastSeen)
+                        localtime_r(&t, &timeinfo)
+                        let hours = Int(timeinfo.tm_hour)
+                        let minutes = Int(timeinfo.tm_min)
+                        let timeString = String(format: "%d:%02d", hours, minutes)
+                        subtitleStringText = presentationData.strings.LastSeen_TodayAt(timeString).string
                     }
-                    var timeinfo = tm()
-                    var t = time_t(lastSeen)
-                    localtime_r(&t, &timeinfo)
-                    let hours = Int(timeinfo.tm_hour)
-                    let minutes = Int(timeinfo.tm_min)
-                    let timeString = String(format: "%d:%02d", hours, minutes)
-                    subtitleStringText = presentationData.strings.LastSeen_TodayAt(timeString).string
                 } else {
                     subtitleStringText = presentationData.strings.Presence_online
                 }

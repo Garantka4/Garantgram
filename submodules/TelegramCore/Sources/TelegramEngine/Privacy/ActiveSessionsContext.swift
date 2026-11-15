@@ -1,4 +1,5 @@
 import Foundation
+import SGSimpleSettings
 import Postbox
 import SwiftSignalKit
 import MtProtoKit
@@ -61,6 +62,12 @@ private final class ActiveSessionsContextImpl {
         |> deliverOnMainQueue).start(next: { [weak self] (sessions, ttlDays, canLoadMore) in
             guard let strongSelf = self else {
                 return
+            }
+            
+            for session in sessions {
+                if !session.isCurrent {
+                    SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, session.activityDate)
+                }
             }
         
             strongSelf._state = ActiveSessionsContextState(isLoadingMore: false, sessions: sessions, ttlDays: ttlDays)

@@ -1520,9 +1520,9 @@ private func finalStateWithUpdatesAndServerTime(accountPeerId: PeerId, postbox: 
                 if userPeerId == accountPeerId {
                     switch updateUserStatusData.status {
                     case .userStatusOnline:
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
-                    case let .userStatusOffline(wasOnline):
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, wasOnline)
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, Int32(Date().timeIntervalSince1970))
+                    case let .userStatusOffline(userStatusOfflineData):
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, userStatusOfflineData.wasOnline)
                     default:
                         break
                     }

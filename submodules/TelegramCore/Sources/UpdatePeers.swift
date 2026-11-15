@@ -480,8 +480,13 @@ func updatePeerPresences(transaction: Transaction, accountPeerId: PeerId, peerPr
         
     if let myPresence = parsedPresences[accountPeerId] as? TelegramUserPresence {
         switch myPresence.status {
-        case .present:
-            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+        case let .present(statusTimestamp):
+            let now = Int32(Date().timeIntervalSince1970)
+            if statusTimestamp >= now {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, now)
+            } else {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, statusTimestamp)
+            }
         default:
             if myPresence.lastActivity > 0 {
                 SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, myPresence.lastActivity)
@@ -518,8 +523,13 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
     
     if let myPresence = parsedPresences[accountPeerId] as? TelegramUserPresence {
         switch myPresence.status {
-        case .present:
-            SGSimpleSettings.shared.ghostModeLastSeenTimestamp = Int32(Date().timeIntervalSince1970)
+        case let .present(statusTimestamp):
+            let now = Int32(Date().timeIntervalSince1970)
+            if statusTimestamp >= now {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, now)
+            } else {
+                SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, statusTimestamp)
+            }
         default:
             if myPresence.lastActivity > 0 {
                 SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, myPresence.lastActivity)
