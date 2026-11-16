@@ -104,7 +104,7 @@ private final class HistoryPreloadEntry: Comparable {
             Logger.shared.log("HistoryPreload", "start hole \(hole)")
             
             let signal: Signal<Never, NoError> = .complete()
-            |> delay(0.3, queue: queue)
+            |> delay(0.1, queue: queue)
             |> then(
                 download
                 |> take(1)
@@ -112,7 +112,7 @@ private final class HistoryPreloadEntry: Comparable {
                 |> mapToSignal { download -> Signal<Never, NoError> in
                     switch hole.hole {
                     case let .peer(peerHole):
-                        return fetchMessageHistoryHole(accountPeerId: accountPeerId, source: .download(download), postbox: postbox, peerInput: .direct(peerId: peerHole.peerId, threadId: peerHole.threadId), namespace: peerHole.namespace, direction: hole.direction, space: .everywhere, count: 60)
+                        return fetchMessageHistoryHole(accountPeerId: accountPeerId, source: .download(download), postbox: postbox, peerInput: .direct(peerId: peerHole.peerId, threadId: peerHole.threadId), namespace: peerHole.namespace, direction: hole.direction, space: .everywhere, count: 100)
                         |> ignoreValues
                     }
                 }
@@ -436,7 +436,7 @@ final class ChatHistoryPreloadManager {
                     let key: PostboxViewKey
                     switch index.entity {
                     case let .peer(peerId, threadId):
-                        key = .messageOfInterestHole(location: .peer(peerId: peerId, threadId: threadId), namespace: Namespaces.Message.Cloud, count: 50)
+                        key = .messageOfInterestHole(location: .peer(peerId: peerId, threadId: threadId), namespace: Namespaces.Message.Cloud, count: 100)
                     }
                     view.disposable.set((self.postbox.combinedView(keys: [key])
                     |> deliverOn(self.queue)).start(next: { [weak self] next in

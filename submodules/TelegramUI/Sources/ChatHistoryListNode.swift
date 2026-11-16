@@ -47,7 +47,7 @@ struct ChatTopVisibleMessageRange: Equatable {
     var isLoading: Bool
 }
 
-private let historyMessageCount: Int = 44
+private let historyMessageCount: Int = 100
 
 enum ChatHistoryViewScrollPosition {
     case unread(index: MessageIndex)
@@ -815,6 +815,7 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
     private let preloadAdPeerDisposable = MetaDisposable()
     private var didSetupRecommendedChannelsPreload = false
     private let preloadRecommendedChannelsDisposable = MetaDisposable()
+    private let currentChatPreloadDisposable = MetaDisposable()
     private var seenAdIds: [Data] = []
     private var pendingDynamicAdMessages: [Message] = []
     private var pendingDynamicAdMessageInterval: Int?
@@ -1171,6 +1172,9 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
             self.chatHistoryLocationValue = ChatHistoryLocationInput(content: .Initial(count: historyMessageCount), id: 0)
         }
         self.chatHistoryLocationPromise.set(self.chatHistoryLocationValue!)
+        if let peerId = self.chatLocation.peerId {
+            self.currentChatPreloadDisposable.set(context.account.addAdditionalPreloadHistoryPeerId(peerId: peerId))
+        }
         
         self.listView.generalScrollDirectionUpdated = { [weak self] direction in
             guard let strongSelf = self else {
@@ -1434,6 +1438,7 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
         self.loadedMessagesFromCachedDataDisposable?.dispose()
         self.preloadAdPeerDisposable.dispose()
         self.preloadRecommendedChannelsDisposable.dispose()
+        self.currentChatPreloadDisposable.dispose()
         self.refreshDisplayedItemRangeTimer?.invalidate()
         self.genericReactionEffectDisposable?.dispose()
         self.adMessagesDisposable?.dispose()
@@ -3743,11 +3748,11 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
                 if lastHasGroups {
                     mathesLast = loaded.lastIndex >= historyView.filteredEntries.count - 1
                 } else {
-                    mathesLast = loaded.lastIndex >= historyView.filteredEntries.count - 5
+                    mathesLast = loaded.lastIndex >= historyView.filteredEntries.count - 10
                 }
             }
             
-            if mathesFirst && historyView.originalView.laterId != nil {
+            if mathesFirst && (historyView.originalView.laterId != nil || historyView.originalView.holeLater) {
                 let locationInput: ChatHistoryLocation = .Navigation(index: .message(lastEntry.index), anchorIndex: .message(lastEntry.index), count: historyMessageCount, highlight: false)
                 if self.chatHistoryLocationValue?.content != locationInput {
                     self.chatHistoryLocationValue = ChatHistoryLocationInput(content: locationInput, id: self.takeNextHistoryLocationId())
@@ -3758,20 +3763,18 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
                 }
             } else if mathesLast {
                 let locationInput: ChatHistoryLocation = .Navigation(index: .message(firstEntry.index), anchorIndex: .message(firstEntry.index), count: historyMessageCount, highlight: false)
-                if historyView.originalView.earlierId != nil {
+                if historyView.originalView.earlierId != nil || historyView.originalView.holeEarlier {
                     if self.chatHistoryLocationValue?.content != locationInput {
                         self.chatHistoryLocationValue = ChatHistoryLocationInput(content: locationInput, id: self.takeNextHistoryLocationId())
                     }
-                } else if historyView.originalView.holeEarlier, case let .custom(_, _, _, _, _, _, loadMore) = self.source, let loadMore {
-                    if self.chatHistoryLocationValue?.content != locationInput {
-                        self.chatHistoryLocationValue = ChatHistoryLocationInput(content: locationInput, id: self.takeNextHistoryLocationId())
+                    if historyView.originalView.holeEarlier, case let .custom(_, _, _, _, _, _, loadMore) = self.source, let loadMore {
                         loadMore()
                     }
                 } else if case let .customChatContents(customChatContents) = self.subject, case .hashTagSearch = customChatContents.kind {
                     if self.chatHistoryLocationValue?.content != locationInput {
                         self.chatHistoryLocationValue = ChatHistoryLocationInput(content: locationInput, id: self.takeNextHistoryLocationId())
-                        customChatContents.loadMore()
                     }
+                    customChatContents.loadMore()
                 }
             }
         }
