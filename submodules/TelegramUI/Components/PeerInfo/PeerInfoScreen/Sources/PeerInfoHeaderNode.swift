@@ -1312,17 +1312,13 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                         SGSimpleSettings.shared.ghostModeLastSeenTimestamp = now
                     }
                 } else if SGSimpleSettings.shared.ghostModeOnline {
-                    if now - lastSeen < 60 {
-                        subtitleStringText = presentationData.strings.Presence_online
-                    } else {
-                        var timeinfo = tm()
-                        var t = time_t(lastSeen)
-                        localtime_r(&t, &timeinfo)
-                        let hours = Int(timeinfo.tm_hour)
-                        let minutes = Int(timeinfo.tm_min)
-                        let timeString = String(format: "%d:%02d", hours, minutes)
-                        subtitleStringText = presentationData.strings.LastSeen_TodayAt(timeString).string
-                    }
+                    var timeinfo = tm()
+                    var t = time_t(lastSeen)
+                    localtime_r(&t, &timeinfo)
+                    let hours = Int(timeinfo.tm_hour)
+                    let minutes = Int(timeinfo.tm_min)
+                    let timeString = String(format: "%d:%02d", hours, minutes)
+                    subtitleStringText = presentationData.strings.LastSeen_TodayAt(timeString).string
                 } else {
                     subtitleStringText = presentationData.strings.Presence_online
                 }

@@ -1374,6 +1374,43 @@ public final class Network: NSObject {
         }
     }
     
+    private func shouldForceOfflineAfterRequest(_ methodName: String) -> Bool {
+        switch methodName {
+        case "messages.sendMessage",
+             "messages.sendMedia",
+             "messages.sendMultiMedia",
+             "messages.forwardMessages",
+             "messages.sendReaction",
+             "messages.editMessage",
+             "messages.sendInlineBotResult":
+            return true
+        default:
+            return false
+        }
+    }
+
+    private func sendForceOffline(requestService: NetworkEngineRequestService) {
+        let data = Api.functions.account.updateStatus(offline: .boolTrue)
+        let request = NetworkEngineRequest(
+            payload: data.1.makeData(),
+            metadata: WrappedRequestMetadata(metadata: WrappedFunctionDescription(data.0), tag: nil),
+            shortMetadata: WrappedRequestShortMetadata(shortMetadata: WrappedShortFunctionDescription(data.0)),
+            parse: { response in
+                if let result = data.2.parse(Buffer(data: response)) {
+                    return BoxedMessage(result)
+                }
+                return nil
+            },
+            options: NetworkEngineRequestOptions(),
+            shouldContinueAfterError: { _ in return false },
+            dependsOn: nil,
+            acknowledged: nil,
+            progress: nil,
+            completed: { _ in }
+        )
+        let _ = requestService.add(request)
+    }
+
     func requestWithAdditionalInfo<T>(_ data: (FunctionDescription, Buffer, DeserializeFunctionResponse<T>), info: NetworkRequestAdditionalInfo, tag: NetworkRequestDependencyTag? = nil, automaticFloodWait: Bool = true, onFloodWaitError: ((String) -> Void)? = nil) -> Signal<NetworkRequestResult<T>, MTRpcError> {
         if data.0.name == "account.updateStatus" && SGSimpleSettings.shared.ghostModeOnline {
             if let result = Api.Bool.boolTrue as? T {
@@ -1381,7 +1418,8 @@ public final class Network: NSObject {
             }
         }
         let requestService = self.requestService
-        return Signal { [requestService] subscriber in
+        let forceOffline = SGSimpleSettings.shared.ghostModeOnline && self.shouldForceOfflineAfterRequest(data.0.name)
+        return Signal { [weak self, requestService] subscriber in
             let request = NetworkEngineRequest(
                 payload: data.1.makeData(),
                 metadata: WrappedRequestMetadata(metadata: WrappedFunctionDescription(data.0), tag: tag),
@@ -1409,6 +1447,9 @@ public final class Network: NSObject {
                     switch result {
                     case let .success(response):
                         if let result = (response.result as! BoxedMessage).body as? T {
+                            if forceOffline && SGSimpleSettings.shared.ghostModeOnline {
+                                self?.sendForceOffline(requestService: requestService)
+                            }
                             subscriber.putNext(.result(result))
                             subscriber.putCompletion()
                         }
@@ -1432,7 +1473,8 @@ public final class Network: NSObject {
             }
         }
         let requestService = self.requestService
-        return Signal { [requestService] subscriber in
+        let forceOffline = SGSimpleSettings.shared.ghostModeOnline && self.shouldForceOfflineAfterRequest(data.0.name)
+        return Signal { [weak self, requestService] subscriber in
             let request = NetworkEngineRequest(
                 payload: data.1.makeData(),
                 metadata: WrappedRequestMetadata(metadata: WrappedFunctionDescription(data.0), tag: tag),
@@ -1452,6 +1494,9 @@ public final class Network: NSObject {
                     switch result {
                     case let .success(response):
                         if let result = (response.result as! BoxedMessage).body as? T {
+                            if forceOffline && SGSimpleSettings.shared.ghostModeOnline {
+                                self?.sendForceOffline(requestService: requestService)
+                            }
                             subscriber.putNext(result)
                             subscriber.putCompletion()
                         }

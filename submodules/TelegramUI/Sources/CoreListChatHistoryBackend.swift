@@ -955,15 +955,14 @@ final class CoreListChatHistoryBackend: ASDisplayNode, ChatHistoryListViewBacken
                     updated[update.index] = CoreListEntryItem(stableId: update.stableId, stableVersion: stableVersion, listItem: update.item, backend: self, leftInset: self.currentInsets.left, rightInset: self.currentInsets.right)
                 }
             }
-            // Deduplicate updated entries by stableId to prevent duplicate identities
-            var seenStableIds = Set<UInt64>()
-            var uniqueEntries: [CoreListEntryItem] = []
+            // Ensure unique CoreList identities without ever removing entries from updated
+            // (dropping entries desyncs self.entries.count from historyView.filteredEntries.count)
+            var stableIdCounts: [UInt64: Int] = [:]
             for entry in updated {
-                if seenStableIds.insert(entry.stableId).inserted {
-                    uniqueEntries.append(entry)
-                }
+                let count = stableIdCounts[entry.stableId] ?? 0
+                entry.identityDisambiguator = count
+                stableIdCounts[entry.stableId] = count + 1
             }
-            updated = uniqueEntries
 
             // Neighbors are a function of final adjacency, so they are computed once the array has
             // settled rather than per-operation. Same index bases as ListView.neighbors(at:) — the
@@ -1719,7 +1718,14 @@ private final class CoreListEntryItem: CoreListItem {
     // Held for withSideInsets(left:right:), which has to rebuild `attachedItems`.
     private weak var backend: CoreListChatHistoryBackend?
 
-    var identity: AnyHashable { AnyHashable(self.stableId) }
+    var identityDisambiguator: Int = 0
+    var identity: AnyHashable {
+        if self.identityDisambiguator == 0 {
+            return AnyHashable(self.stableId)
+        } else {
+            return AnyHashable("\(self.stableId)_\(self.identityDisambiguator)")
+        }
+    }
 
     // CoreList's analogue of the ListView flag, forwarded verbatim. Only `ChatMessageItemImpl`
     // implements it (from `ChatMessageEntryAttributes.pinToTop`), so this is true exactly for the
@@ -1763,13 +1769,15 @@ private final class CoreListEntryItem: CoreListItem {
     /// The same entry re-pinned to new side insets, preserving its identity and stable version so it
     /// reconciles as a survivor whose content changed rather than as a replacement.
     func withSideInsets(left: CGFloat, right: CGFloat) -> CoreListEntryItem {
-        return CoreListEntryItem(stableId: self.stableId,
-                                 stableVersion: self.stableVersion,
-                                 listItem: self.listItem,
-                                 backend: self.backend,
-                                 leftInset: left,
-                                 rightInset: right,
-                                 neighbors: self.neighbors)
+        let copy = CoreListEntryItem(stableId: self.stableId,
+                                     stableVersion: self.stableVersion,
+                                     listItem: self.listItem,
+                                     backend: self.backend,
+                                     leftInset: left,
+                                     rightInset: right,
+                                     neighbors: self.neighbors)
+        copy.identityDisambiguator = self.identityDisambiguator
+        return copy
     }
 
     func view() -> UIView & CoreListItemView {
