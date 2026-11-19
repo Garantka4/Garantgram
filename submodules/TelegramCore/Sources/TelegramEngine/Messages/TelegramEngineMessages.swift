@@ -117,6 +117,10 @@ public extension TelegramEngine {
             return _internal_applyMaxReadMessageIdInteractively(postbox: self.account.postbox, stateManager: self.account.stateManager, messageId: messageId)
         }
 
+        public func markMessageAsReadExplicitly(messageId: MessageId) -> Signal<Void, NoError> {
+            return _internal_markMessageAsReadExplicitly(account: self.account, messageId: messageId)
+        }
+
         public func sendScheduledMessageNowInteractively(messageId: MessageId) -> Signal<Never, NoError> {
             return _internal_sendScheduledMessageNowInteractively(postbox: self.account.postbox, messageId: messageId)
         }

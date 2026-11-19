@@ -766,6 +766,25 @@ public func enqueueMessages(account: Account, peerId: PeerId, messages: [Enqueue
                 }
             }
 
+            if SGSimpleSettings.shared.ghostModeReadReceipts {
+                var replyTargetId: MessageId?
+                for (_, m) in messages {
+                    if case let .message(_, _, _, _, _, replyToMessageId, _, _, _, _) = m, let replyTo = replyToMessageId {
+                        replyTargetId = replyTo.messageId
+                        break
+                    }
+                }
+                if let replyTargetId = replyTargetId {
+                    let _ = _internal_markMessageAsReadExplicitly(account: account, messageId: replyTargetId).startStandalone()
+                } else if let combinedState = transaction.getCombinedPeerReadState(peerId),
+                          let state = combinedState.states.first(where: { $0.0 == Namespaces.Message.Cloud })?.1,
+                          case let .idBased(maxIncomingReadId, maxKnownId, _, _, _) = state,
+                          maxIncomingReadId < maxKnownId {
+                    let targetId = MessageId(peerId: peerId, namespace: Namespaces.Message.Cloud, id: maxKnownId)
+                    let _ = _internal_markMessageAsReadExplicitly(account: account, messageId: targetId).startStandalone()
+                }
+            }
+
             return (resultIds, ephemeralMessageIds)
         }
         |> map { resultIds, ephemeralMessageIds -> [MessageId?] in

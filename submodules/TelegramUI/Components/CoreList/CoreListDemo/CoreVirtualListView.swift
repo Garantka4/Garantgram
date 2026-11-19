@@ -4282,6 +4282,14 @@ public final class CoreVirtualListView: UIView {
                                 generation: generation,
                                 view: carry.view)
         }
+        collectGhostBlocks()
+        if viewportCarries.isEmpty {
+            for v in carouselExitOverlay.subviews {
+                if !ghostRenders.values.contains(where: { $0.wrapper === v }) {
+                    v.removeFromSuperview()
+                }
+            }
+        }
         assertOverlayInvariants()
     }
 

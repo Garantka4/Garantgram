@@ -6166,9 +6166,10 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
                         }
                         items.append(.action(ContextMenuActionItem(text: strongSelf.presentationData.strings.Conversation_Search, icon: { theme in
                             return generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Search"), color: theme.actionSheet.primaryTextColor)
-                        }, action: { _, f in
-                            f(.dismissWithoutContent)
-                            self?.interfaceInteraction?.beginMessageSearch(.everything, "")
+                        }, action: { c, _ in
+                            c?.dismiss(result: .dismissWithoutContent, completion: { [weak self] in
+                                self?.interfaceInteraction?.beginMessageSearch(.everything, "")
+                            })
                         })))
                                                 
                         return items
@@ -6416,9 +6417,10 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
                         
                         items.append(.action(ContextMenuActionItem(text: strongSelf.presentationData.strings.Conversation_Search, icon: { theme in
                             return generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Search"), color: theme.actionSheet.primaryTextColor)
-                        }, action: { _, f in
-                            f(.dismissWithoutContent)
-                            self?.interfaceInteraction?.beginMessageSearch(.everything, "")
+                        }, action: { c, _ in
+                            c?.dismiss(result: .dismissWithoutContent, completion: { [weak self] in
+                                self?.interfaceInteraction?.beginMessageSearch(.everything, "")
+                            })
                         })))
                         
                         if threadId != 1 {

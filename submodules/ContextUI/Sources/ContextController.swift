@@ -744,11 +744,18 @@ public protocol ContextController: ViewController, StandalonePresentableControll
     func addRelativeContentOffset(_ offset: CGPoint, transition: ContainedViewLayoutTransition)
     func updateTheme(presentationData: PresentationData)
     func dismissWithCustomTransition(transition: ContainedViewLayoutTransition, completion: (() -> Void)?)
+    func dismiss(result: ContextMenuActionResult, completion: (() -> Void)?)
     func dismissWithoutContent()
     func dismissNow()
     func dismissWithReaction(value: MessageReaction.Reaction, targetView: UIView, hideNode: Bool, animateTargetContainer: UIView?, addStandaloneReactionAnimation: ((StandaloneReactionAnimation) -> Void)?, onHit: (() -> Void)?, completion: (() -> Void)?)
     func animateDismissalIfNeeded()
     func cancelReactionAnimation()
+}
+
+public extension ContextControllerProtocol {
+    func dismiss(result: ContextMenuActionResult, completion: (() -> Void)?) {
+        self.dismiss(completion: completion)
+    }
 }
 
 public func makeContextController(

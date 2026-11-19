@@ -1041,6 +1041,10 @@ final class ListAnimationController {
             if model.track(for: pending.owner, property: pending.property)?.generation
                 == pending.generation {
                 pendingCompletions[serial] = pending
+                scheduleAfter(0.05) { [weak self] in
+                    guard let self, self.pendingCompletions[serial] != nil else { return }
+                    self.finalize(serial, at: self.now())
+                }
             }
             return
         }

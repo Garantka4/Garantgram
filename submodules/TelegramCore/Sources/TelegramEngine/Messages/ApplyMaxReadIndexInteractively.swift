@@ -373,3 +373,58 @@ func _internal_markAllChatsAsReadInteractively(transaction: Transaction, network
         _internal_togglePeerUnreadMarkInteractively(transaction: transaction, network: network, viewTracker: viewTracker, peerId: peerId, setToValue: false)
     }
 }
+
+func _internal_markMessageAsReadExplicitly(postbox: Postbox, network: Network, stateManager: AccountStateManager, messageId: MessageId) -> Signal<Void, NoError> {
+    return postbox.transaction { transaction -> Signal<Void, NoError> in
+        guard messageId.peerId.namespace != Namespaces.Peer.SecretChat else {
+            return .complete()
+        }
+        guard let peer = transaction.getPeer(messageId.peerId) else {
+            return .complete()
+        }
+        guard peerKeepsReadState(peer) else {
+            return .complete()
+        }
+        
+        let index = transaction.getMessage(messageId)?.index ?? MessageIndex(id: messageId, timestamp: 0)
+        _internal_applyMaxReadIndexInteractively(transaction: transaction, stateManager: stateManager, index: index)
+        
+        let maxId = messageId.id
+        if messageId.peerId.namespace == Namespaces.Peer.CloudChannel {
+            if let inputChannel = apiInputChannel(peer) {
+                return network.request(Api.functions.channels.readHistory(channel: inputChannel, maxId: maxId))
+                |> `catch` { _ -> Signal<Api.Bool, NoError> in
+                    return .single(.boolFalse)
+                }
+                |> mapToSignal { _ -> Signal<Void, NoError> in
+                    return .complete()
+                }
+            }
+        } else if messageId.peerId.namespace == Namespaces.Peer.CloudUser || messageId.peerId.namespace == Namespaces.Peer.CloudGroup {
+            if let inputPeer = apiInputPeer(peer) {
+                return network.request(Api.functions.messages.readHistory(peer: inputPeer, maxId: maxId))
+                |> map(Optional.init)
+                |> `catch` { _ -> Signal<Api.messages.AffectedMessages?, NoError> in
+                    return .single(nil)
+                }
+                |> mapToSignal { result -> Signal<Void, NoError> in
+                    if let result = result {
+                        switch result {
+                            case let .affectedMessages(affectedMessagesData):
+                                let (pts, ptsCount) = (affectedMessagesData.pts, affectedMessagesData.ptsCount)
+                                stateManager.addUpdateGroups([.updatePts(pts: pts, ptsCount: ptsCount)])
+                        }
+                    }
+                    return .complete()
+                }
+            }
+        }
+        return .complete()
+    }
+    |> switchToLatest
+}
+
+public func _internal_markMessageAsReadExplicitly(account: Account, messageId: MessageId) -> Signal<Void, NoError> {
+    return _internal_markMessageAsReadExplicitly(postbox: account.postbox, network: account.network, stateManager: account.stateManager, messageId: messageId)
+}
+

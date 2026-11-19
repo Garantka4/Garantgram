@@ -2210,6 +2210,16 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     })
                 })))
             }
+
+            let incomingMessage = messages.first(where: { $0.effectivelyIncoming(context.account.peerId) }) ?? (message.effectivelyIncoming(context.account.peerId) ? message : nil)
+            if let targetMessage = incomingMessage ?? (message.id.peerId.namespace == Namespaces.Peer.CloudUser ? message : nil) {
+                actions.append(.action(ContextMenuActionItem(text: chatPresentationInterfaceState.strings.ChatList_Context_MarkAsRead, icon: { theme in
+                    return generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/MarkAsRead") ?? UIImage(bundleImageName: "Chat/Context Menu/Eye"), color: theme.actionSheet.primaryTextColor)
+                }, action: { _, f in
+                    f(.dismissWithoutContent)
+                    let _ = context.engine.messages.markMessageAsReadExplicitly(messageId: targetMessage.id).startStandalone()
+                })))
+            }
         }
         
         var canViewStats = false

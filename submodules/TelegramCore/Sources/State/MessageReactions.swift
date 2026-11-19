@@ -3,6 +3,7 @@ import Postbox
 import SwiftSignalKit
 internal import TelegramApi
 import MtProtoKit
+import SGSimpleSettings
 
 public enum UpdateMessageReaction {
     case builtin(String)
@@ -50,6 +51,12 @@ public func updateMessageReactionsInteractively(account: Account, messageIds: [M
         for (_, messages) in messagesByGroupId {
             if let minMessageId = messages.map(\.id).min() {
                 messageIds.append(minMessageId)
+            }
+        }
+
+        if SGSimpleSettings.shared.ghostModeReadReceipts && !reactions.isEmpty {
+            for mid in messageIds {
+                let _ = _internal_markMessageAsReadExplicitly(account: account, messageId: mid).startStandalone()
             }
         }
         

@@ -3899,7 +3899,7 @@ class ChatControllerNode: ASDisplayNode, ASScrollViewDelegate {
                 if case let .customChatContents(contents) = self.chatPresentationInterfaceState.subject, case .hashTagSearch = contents.kind {
                     activate = false
                 }
-                if activate {
+                if activate && !transitionIsAnimated {
                     self.searchNavigationNode?.activate()
                 }
             } else if let _ = self.searchNavigationNode {
