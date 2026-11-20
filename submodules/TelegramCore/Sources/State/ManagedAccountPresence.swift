@@ -24,16 +24,21 @@ private final class AccountPresenceManagerImpl {
         self.network = network
         
         self.shouldKeepOnlinePresenceDisposable = (shouldKeepOnlinePresence
-        |> distinctUntilChanged
         |> deliverOn(self.queue)).start(next: { [weak self] value in
             guard let `self` = self else {
                 return
             }
-            if self.wasOnline != value {
+            if SGSimpleSettings.shared.ghostModeOnline {
+                self.updatePresence(false)
+            } else if self.wasOnline != value {
                 self.wasOnline = value
                 self.updatePresence(value)
             }
         })
+        
+        if SGSimpleSettings.shared.ghostModeOnline {
+            let _ = self.network.request(Api.functions.account.updateStatus(offline: .boolTrue)).startStandalone()
+        }
     }
     
     deinit {
@@ -46,9 +51,17 @@ private final class AccountPresenceManagerImpl {
     private func updatePresence(_ isOnline: Bool) {
         if SGSimpleSettings.shared.ghostModeOnline {
             self.onlineTimer?.invalidate()
-            self.onlineTimer = nil
+            let timer = SignalKitTimer(timeout: 60.0, repeat: true, completion: { [weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                let _ = strongSelf.network.request(Api.functions.account.updateStatus(offline: .boolTrue)).startStandalone()
+            }, queue: self.queue)
+            self.onlineTimer = timer
+            timer.start()
             self.currentRequestDisposable.set(nil)
             self.isPerformingUpdate.set(false)
+            let _ = self.network.request(Api.functions.account.updateStatus(offline: .boolTrue)).startStandalone()
             return
         }
         

@@ -374,9 +374,14 @@ extension ChatControllerImpl {
         items.append(.action(ContextMenuActionItem(text: strings.Conversation_Search, icon: { theme in
             return generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Search"), color: theme.contextMenu.primaryColor)
         }, action: { [weak self] action in
-            action.dismissWithResult(.default)
-            
-            self?.beginMessageSearch("")
+            if let controller = action.controller {
+                controller.dismiss(completion: {
+                    self?.beginMessageSearch("")
+                })
+            } else {
+                action.dismissWithResult(.default)
+                self?.beginMessageSearch("")
+            }
         })))
         
         if let threadId = self.chatLocation.threadId, let peer = self.presentationInterfaceState.renderedPeer?.chatMainPeer, (peer is TelegramChannel || peer is TelegramGroup) {

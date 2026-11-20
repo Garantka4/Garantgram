@@ -1289,9 +1289,7 @@ func peerInfoScreenData(
                         return .none
                     }
                     if user.id == context.account.peerId {
-                        if !SGSimpleSettings.shared.ghostModeOnline {
-                            return .none
-                        }
+                        return .none
                     }
                     if user.isDeleted {
                         return .none

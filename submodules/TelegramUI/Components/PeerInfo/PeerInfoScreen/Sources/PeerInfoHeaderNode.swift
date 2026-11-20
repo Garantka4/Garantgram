@@ -1295,7 +1295,7 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                 
                 usernameString = ("", MultiScaleTextState.Attributes(font: Font.regular(16.0), color: .white))
                 //
-            } else if self.isMyProfile {
+            } else if self.isMyProfile || peer.id == self.context.account.peerId {
                 let subtitleColor: UIColor
                 subtitleColor = .white
 
@@ -1306,12 +1306,7 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                     SGSimpleSettings.shared.ghostModeLastSeenTimestamp = lastSeen
                 }
 
-                if let statusData = statusData, !statusData.text.isEmpty {
-                    subtitleStringText = statusData.text
-                    if statusData.isActivity {
-                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = now
-                    }
-                } else if SGSimpleSettings.shared.ghostModeOnline {
+                if SGSimpleSettings.shared.ghostModeOnline {
                     var timeinfo = tm()
                     var t = time_t(lastSeen)
                     localtime_r(&t, &timeinfo)
@@ -1319,6 +1314,11 @@ final class PeerInfoHeaderNode: ASDisplayNode {
                     let minutes = Int(timeinfo.tm_min)
                     let timeString = String(format: "%d:%02d", hours, minutes)
                     subtitleStringText = presentationData.strings.LastSeen_TodayAt(timeString).string
+                } else if let statusData = statusData, !statusData.text.isEmpty {
+                    subtitleStringText = statusData.text
+                    if statusData.isActivity {
+                        SGSimpleSettings.shared.ghostModeLastSeenTimestamp = now
+                    }
                 } else {
                     subtitleStringText = presentationData.strings.Presence_online
                 }

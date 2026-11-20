@@ -494,9 +494,7 @@ func updatePeerPresences(transaction: Transaction, accountPeerId: PeerId, peerPr
         }
     }
 
-    if !SGSimpleSettings.shared.ghostModeOnline {
-        parsedPresences.removeValue(forKey: accountPeerId)
-    }
+    parsedPresences.removeValue(forKey: accountPeerId)
         
     transaction.updatePeerPresencesInternal(presences: parsedPresences, merge: { previous, updated in
         if let previous = previous as? TelegramUserPresence, let updated = updated as? TelegramUserPresence, previous.lastActivity != updated.lastActivity {
@@ -537,9 +535,7 @@ func updatePeerPresencesClean(transaction: Transaction, accountPeerId: PeerId, p
         }
     }
 
-    if !SGSimpleSettings.shared.ghostModeOnline && parsedPresences[accountPeerId] != nil {
-        parsedPresences.removeValue(forKey: accountPeerId)
-    }
+    parsedPresences.removeValue(forKey: accountPeerId)
     
     transaction.updatePeerPresencesInternal(presences: parsedPresences, merge: { previous, updated in
         if let previous = previous as? TelegramUserPresence, let updated = updated as? TelegramUserPresence, previous.lastActivity != updated.lastActivity {
@@ -554,9 +550,7 @@ func updatePeerPresenceLastActivities(transaction: Transaction, accountPeerId: P
     if let myTimestamp = activities[accountPeerId] {
         SGSimpleSettings.shared.ghostModeLastSeenTimestamp = max(SGSimpleSettings.shared.ghostModeLastSeenTimestamp, myTimestamp)
     }
-    if !SGSimpleSettings.shared.ghostModeOnline && activities[accountPeerId] != nil {
-        activities.removeValue(forKey: accountPeerId)
-    }
+    activities.removeValue(forKey: accountPeerId)
     for (peerId, timestamp) in activities {
         transaction.updatePeerPresenceInternal(peerId: peerId, update: { previous in
             if let previous = previous as? TelegramUserPresence, previous.lastActivity < timestamp {

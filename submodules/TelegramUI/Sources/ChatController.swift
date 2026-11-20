@@ -11154,8 +11154,11 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
     }
     
     public func activateSearch(domain: ChatSearchDomain = .everything, query: String = "") {
-        self.focusOnSearchAfterAppearance = (domain, query)
-        self.interfaceInteraction?.beginMessageSearch(domain, query)
+        if let interfaceInteraction = self.interfaceInteraction {
+            interfaceInteraction.beginMessageSearch(domain, query)
+        } else {
+            self.focusOnSearchAfterAppearance = (domain, query)
+        }
     }
     
     override public func updatePossibleControllerDropContent(content: NavigationControllerDropContent?) {

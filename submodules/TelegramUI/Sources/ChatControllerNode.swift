@@ -3693,6 +3693,9 @@ class ChatControllerNode: ASDisplayNode, ASScrollViewDelegate {
     }
     
     private func chatPresentationInterfaceStateRequiresInputFocus(_ state: ChatPresentationInterfaceState) -> Bool {
+        if state.search != nil {
+            return false
+        }
         switch state.inputMode {
         case .text:
             if state.interfaceState.selectionState != nil {
@@ -3951,13 +3954,15 @@ class ChatControllerNode: ASDisplayNode, ASScrollViewDelegate {
                         self.ensureInputViewFocused()
                     }
                 } else {
-                    if let customTextView, customTextView.isFirstResponder {
-                        self.context.sharedContext.mainWindow?.simulateKeyboardDismiss(transition: .animated(duration: 0.5, curve: .spring))
-                    } else if let inputPanelNode = self.inputPanelNode as? ChatTextInputPanelNode {
-                        if inputPanelNode.isFocused {
-                            inputPanelNode.skipPresentationInterfaceStateUpdate = true
+                    if chatPresentationInterfaceState.search == nil {
+                        if let customTextView, customTextView.isFirstResponder {
                             self.context.sharedContext.mainWindow?.simulateKeyboardDismiss(transition: .animated(duration: 0.5, curve: .spring))
-                            inputPanelNode.skipPresentationInterfaceStateUpdate = false
+                        } else if let inputPanelNode = self.inputPanelNode as? ChatTextInputPanelNode {
+                            if inputPanelNode.isFocused {
+                                inputPanelNode.skipPresentationInterfaceStateUpdate = true
+                                self.context.sharedContext.mainWindow?.simulateKeyboardDismiss(transition: .animated(duration: 0.5, curve: .spring))
+                                inputPanelNode.skipPresentationInterfaceStateUpdate = false
+                            }
                         }
                     }
                 }

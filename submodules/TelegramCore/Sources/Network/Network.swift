@@ -1382,6 +1382,7 @@ public final class Network: NSObject {
              "messages.forwardMessages",
              "messages.sendReaction",
              "messages.editMessage",
+             "messages.sendVote",
              "messages.sendInlineBotResult":
             return true
         default:
@@ -1413,8 +1414,18 @@ public final class Network: NSObject {
 
     func requestWithAdditionalInfo<T>(_ data: (FunctionDescription, Buffer, DeserializeFunctionResponse<T>), info: NetworkRequestAdditionalInfo, tag: NetworkRequestDependencyTag? = nil, automaticFloodWait: Bool = true, onFloodWaitError: ((String) -> Void)? = nil) -> Signal<NetworkRequestResult<T>, MTRpcError> {
         if data.0.name == "account.updateStatus" && SGSimpleSettings.shared.ghostModeOnline {
-            if let result = Api.Bool.boolTrue as? T {
-                return .single(.result(result))
+            let payload = data.1.makeData()
+            var isSettingOnline = true
+            if payload.count >= 8 {
+                let boolId = payload.withUnsafeBytes { $0.load(fromByteOffset: 4, as: UInt32.self) }
+                if boolId == 0x997275b5 {
+                    isSettingOnline = false
+                }
+            }
+            if isSettingOnline {
+                if let result = Api.Bool.boolTrue as? T {
+                    return .single(.result(result))
+                }
             }
         }
         let requestService = self.requestService
@@ -1468,8 +1479,18 @@ public final class Network: NSObject {
     
     func request<T>(_ data: (FunctionDescription, Buffer, DeserializeFunctionResponse<T>), tag: NetworkRequestDependencyTag? = nil, automaticFloodWait: Bool = true, onFloodWaitError: ((String) -> Void)? = nil) -> Signal<T, MTRpcError> {
         if data.0.name == "account.updateStatus" && SGSimpleSettings.shared.ghostModeOnline {
-            if let result = Api.Bool.boolTrue as? T {
-                return .single(result)
+            let payload = data.1.makeData()
+            var isSettingOnline = true
+            if payload.count >= 8 {
+                let boolId = payload.withUnsafeBytes { $0.load(fromByteOffset: 4, as: UInt32.self) }
+                if boolId == 0x997275b5 {
+                    isSettingOnline = false
+                }
+            }
+            if isSettingOnline {
+                if let result = Api.Bool.boolTrue as? T {
+                    return .single(result)
+                }
             }
         }
         let requestService = self.requestService

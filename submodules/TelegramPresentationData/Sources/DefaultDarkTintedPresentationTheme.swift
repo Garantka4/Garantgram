@@ -614,7 +614,7 @@ public func makeDefaultDarkTintedPresentationTheme(extendingThemeReference: Pres
         frameColor: mainSecondaryTextColor.withAlphaComponent(0.5),
         handleColor: UIColor(rgb: 0x121212),
         contentColor: accentColor,
-        positiveColor: UIColor(rgb: 0xffffff),
+        positiveColor: UIColor(rgb: 0x08a723),
         negativeColor: UIColor(rgb: 0xff6767)
     )
 

@@ -2275,6 +2275,10 @@ extension ChatControllerImpl {
             guard let strongSelf = self else {
                 return
             }
+            if strongSelf.presentationInterfaceState.search != nil {
+                strongSelf.chatDisplayNode.searchNavigationNode?.activate()
+                return
+            }
             
             let _ = strongSelf.presentVoiceMessageDiscardAlert(action: { [strongSelf] in
                 var interactive = true
