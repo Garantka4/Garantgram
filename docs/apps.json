@@ -9,7 +9,7 @@
   "apps": [
     {
       "name": "Garantgram",
-      "bundleIdentifier": "ph.telegra.Telegraph",
+      "bundleIdentifier": "org.garantka.garantgram",
       "developerName": "Garant",
       "version": "13.1.1",
       "versionDate": "2026-11-21T00:00:00Z",

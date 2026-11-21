@@ -29,7 +29,7 @@
             <key>metadata</key>
             <dict>
                 <key>bundle-identifier</key>
-                <string>ph.telegra.Telegraph</string>
+                <string>org.garantka.garantgram</string>
                 <key>bundle-version</key>
                 <string>13.1.1</string>
                 <key>kind</key>

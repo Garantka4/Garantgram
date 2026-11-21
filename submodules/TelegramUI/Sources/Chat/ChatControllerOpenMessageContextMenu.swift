@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 import SwiftSignalKit
 import TelegramCore
+import SGSimpleSettings
 import AsyncDisplayKit
 import Display
 import TelegramNotices

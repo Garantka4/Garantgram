@@ -123,6 +123,8 @@ jobs:
             done
           fi
           if [ -f "$OUTPUT_PATH/Garantgram.ipa" ]; then
+            cp "$OUTPUT_PATH/Garantgram.ipa" "$OUTPUT_PATH/Garantgram-Original.ipa"
+            python3 build-system/patch_ipa_bundle_id.py "$OUTPUT_PATH/Garantgram.ipa" "$OUTPUT_PATH/Garantgram.ipa" "ph.telegra.Telegraph" "org.garantka.garantgram"
             cp "$OUTPUT_PATH/Garantgram.ipa" "$OUTPUT_PATH/Telegram.ipa"
           else
             echo "ERROR: Garantgram.ipa was not found!"
@@ -152,6 +154,7 @@ jobs:
           cd /Users/Shared/telegram-ios/build/artifacts
           gh release create "build-${{ env.BUILD_NUMBER }}" \
             Garantgram.ipa \
+            Garantgram-Original.ipa \
             Garantgram.DSYMs.zip \
             --title "Garantgram ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }})" \
             --notes "Garantgram for iOS (${{ env.APP_VERSION }}) - Ghost Mode and No-Ads"
