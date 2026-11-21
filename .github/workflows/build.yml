@@ -155,3 +155,24 @@ jobs:
             Garantgram.DSYMs.zip \
             --title "Garantgram ${{ env.APP_VERSION }} (${{ env.BUILD_NUMBER }})" \
             --notes "Garantgram for iOS (${{ env.APP_VERSION }}) - Ghost Mode and No-Ads"
+
+      - name: Update Web Installer and Apps Source
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd /Users/Shared/telegram-ios
+          python3 -c "
+          import json, datetime
+          with open('docs/apps.json', 'r', encoding='utf-8') as f:
+              data = json.load(f)
+          data['apps'][0]['version'] = '${{ env.APP_VERSION }}'
+          data['apps'][0]['versionDate'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+          data['apps'][0]['versionDescription'] = 'Build ${{ env.BUILD_NUMBER }}'
+          with open('docs/apps.json', 'w', encoding='utf-8') as f:
+              json.dump(data, f, ensure_ascii=False, indent=2)
+          "
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/apps.json
+          git commit -m "Auto-update installer source for build ${{ env.BUILD_NUMBER }} [skip ci]" || true
+          git push origin main || true

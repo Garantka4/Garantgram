@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Garantgram — Установка для iOS</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        :root {
+            --bg-color: #0c0d0e;
+            --card-bg: #16181a;
+            --accent: #ffffff;
+            --accent-text: #000000;
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+            --btn-secondary: #24272b;
+            --border: #2c2f35;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 32px 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .icon-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(255,255,255,0.08);
+            margin-bottom: 20px;
+            background: #000;
+        }
+
+        .icon-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .badge span {
+            color: #4cd964;
+            margin-right: 4px;
+        }
+
+        .actions {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--accent-text);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: var(--btn-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+            background: #2e3238;
+        }
+
+        .instructions {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 18px;
+            padding: 18px 16px;
+            text-align: left;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .instructions h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .instructions ol {
+            padding-left: 18px;
+        }
+
+        .instructions li {
+            margin-bottom: 6px;
+        }
+
+        .instructions li:last-child {
+            margin-bottom: 0;
+        }
+
+        .instructions strong {
+            color: var(--text-primary);
+        }
+
+        .footer {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="icon-wrapper">
+            <img src="icon.png" alt="Garantgram">
+        </div>
+
+        <h1>Garantgram</h1>
+        <div class="badge"><span>●</span> Всегда актуальный билд</div>
+
+        <div class="actions">
+            <!-- Прямая установка через Safari (OTA) -->
+            <a href="itms-services://?action=download-manifest&url=https://garantka4.github.io/Garantgram/manifest.plist" class="btn btn-primary">
+                ⚡ Установить на iPhone
+            </a>
+
+            <!-- Добавить источник в установщики (SideStore / ESign / Scarlet) -->
+            <a href="sidestore://source?url=https://garantka4.github.io/Garantgram/apps.json" class="btn btn-secondary">
+                📲 Добавить в SideStore
+            </a>
+
+            <!-- Скачать IPA напрямую -->
+            <a href="https://github.com/Garantka4/Garantgram/releases/latest/download/Garantgram.ipa" class="btn btn-secondary">
+                💾 Скачать .IPA файл
+            </a>
+        </div>
+
+        <div class="instructions">
+            <h3>ℹ️ После нажатия «Установить»:</h3>
+            <ol>
+                <li>В появившемся окне подтвердите <strong>«Установить»</strong>. Приложение появится на рабочем столе.</li>
+                <li>Перейдите в <strong>Настройки -> Основные -> VPN и управление устройством</strong> и нажмите <strong>«Доверять»</strong>.</li>
+                <li>Если система попросит режим разработчика: <strong>Настройки -> Конфиденциальность и безопасность -> Режим разработчика -> Вкл</strong>.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="footer">
+        Garantgram iOS · Автоматическое обновление через GitHub
+    </div>
+
+</body>
+</html>

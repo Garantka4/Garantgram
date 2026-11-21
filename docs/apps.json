@@ -1,0 +1,26 @@
+{
+  "name": "Garantgram",
+  "identifier": "org.garantgram.source",
+  "subtitle": "Официальный источник Garantgram iOS",
+  "description": "Автоматически обновляемый репозиторий Garantgram для iOS.",
+  "iconURL": "https://garantka4.github.io/Garantgram/icon.png",
+  "headerURL": "https://garantka4.github.io/Garantgram/icon.png",
+  "website": "https://garantka4.github.io/Garantgram",
+  "apps": [
+    {
+      "name": "Garantgram",
+      "bundleIdentifier": "ph.telegra.Telegraph",
+      "developerName": "Garant",
+      "version": "13.1.1",
+      "versionDate": "2026-11-21T00:00:00Z",
+      "versionDescription": "Ghost Mode, No-Ads, Fast Search, White Brand",
+      "downloadURL": "https://github.com/Garantka4/Garantgram/releases/latest/download/Garantgram.ipa",
+      "localizedDescription": "Самый быстрый и функциональный Telegram клиент с Ghost Mode, защитой от рекламы и продвинутыми настройками.",
+      "iconURL": "https://garantka4.github.io/Garantgram/icon.png",
+      "tintColor": "ffffff",
+      "size": 78331179,
+      "screenshotURLs": []
+    }
+  ],
+  "news": []
+}
