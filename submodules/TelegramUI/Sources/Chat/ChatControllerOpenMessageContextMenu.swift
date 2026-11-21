@@ -628,6 +628,9 @@ extension ChatControllerImpl {
                         }
                         
                         let _ = updateMessageReactionsInteractively(account: self.context.account, messageIds: [message.id], reactions: mappedUpdatedReactions, isLarge: isLarge, storeAsRecentlyUsed: true).startStandalone()
+                        if SGSimpleSettings.shared.ghostModeReadReceipts && !mappedUpdatedReactions.isEmpty {
+                            let _ = self.context.engine.messages.markMessageAsReadExplicitly(messageId: message.id).startStandalone()
+                        }
                     }
                 }
 

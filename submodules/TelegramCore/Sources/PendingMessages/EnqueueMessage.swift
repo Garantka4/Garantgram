@@ -767,21 +767,34 @@ public func enqueueMessages(account: Account, peerId: PeerId, messages: [Enqueue
             }
 
             if SGSimpleSettings.shared.ghostModeReadReceipts {
-                var replyTargetId: MessageId?
+                var targetId: MessageId?
                 for (_, m) in messages {
                     if case let .message(_, _, _, _, _, replyToMessageId, _, _, _, _) = m, let replyTo = replyToMessageId {
-                        replyTargetId = replyTo.messageId
+                        targetId = replyTo.messageId
                         break
                     }
                 }
-                if let replyTargetId = replyTargetId {
-                    let _ = _internal_markMessageAsReadExplicitly(account: account, messageId: replyTargetId).startStandalone()
-                } else if let combinedState = transaction.getCombinedPeerReadState(peerId),
+                if targetId == nil, let combinedState = transaction.getCombinedPeerReadState(peerId),
                           let state = combinedState.states.first(where: { $0.0 == Namespaces.Message.Cloud })?.1,
                           case let .idBased(maxIncomingReadId, maxKnownId, _, _, _) = state,
                           maxIncomingReadId < maxKnownId {
-                    let targetId = MessageId(peerId: peerId, namespace: Namespaces.Message.Cloud, id: maxKnownId)
-                    let _ = _internal_markMessageAsReadExplicitly(account: account, messageId: targetId).startStandalone()
+                    targetId = MessageId(peerId: peerId, namespace: Namespaces.Message.Cloud, id: maxKnownId)
+                }
+                if let targetId = targetId {
+                    let index = transaction.getMessage(targetId)?.index ?? MessageIndex(id: targetId, timestamp: 0)
+                    _internal_applyMaxReadIndexInteractively(transaction: transaction, stateManager: account.stateManager, index: index)
+                    if let peer = transaction.getPeer(targetId.peerId), peerKeepsReadState(peer) {
+                        let maxId = targetId.id
+                        if targetId.peerId.namespace == Namespaces.Peer.CloudChannel {
+                            if let inputChannel = apiInputChannel(peer) {
+                                let _ = account.network.request(Api.functions.channels.readHistory(channel: inputChannel, maxId: maxId)).startStandalone()
+                            }
+                        } else if targetId.peerId.namespace == Namespaces.Peer.CloudUser || targetId.peerId.namespace == Namespaces.Peer.CloudGroup {
+                            if let inputPeer = apiInputPeer(peer) {
+                                let _ = account.network.request(Api.functions.messages.readHistory(peer: inputPeer, maxId: maxId)).startStandalone()
+                            }
+                        }
+                    }
                 }
             }
 

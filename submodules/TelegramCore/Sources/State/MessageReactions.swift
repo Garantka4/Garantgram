@@ -56,7 +56,20 @@ public func updateMessageReactionsInteractively(account: Account, messageIds: [M
 
         if SGSimpleSettings.shared.ghostModeReadReceipts && !reactions.isEmpty {
             for mid in messageIds {
-                let _ = _internal_markMessageAsReadExplicitly(account: account, messageId: mid).startStandalone()
+                let index = transaction.getMessage(mid)?.index ?? MessageIndex(id: mid, timestamp: 0)
+                _internal_applyMaxReadIndexInteractively(transaction: transaction, stateManager: account.stateManager, index: index)
+                if let peer = transaction.getPeer(mid.peerId), peerKeepsReadState(peer) {
+                    let maxId = mid.id
+                    if mid.peerId.namespace == Namespaces.Peer.CloudChannel {
+                        if let inputChannel = apiInputChannel(peer) {
+                            let _ = account.network.request(Api.functions.channels.readHistory(channel: inputChannel, maxId: maxId)).startStandalone()
+                        }
+                    } else if mid.peerId.namespace == Namespaces.Peer.CloudUser || mid.peerId.namespace == Namespaces.Peer.CloudGroup {
+                        if let inputPeer = apiInputPeer(peer) {
+                            let _ = account.network.request(Api.functions.messages.readHistory(peer: inputPeer, maxId: maxId)).startStandalone()
+                        }
+                    }
+                }
             }
         }
         

@@ -2298,6 +2298,9 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
                         }
                         
                         let _ = updateMessageReactionsInteractively(account: strongSelf.context.account, messageIds: [message.id], reactions: mappedUpdatedReactions, isLarge: false, storeAsRecentlyUsed: false).startStandalone()
+                        if SGSimpleSettings.shared.ghostModeReadReceipts && !mappedUpdatedReactions.isEmpty {
+                            let _ = strongSelf.context.engine.messages.markMessageAsReadExplicitly(messageId: message.id).startStandalone()
+                        }
                     }
                 }
             })
