@@ -18,8 +18,12 @@
 
 <br/>
 
+<a href="https://garantka4.github.io/Garantgram/">
+  <img src="https://img.shields.io/badge/🌐_ОФИЦИАЛЬНЫЙ_САЙТ-FFFFFF?style=for-the-badge&labelColor=000000&color=FFFFFF" height="42" />
+</a>
+&nbsp;&nbsp;
 <a href="https://github.com/Garantka4/Garantgram/releases/latest/download/Garantgram.ipa">
-  <img src="https://img.shields.io/badge/⬇️_СКАЧАТЬ_GARANTGRAM.IPA-FFFFFF?style=for-the-badge&labelColor=000000&color=FFFFFF" height="42" />
+  <img src="https://img.shields.io/badge/⬇️_СКАЧАТЬ_IPA_(КЛОН)-FFFFFF?style=for-the-badge&labelColor=000000&color=FFFFFF" height="42" />
 </a>
 &nbsp;&nbsp;
 <a href="https://t.me/garantgram_ios">
@@ -42,8 +46,13 @@
 
 ### 👻 Полный Ghost Mode (Режим «Призрак»)
 * 👁 **Скрытое чтение сообщений**: собеседники не знают, что вы открыли диалог (сообщения остаются непрочитанными с одной галочкой).
+* 💬 **Умное прочтение**: сообщение автоматически отмечается прочитанным со второй галочкой только тогда, когда вы сами отвечаете человеку или ставите реакцию.
 * ⌨️ **Скрытый статус активности**: отключена отправка статусов «Печатает...», «Записывает голосовое...» и «Отправка фото/видео».
 * 🎭 **Анонимный просмотр Stories**: вы не появляетесь в списке просмотревших ни у пользователей, ни у каналов.
+
+### 👥 Работа рядом с оригиналом (Клон)
+* Garantgram использует собственный Bundle ID (`org.garantka.garantgram`), поэтому устанавливается как независимое второе приложение.
+* Удалять официальный Telegram не нужно — вы можете держать оба клиента на одном устройстве одновременно.
 
 ### 🚫 100% блокировка рекламы
 * Все спонсорские и рекламные сообщения Telegram заблокированы на уровне сетевого движка (`TelegramCore`).
