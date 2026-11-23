@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import Postbox
 import TelegramCore
 import SwiftSignalKit
 import Display
@@ -462,28 +463,28 @@ extension ChatControllerImpl {
                     let progressDisposable = MetaDisposable()
                     var progressStarted = false
 
-                    let signal: Signal<(Message?, Bool), NoError>
+                    let signal: Signal<(EngineMessage?, Bool), NoError>
                     if let messageId = messageLocation.messageId {
                         signal = self.context.engine.messages.getMessagesLoadIfNecessary([messageId], strategy: .cloud(skipLocal: false))
                         |> `catch` { _ in
                             return .single(.result([]))
                         }
-                        |> map { (result: GetMessagesResult) -> (Message?, Bool) in
+                        |> map { (result: GetMessagesResult) -> (EngineMessage?, Bool) in
                             switch result {
                             case .progress:
-                                return (nil as Message?, true)
+                                return (nil as EngineMessage?, true)
                             case let .result(messages):
-                                return (messages.first, false)
+                                return (messages.first.flatMap(EngineMessage.init), false)
                             }
                         }
                     } else {
-                        let emptyResult: (Message?, Bool) = (nil, false)
+                        let emptyResult: (EngineMessage?, Bool) = (nil, false)
                         signal = .single(emptyResult)
                     }
 
-                    let typedSignal: Signal<(Message?, Bool), NoError> = signal
+                    let typedSignal: Signal<(EngineMessage?, Bool), NoError> = signal
                     self.messageIndexDisposable.set((typedSignal
-                    |> take(until: { (item: (Message?, Bool)) -> SignalTakeAction in
+                    |> take(until: { (item: (EngineMessage?, Bool)) -> SignalTakeAction in
                         return SignalTakeAction(passthrough: true, complete: !item.1)
                     })
                     |> afterDisposed {
@@ -491,7 +492,7 @@ extension ChatControllerImpl {
                             progressDisposable.dispose()
                         }
                     }
-                    |> deliverOnMainQueue).startStrict(next: { [weak self] result in
+                    |> deliverOnMainQueue).startStrict(next: { [weak self] (result: (EngineMessage?, Bool)) in
                         guard let strongSelf = self else {
                             return
                         }
@@ -510,7 +511,7 @@ extension ChatControllerImpl {
                             } else {
                                 strongSelf.chatDisplayNode.historyNode.navigateToMessageLocation(searchLocation, quote: quote, subject: subject, highlight: true, setupReply: setupReply)
                                 if let targetMessage = targetMessage, case let .id(_, params) = messageLocation, let timecode = params.timestamp {
-                                    let _ = strongSelf.controllerInteraction?.openMessage(targetMessage, OpenMessageParams(mode: .timecode(timecode)))
+                                    let _ = strongSelf.controllerInteraction?.openMessage(targetMessage._asMessage(), OpenMessageParams(mode: .timecode(timecode)))
                                 }
                             }
                         }
