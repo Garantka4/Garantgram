@@ -468,20 +468,22 @@ extension ChatControllerImpl {
                         |> `catch` { _ in
                             return .single(.result([]))
                         }
-                        |> map { result -> (Message?, Bool) in
+                        |> map { (result: GetMessagesResult) -> (Message?, Bool) in
                             switch result {
                             case .progress:
-                                return (nil, true)
+                                return (nil as Message?, true)
                             case let .result(messages):
                                 return (messages.first, false)
                             }
                         }
                     } else {
-                        signal = .single((nil, false))
+                        let emptyResult: (Message?, Bool) = (nil, false)
+                        signal = .single(emptyResult)
                     }
 
-                    self.messageIndexDisposable.set((signal
-                    |> take(until: { item in
+                    let typedSignal: Signal<(Message?, Bool), NoError> = signal
+                    self.messageIndexDisposable.set((typedSignal
+                    |> take(until: { (item: (Message?, Bool)) -> SignalTakeAction in
                         return SignalTakeAction(passthrough: true, complete: !item.1)
                     })
                     |> afterDisposed {
