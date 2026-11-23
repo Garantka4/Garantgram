@@ -462,13 +462,13 @@ extension ChatControllerImpl {
                     let progressDisposable = MetaDisposable()
                     var progressStarted = false
 
-                    let signal: Signal<(EngineMessage?, Bool), NoError>
+                    let signal: Signal<(Message?, Bool), NoError>
                     if let messageId = messageLocation.messageId {
                         signal = self.context.engine.messages.getMessagesLoadIfNecessary([messageId], strategy: .cloud(skipLocal: false))
                         |> `catch` { _ in
                             return .single(.result([]))
                         }
-                        |> map { result -> (EngineMessage?, Bool) in
+                        |> map { result -> (Message?, Bool) in
                             switch result {
                             case .progress:
                                 return (nil, true)
@@ -507,7 +507,7 @@ extension ChatControllerImpl {
                             } else {
                                 strongSelf.chatDisplayNode.historyNode.navigateToMessageLocation(searchLocation, quote: quote, subject: subject, highlight: true, setupReply: setupReply)
                                 if let message = message, case let .id(_, params) = messageLocation, let timecode = params.timestamp {
-                                    let _ = strongSelf.controllerInteraction?.openMessage(message._asMessage(), OpenMessageParams(mode: .timecode(timecode)))
+                                    let _ = strongSelf.controllerInteraction?.openMessage(message, OpenMessageParams(mode: .timecode(timecode)))
                                 }
                             }
                         }
