@@ -2110,6 +2110,9 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
                         if update.2 != strongSelf.chatHistoryLocationValue {
                             return
                         }
+                        if case .InitialSearch = update.2?.content {
+                            return
+                        }
                         
                         let historyView = (strongSelf.listView.opaqueTransactionState as? ChatHistoryTransactionOpaqueState)?.historyView
                         let displayRange = strongSelf.listView.displayedItemRange
@@ -2268,15 +2271,21 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
                 }
                 
                 if case .Generic(.FillHole) = type {
-                    applyHole()
-                    return
+                    if case .InitialSearch = update.2?.content {
+                    } else {
+                        applyHole()
+                        return
+                    }
                 }
                 
                 return
             case let .HistoryView(view, type, scrollPosition, flashIndicators, originalScrollPosition, data, id):
                 if case .Generic(.FillHole) = type {
-                    applyHole()
-                    return
+                    if case .InitialSearch = update.2?.content {
+                    } else {
+                        applyHole()
+                        return
+                    }
                 }
                 
                 initialData = data
@@ -3936,6 +3945,10 @@ public final class ChatHistoryListNodeImpl: ASDisplayNode, ChatHistoryNode, Chat
     
     public func scrollToMessage(from fromIndex: MessageIndex, to toIndex: MessageIndex, animated: Bool, highlight: Bool = true, quote: (string: String, offset: Int?)? = nil, subject: EngineMessageReplyInnerSubject? = nil, scrollPosition: ListViewScrollPosition = .center(.bottom), setupReply: Bool = false) {
         self.chatHistoryLocationValue = ChatHistoryLocationInput(content: .Scroll(subject: MessageHistoryScrollToSubject(index: .message(toIndex), quote: quote.flatMap { quote in MessageHistoryScrollToSubject.Quote(string: quote.string, offset: quote.offset) }, subject: subject, setupReply: setupReply), anchorIndex: .message(toIndex), sourceIndex: .message(fromIndex), scrollPosition: scrollPosition, animated: animated, highlight: highlight, setupReply: setupReply), id: self.takeNextHistoryLocationId())
+    }
+    
+    public func navigateToMessageLocation(_ searchLocation: ChatHistoryInitialSearchLocation, quote: (string: String, offset: Int?)? = nil, subject: EngineMessageReplyInnerSubject? = nil, highlight: Bool = true, setupReply: Bool = false) {
+        self.chatHistoryLocationValue = ChatHistoryLocationInput(content: .InitialSearch(subject: MessageHistoryInitialSearchSubject(location: searchLocation, quote: quote.flatMap { quote in MessageHistoryInitialSearchSubject.Quote(string: quote.string, offset: quote.offset) }, subject: subject), count: historyMessageCount, highlight: highlight, setupReply: setupReply), id: self.takeNextHistoryLocationId())
     }
     
     public func anchorMessageInCurrentHistoryView() -> EngineMessage? {

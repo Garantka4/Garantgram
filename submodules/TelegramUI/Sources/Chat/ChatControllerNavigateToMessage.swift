@@ -393,12 +393,14 @@ extension ChatControllerImpl {
                 } else {
                     var setupReply = false
                     var quote: (string: String, offset: Int?)?
+                    var subject: EngineMessageReplyInnerSubject?
                     if case let .id(messageId, params) = messageLocation {
                         if params.timestamp != nil {
                             self.scheduledScrollToMessageId = (messageId, params)
                         }
                         quote = params.quote.flatMap { ($0.string, $0.offset) }
                         setupReply = params.setupReply
+                        subject = params.subject
                     }
                     var progress: Promise<Bool>?
                     if case let .id(_, params) = messageLocation {
@@ -423,67 +425,7 @@ extension ChatControllerImpl {
                             searchLocation = .index(.absoluteUpperBound())
                         }
                     }
-                    var historyView: Signal<ChatHistoryViewUpdate, NoError>
-                    historyView = preloadedChatHistoryViewForLocation(ChatHistoryLocationInput(content: .InitialSearch(subject: MessageHistoryInitialSearchSubject(location: searchLocation), count: 50, highlight: true, setupReply: setupReply), id: 0), context: self.context, chatLocation: self.chatLocation, subject: self.subject, chatLocationContextHolder: self.chatLocationContextHolder, fixedCombinedReadStates: nil, tag: nil, additionalData: [])
-                    |> take(until: { update in
-                        switch update {
-                        case .Loading:
-                            return SignalTakeAction(passthrough: true, complete: false)
-                        case .HistoryView:
-                            return SignalTakeAction(passthrough: true, complete: true)
-                        }
-                    })
-                    
-                    var signal: Signal<(EngineMessage.Index?, Bool), NoError>
-                    signal = historyView
-                    |> mapToSignal { [weak self] historyView -> Signal<(EngineMessage.Index?, Bool), NoError> in
-                        guard let self = self else {
-                            return .single((nil, false))
-                        }
-                        switch historyView {
-                            case .Loading:
-                                return .single((nil, true))
-                            case let .HistoryView(view, _, _, _, _, _, _):
-                                for entry in view.entries {
-                                    if entry.message.id == messageLocation.messageId {
-                                        return .single((entry.message.index, false))
-                                    }
-                                }
-                                if case let .index(index) = searchLocation {
-                                    return .single((index, false))
-                                }
-                                if let messageId = messageLocation.messageId {
-                                    return .single((nil, true))
-                                    |> then(
-                                        self.context.engine.messages.getMessagesLoadIfNecessary([messageId], strategy: .cloud(skipLocal: false))
-                                        |> `catch` { _ in
-                                            return .single(.result([]))
-                                        }
-                                        |> map { result -> (EngineMessage.Index?, Bool) in
-                                            switch result {
-                                            case .progress:
-                                                return (nil, true)
-                                            case let .result(messages):
-                                                if let message = messages.first {
-                                                    return (message.index, false)
-                                                } else {
-                                                    return (nil, false)
-                                                }
-                                            }
-                                        }
-                                    )
-                                }
-                                return .single((nil, false))
-                        }
-                    }
-                    |> take(until: { index in
-                        return SignalTakeAction(passthrough: true, complete: !index.1)
-                    })
-                    
-                    /*#if DEBUG
-                    signal = .single((nil, true)) |> then(signal |> delay(2.0, queue: .mainQueue()))
-                    #endif*/
-                    
+
                     var cancelImpl: (() -> Void)?
                     let presentationData = self.presentationData
                     let displayTime = CACurrentMediaTime()
@@ -519,22 +461,55 @@ extension ChatControllerImpl {
                     |> delay(0.05, queue: Queue.mainQueue())
                     let progressDisposable = MetaDisposable()
                     var progressStarted = false
+
+                    let signal: Signal<(EngineMessage?, Bool), NoError>
+                    if let messageId = messageLocation.messageId {
+                        signal = self.context.engine.messages.getMessagesLoadIfNecessary([messageId], strategy: .cloud(skipLocal: false))
+                        |> `catch` { _ in
+                            return .single(.result([]))
+                        }
+                        |> map { result -> (EngineMessage?, Bool) in
+                            switch result {
+                            case .progress:
+                                return (nil, true)
+                            case let .result(messages):
+                                return (messages.first, false)
+                            }
+                        }
+                    } else {
+                        signal = .single((nil, false))
+                    }
+
                     self.messageIndexDisposable.set((signal
+                    |> take(until: { item in
+                        return SignalTakeAction(passthrough: true, complete: !item.1)
+                    })
                     |> afterDisposed {
                         Queue.mainQueue().async {
                             progressDisposable.dispose()
                         }
                     }
-                    |> deliverOnMainQueue).startStrict(next: { [weak self] index in
-                        if let strongSelf = self, let index = index.0 {
-                            strongSelf.chatDisplayNode.historyNode.scrollToMessage(from: scrollFromIndex, to: index, animated: animated, quote: quote, scrollPosition: scrollPosition, setupReply: setupReply)
-                        } else if index.1 {
+                    |> deliverOnMainQueue).startStrict(next: { [weak self] message, isProgress in
+                        guard let strongSelf = self else {
+                            return
+                        }
+                        if isProgress {
                             if !progressStarted {
                                 progressStarted = true
                                 progressDisposable.set(progressSignal.start())
                             }
-                        } else if let strongSelf = self {
-                            strongSelf.controllerInteraction?.displayUndo(.info(title: nil, text: strongSelf.presentationData.strings.Conversation_MessageDoesntExist, timeout: nil, customUndoText: nil))
+                        } else {
+                            strongSelf.loadingMessage.set(.single(nil))
+                            progressDisposable.dispose()
+
+                            if messageLocation.messageId != nil && message == nil {
+                                strongSelf.controllerInteraction?.displayUndo(.info(title: nil, text: strongSelf.presentationData.strings.Conversation_MessageDoesntExist, timeout: nil, customUndoText: nil))
+                            } else {
+                                strongSelf.chatDisplayNode.historyNode.navigateToMessageLocation(searchLocation, quote: quote, subject: subject, highlight: true, setupReply: setupReply)
+                                if let message = message, case let .id(_, params) = messageLocation, let timecode = params.timestamp {
+                                    let _ = strongSelf.controllerInteraction?.openMessage(message._asMessage(), OpenMessageParams(mode: .timecode(timecode)))
+                                }
+                            }
                         }
                     }, completed: { [weak self] in
                         if let strongSelf = self {

@@ -318,7 +318,7 @@ func chatHistoryViewForLocation(
                         
                         var reportUpdateType: ChatHistoryViewUpdateType = .Initial(fadeIn: fadeIn)
                         if case .FillHole = updateType {
-                            reportUpdateType = .Generic(type: updateType)
+                            reportUpdateType = .Generic(type: .Generic)
                         }
                         
                         preloaded = true
