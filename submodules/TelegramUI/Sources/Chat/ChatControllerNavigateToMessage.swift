@@ -425,10 +425,21 @@ extension ChatControllerImpl {
                     }
                     var historyView: Signal<ChatHistoryViewUpdate, NoError>
                     historyView = preloadedChatHistoryViewForLocation(ChatHistoryLocationInput(content: .InitialSearch(subject: MessageHistoryInitialSearchSubject(location: searchLocation), count: 50, highlight: true, setupReply: setupReply), id: 0), context: self.context, chatLocation: self.chatLocation, subject: self.subject, chatLocationContextHolder: self.chatLocationContextHolder, fixedCombinedReadStates: nil, tag: nil, additionalData: [])
+                    |> take(until: { update in
+                        switch update {
+                        case .Loading:
+                            return SignalTakeAction(passthrough: true, complete: false)
+                        case .HistoryView:
+                            return SignalTakeAction(passthrough: true, complete: true)
+                        }
+                    })
                     
                     var signal: Signal<(EngineMessage.Index?, Bool), NoError>
                     signal = historyView
-                    |> mapToSignal { historyView -> Signal<(EngineMessage.Index?, Bool), NoError> in
+                    |> mapToSignal { [weak self] historyView -> Signal<(EngineMessage.Index?, Bool), NoError> in
+                        guard let self = self else {
+                            return .single((nil, false))
+                        }
                         switch historyView {
                             case .Loading:
                                 return .single((nil, true))
@@ -440,6 +451,27 @@ extension ChatControllerImpl {
                                 }
                                 if case let .index(index) = searchLocation {
                                     return .single((index, false))
+                                }
+                                if let messageId = messageLocation.messageId {
+                                    return .single((nil, true))
+                                    |> then(
+                                        self.context.engine.messages.getMessagesLoadIfNecessary([messageId], strategy: .cloud(skipLocal: false))
+                                        |> `catch` { _ in
+                                            return .single(.result([]))
+                                        }
+                                        |> map { result -> (EngineMessage.Index?, Bool) in
+                                            switch result {
+                                            case .progress:
+                                                return (nil, true)
+                                            case let .result(messages):
+                                                if let message = messages.first {
+                                                    return (message.index, false)
+                                                } else {
+                                                    return (nil, false)
+                                                }
+                                            }
+                                        }
+                                    )
                                 }
                                 return .single((nil, false))
                         }
