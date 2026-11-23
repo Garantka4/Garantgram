@@ -489,10 +489,11 @@ extension ChatControllerImpl {
                             progressDisposable.dispose()
                         }
                     }
-                    |> deliverOnMainQueue).startStrict(next: { [weak self] message, isProgress in
+                    |> deliverOnMainQueue).startStrict(next: { [weak self] result in
                         guard let strongSelf = self else {
                             return
                         }
+                        let (targetMessage, isProgress) = result
                         if isProgress {
                             if !progressStarted {
                                 progressStarted = true
@@ -502,12 +503,12 @@ extension ChatControllerImpl {
                             strongSelf.loadingMessage.set(.single(nil))
                             progressDisposable.dispose()
 
-                            if messageLocation.messageId != nil && message == nil {
+                            if messageLocation.messageId != nil && targetMessage == nil {
                                 strongSelf.controllerInteraction?.displayUndo(.info(title: nil, text: strongSelf.presentationData.strings.Conversation_MessageDoesntExist, timeout: nil, customUndoText: nil))
                             } else {
                                 strongSelf.chatDisplayNode.historyNode.navigateToMessageLocation(searchLocation, quote: quote, subject: subject, highlight: true, setupReply: setupReply)
-                                if let message = message, case let .id(_, params) = messageLocation, let timecode = params.timestamp {
-                                    let _ = strongSelf.controllerInteraction?.openMessage(message, OpenMessageParams(mode: .timecode(timecode)))
+                                if let targetMessage = targetMessage, case let .id(_, params) = messageLocation, let timecode = params.timestamp {
+                                    let _ = strongSelf.controllerInteraction?.openMessage(targetMessage, OpenMessageParams(mode: .timecode(timecode)))
                                 }
                             }
                         }
