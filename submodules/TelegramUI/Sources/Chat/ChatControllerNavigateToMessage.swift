@@ -1,6 +1,5 @@
 import Foundation
 import UIKit
-import Postbox
 import TelegramCore
 import SwiftSignalKit
 import Display
@@ -469,7 +468,7 @@ extension ChatControllerImpl {
                         |> `catch` { _ in
                             return .single(.result([]))
                         }
-                        |> map { (result: GetMessagesResult) -> (EngineMessage?, Bool) in
+                        |> map { result -> (EngineMessage?, Bool) in
                             switch result {
                             case .progress:
                                 return (nil as EngineMessage?, true)
